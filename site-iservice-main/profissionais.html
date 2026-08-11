@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Profissionais Destaques</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header .logo h1 {
+            font-size: 24px;
+            color: #2d3436;
+            font-weight: 700;
+        }
+
+        header .logo h1 i {
+            color: #4cb951;
+        }
+
+        header nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        header nav ul li a {
+            color: #636e72;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        header nav ul li a:hover {
+            color: #4cb951;
+        }
+
+        header nav ul li a.active {
+            color: #4cb951;
+            font-weight: 600;
+        }
+
+        header nav ul li a.btn-sair {
+            background: #fee8e8;
+            color: #e74c3c;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        header nav ul li a.btn-sair:hover {
+            background: #fdd4d4;
+            color: #c0392b;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 50px 0 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .hero h2 i {
+            color: #4cb951;
+            margin-right: 10px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 300;
+        }
+
+        .container-search {
+            max-width: 1200px;
+            margin: -24px auto 0;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-bar {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-bar .search-input {
+            flex: 2;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-bar .search-input i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b2bec3;
+        }
+
+        .search-bar .search-input input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fafbfc;
+            transition: 0.2s;
+        }
+
+        .search-bar .search-input input:focus {
+            border-color: #4cb951;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(76, 185, 81, 0.08);
+        }
+
+        .search-bar .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .search-bar .filter-group select {
+            padding: 12px 16px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fafbfc;
+            cursor: pointer;
+            transition: 0.2s;
+            min-width: 140px;
+        }
+
+        .search-bar .filter-group select:focus {
+            border-color: #4cb951;
+            outline: none;
+        }
+
+        .search-bar .btn-buscar {
+            padding: 12px 28px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-bar .btn-buscar:hover {
+            background: #43a047;
+            transform: scale(1.02);
+        }
+
+        .profissionais-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 24px;
+        }
+
+        .resultados-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .resultados-info span {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .resultados-info span strong {
+            color: #2d3436;
+        }
+
+        .grid-profissionais {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card-profissional {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border: 1px solid #e8ecf0;
+            transition: 0.3s;
+        }
+
+        .card-profissional:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+
+        .card-profissional .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #4cb951;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .card-profissional h3 {
+            color: #2d3436;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-profissional .categoria {
+            font-size: 13px;
+            color: #4cb951;
+            font-weight: 500;
+            background: #e8f5e9;
+            padding: 2px 12px;
+            border-radius: 30px;
+            display: inline-block;
+            margin: 6px 0 10px;
+        }
+
+        .card-profissional .descricao {
+            color: #636e72;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .card-profissional .preco {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4cb951;
+            margin-bottom: 14px;
+        }
+
+        .card-profissional .botoes {
+            display: flex;
+            gap: 10px;
+        }
+
+        .card-profissional .botoes .btn-contratar {
+            flex: 1;
+            padding: 10px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card-profissional .botoes .btn-contratar:hover {
+            background: #43a047;
+        }
+
+        .card-profissional .botoes .btn-chat {
+            flex: 1;
+            padding: 10px;
+            background: #0984e3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card-profissional .botoes .btn-chat:hover {
+            background: #0770c4;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: #b2bec3;
+        }
+
+        .empty-state i {
+            font-size: 56px;
+            display: block;
+            margin-bottom: 16px;
+            color: #dce1e8;
+        }
+
+        .empty-state h3 {
+            color: #2d3436;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e8ecf0;
+            padding: 20px 0;
+            text-align: center;
+            color: #b2bec3;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-bar .filter-group {
+                flex-direction: column;
+            }
+
+            .search-bar .filter-group select {
+                width: 100%;
+            }
+
+            .search-bar .btn-buscar {
+                justify-content: center;
+            }
+
+            .hero h2 {
+                font-size: 24px;
+            }
+
+            .grid-profissionais {
+                grid-template-columns: 1fr;
+            }
+
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            header nav ul {
+                gap: 12px;
+            }
+
+            header nav ul li a {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 30px 0 24px;
+            }
+
+            .hero h2 {
+                font-size: 20px;
+            }
+
+            .container-search {
+                margin-top: -16px;
+            }
+
+            .search-bar {
+                padding: 12px 16px;
+            }
+
+            .resultados-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-profissional .botoes {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-handshake"></i> IService</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="dashboard-prestador.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="profissionais.html" class="active"><i class="fas fa-briefcase"></i> Profissionais</a></li>
+                    <li><a href="perfil-prestador.html"><i class="fas fa-user-cog"></i> Perfil</a></li>
+                    <li><a href="login.html" class="btn-sair" id="btnSair"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="container">
+            <h2><i class="fas fa-users"></i> Nossos Profissionais</h2>
+            <p>Encontre os melhores prestadores de serviços em Taquara/RS</p>
+        </div>
+    </div>
+
+    <div class="container-search">
+        <div class="search-bar">
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" id="buscaInput" placeholder="Buscar por nome ou serviço...">
+            </div>
+            <div class="filter-group">
+                <select id="filtroCategoria">
+                    <option value="todos">Todas as categorias</option>
+                    <option value="faxina">Faxina</option>
+                    <option value="jardinagem">Jardinagem</option>
+                    <option value="reparos">Reparos</option>
+                    <option value="eletrica">Elétrica</option>
+                    <option value="pintura">Pintura</option>
+                    <option value="encanamento">Encanamento</option>
+                </select>
+                <select id="filtroOrdenacao">
+                    <option value="nome">Ordenar por nome</option>
+                    <option value="preco_asc">Menor preço</option>
+                    <option value="preco_desc">Maior preço</option>
+                </select>
+            </div>
+            <button class="btn-buscar" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
+        </div>
+    </div>
+
+    <div class="profissionais-container">
+        <div class="resultados-info">
+            <span>Mostrando <strong id="totalResultados">0</strong> profissionais</span>
+        </div>
+
+        <div class="grid-profissionais" id="listaProfissionais">
+            <div class="empty-state">
+                <i class="fas fa-user-slash"></i>
+                <h3>Nenhum profissional encontrado</h3>
+                <p>Tente ajustar os filtros ou faça uma nova busca.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('btnSair').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            window.location.href = 'login.html';
+        });
+
+        let profissionais = [];
+
+        async function carregarProfissionais() {
+            try {
+                const resposta = await fetch('http://localhost:3000/api/servicos', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok || dados.length === 0) {
+                    document.getElementById('listaProfissionais').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-slash"></i>
+                            <h3>Nenhum profissional encontrado</h3>
+                            <p>Não há serviços cadastrados no momento.</p>
+                        </div>
+                    `;
+                    document.getElementById('totalResultados').textContent = '0';
+                    return;
+                }
+
+                profissionais = dados;
+                aplicarFiltros();
+
+            } catch (erro) {
+                console.error('Erro:', erro);
+                document.getElementById('listaProfissionais').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Erro ao carregar</h3>
+                        <p>Não foi possível conectar ao servidor.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function aplicarFiltros() {
+            const busca = document.getElementById('buscaInput').value.toLowerCase().trim();
+            const categoria = document.getElementById('filtroCategoria').value;
+            const ordenacao = document.getElementById('filtroOrdenacao').value;
+
+            let filtrados = profissionais.filter(s => {
+                const nomeMatch = s.nome.toLowerCase().includes(busca);
+                const prestadorMatch = s.prestador_id?.nome?.toLowerCase().includes(busca) || false;
+                const catMatch = categoria === 'todos' || s.categoria === categoria;
+                return (nomeMatch || prestadorMatch) && catMatch;
+            });
+
+            if (ordenacao === 'nome') {
+                filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
+            } else if (ordenacao === 'preco_asc') {
+                filtrados.sort((a, b) => a.preco - b.preco);
+            } else if (ordenacao === 'preco_desc') {
+                filtrados.sort((a, b) => b.preco - a.preco);
+            }
+
+            document.getElementById('totalResultados').textContent = filtrados.length;
+
+            const container = document.getElementById('listaProfissionais');
+
+            if (filtrados.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-slash"></i>
+                        <h3>Nenhum profissional encontrado</h3>
+                        <p>Tente ajustar os filtros ou faça uma nova busca.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtrados.map(s => {
+                const prestador = s.prestador_id || {};
+                const inicial = (prestador.nome || 'P')[0].toUpperCase();
+                return `
+                    <div class="card-profissional">
+                        <div class="avatar">${inicial}</div>
+                        <h3>${prestador.nome || 'Profissional'}</h3>
+                        <span class="categoria"><i class="fas fa-tag"></i> ${s.categoria}</span>
+                        <p class="descricao">${s.descricao || 'Descrição não informada'}</p>
+                        <div class="preco">R$ ${s.preco.toFixed(2)}</div>
+                        <div class="botoes">
+                            <button class="btn-contratar" onclick="contratar('${s._id}')"><i class="fas fa-calendar-plus"></i> Contratar</button>
+                            <button class="btn-chat" onclick="abrirChat('${s.prestador_id?._id || s.prestador_id}')"><i class="fas fa-comment-dots"></i> Conversar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function contratar(servicoId) {
+            const data = prompt('Digite a data do serviço (formato: YYYY-MM-DD):');
+            if (!data) return;
+
+            const hora = prompt('Digite a hora do serviço (formato: HH:MM):');
+            if (!hora) return;
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/agendamentos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ servico_id: servicoId, data, hora })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    alert(dados.mensagem || 'Erro ao agendar');
+                    return;
+                }
+
+                alert('Serviço agendado com sucesso!');
+                window.location.href = usuario.tipo === 'cliente' ? 'dashboard-cliente.html' : 'dashboard-prestador.html';
+
+            } catch (erro) {
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        async function abrirChat(prestadorId) {
+            if (!prestadorId) {
+                alert('Prestador não identificado');
+                return;
+            }
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/chat/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prestador_id: prestadorId })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    alert(dados.mensagem || 'Erro ao iniciar chat');
+                    return;
+                }
+
+                window.location.href = `chat.html?chatId=${dados.chat._id}`;
+
+            } catch (erro) {
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        document.getElementById('btnBuscar').addEventListener('click', aplicarFiltros);
+
+        document.getElementById('buscaInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                aplicarFiltros();
+            }
+        });
+
+        document.getElementById('filtroCategoria').addEventListener('change', aplicarFiltros);
+        document.getElementById('filtroOrdenacao').addEventListener('change', aplicarFiltros);
+
+        carregarProfissionais();
+    </script>
+
+</body>
+</html>

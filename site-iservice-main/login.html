@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 35px 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            color: #2d3436;
+            margin-bottom: 5px;
+            font-size: 24px;
+        }
+
+        .login-container h2 i {
+            color: #4cb951;
+            margin-right: 8px;
+        }
+
+        .login-container .subtitulo {
+            text-align: center;
+            color: #636e72;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 14px;
+        }
+
+        .input-icone {
+            position: relative;
+        }
+
+        .input-icone i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b2bec3;
+            font-size: 16px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .input-icone input {
+            width: 100%;
+            padding: 13px 16px 13px 44px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .input-icone input:focus {
+            border-color: #4cb951;
+            outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(76, 185, 81, 0.1);
+        }
+
+        .input-icone input::placeholder {
+            color: #b2bec3;
+        }
+
+        .btn-entrar {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4cb951 0%, #43a047 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(76, 185, 81, 0.3);
+        }
+
+        .btn-entrar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(76, 185, 81, 0.4);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 22px;
+        }
+
+        .links a {
+            color: #4cb951;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .links a:hover {
+            color: #43a047;
+            text-decoration: underline;
+        }
+
+        .links p {
+            margin-top: 12px;
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .links p a {
+            font-weight: 600;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #636e72;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .voltar:hover {
+            color: #4cb951;
+        }
+
+        .voltar i {
+            margin-right: 6px;
+        }
+
+        .msg-erro {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 30px 16px;
+                padding: 28px 20px;
+            }
+
+            .input-icone input {
+                padding: 12px 14px 12px 40px;
+                font-size: 14px;
+            }
+
+            .input-icone i {
+                left: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>IService</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="cadastro.html">Criar Conta</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="login-container">
+        <a href="index.html" class="voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+
+        <h2><i class="fas fa-sign-in-alt"></i> Entrar na conta</h2>
+        <p class="subtitulo">Acesse para contratar ou divulgar serviços</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-icone">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Digite seu email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="input-icone">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="senha" placeholder="Digite sua senha" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-entrar">Entrar</button>
+        </form>
+
+        <p class="msg-erro" id="msgLogin"></p>
+
+        <div class="links">
+            <a href="#">Esqueci minha senha</a>
+            <p>Não tem conta? <a href="cadastro.html">Crie uma aqui</a></p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+            const msg = document.getElementById("msgLogin");
+
+            msg.textContent = "";
+            msg.style.color = "#e74c3c";
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    msg.textContent = dados.mensagem || "Erro ao fazer login";
+                    return;
+                }
+
+                localStorage.setItem('token', dados.token);
+                localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+
+                msg.style.color = "#4cb951";
+                msg.textContent = "Login realizado com sucesso!";
+
+                setTimeout(() => {
+                    if (dados.usuario.tipo === 'cliente') {
+                        window.location.href = "dashboard-cliente.html";
+                    } else if (dados.usuario.tipo === 'prestador') {
+                        window.location.href = "dashboard-prestador.html";
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                }, 1000);
+
+            } catch (erro) {
+                msg.textContent = "Erro ao conectar com o servidor";
+            }
+        });
+    </script>
+</body>
+</html>

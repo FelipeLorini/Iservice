@@ -1,0 +1,588 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    color: #2d3436;
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== HEADER ===== */
+header {
+    background: linear-gradient(135deg, #4cb951 0%, #43a047 100%);
+    padding: 18px 0;
+    box-shadow: 0 2px 20px rgba(76, 185, 81, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo h1 {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+header .logo h1::before {
+    content: "✦ ";
+    font-size: 1.4rem;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 28px;
+}
+
+nav ul li a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+}
+
+nav ul li a:hover {
+    color: #ffffff;
+    border-bottom-color: #ffffff;
+}
+
+/* ===== HERO ===== */
+.hero {
+    text-align: center;
+    padding: 80px 20px 60px;
+    background: linear-gradient(180deg, #f0f2f5 0%, #ffffff 100%);
+}
+
+.hero h2 {
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+}
+
+.hero h2 span {
+    color: #4cb951;
+}
+
+.hero p {
+    font-size: 1.15rem;
+    color: #636e72;
+    margin-bottom: 28px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero button {
+    background: linear-gradient(135deg, #4cb951 0%, #43a047 100%);
+    color: #ffffff;
+    border: none;
+    padding: 14px 44px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(76, 185, 81, 0.35);
+}
+
+.hero button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(76, 185, 81, 0.45);
+}
+
+/* ===== SEÇÕES ===== */
+section {
+    padding: 60px 0;
+}
+
+section:nth-child(even) {
+    background: #ffffff;
+}
+
+section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+}
+
+section h2::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #4cb951, #66bb6a);
+    margin: 12px auto 0;
+    border-radius: 4px;
+}
+
+/* ===== CARDS ===== */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 28px;
+    justify-content: center;
+}
+
+.card {
+    background: #ffffff;
+    padding: 30px 24px;
+    text-align: center;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.35s ease;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(76, 185, 81, 0.15);
+    border-color: rgba(76, 185, 81, 0.2);
+}
+
+.card i {
+    font-size: 44px;
+    color: #4cb951;
+    margin-bottom: 16px;
+    display: inline-block;
+    background: rgba(76, 185, 81, 0.1);
+    padding: 16px;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+
+.card:hover i {
+    background: rgba(76, 185, 81, 0.18);
+    transform: scale(1.05);
+}
+
+.card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 8px;
+}
+
+.card p {
+    color: #636e72;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+.card button {
+    background: #4cb951;
+    color: #ffffff;
+    border: none;
+    padding: 10px 32px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.card button:hover {
+    background: #43a047;
+    transform: scale(1.04);
+    box-shadow: 0 4px 16px rgba(76, 185, 81, 0.35);
+}
+
+/* ===== ESTRELAS ===== */
+.stars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    margin-bottom: 14px;
+}
+
+.star {
+    font-size: 20px;
+    color: #dfe6e9;
+    cursor: default;
+    transition: color 0.2s;
+}
+
+.star.filled {
+    color: #fdcb6e;
+}
+
+.star.half {
+    position: relative;
+    color: #dfe6e9;
+}
+
+.star.half::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #fdcb6e;
+}
+
+.nota {
+    font-size: 0.85rem;
+    color: #636e72;
+    margin-left: 6px;
+    font-weight: 600;
+}
+
+/* ===== AGENDAMENTO ===== */
+#agendamento {
+    background: #f8faf9;
+}
+
+.agendamento-box {
+    background: #ffffff;
+    padding: 36px 32px;
+    max-width: 520px;
+    margin: 0 auto;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #2d3436;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e8ecf0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: #fafbfc;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #4cb951;
+    outline: none;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(76, 185, 81, 0.1);
+}
+
+#btnAgendar {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #4cb951 0%, #43a047 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(76, 185, 81, 0.3);
+}
+
+#btnAgendar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(76, 185, 81, 0.4);
+}
+
+.msg-sucesso {
+    color: #4cb951;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 12px;
+}
+
+.msg-erro {
+    color: #e74c3c;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 12px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: #1a1a2e;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 28px 0;
+    border-top: 3px solid #4cb951;
+}
+
+footer p {
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+footer p::before {
+    content: "© ";
+}
+
+/* ===== PÁGINAS DE SERVIÇOS (Faxina, Jardinagem, Reparos) ===== */
+.pagina-servico {
+    padding: 30px 0;
+}
+
+.pagina-servico .header-servico {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.pagina-servico .header-servico i {
+    font-size: 52px;
+    color: #4cb951;
+    margin-bottom: 12px;
+    display: inline-block;
+    background: rgba(76, 185, 81, 0.1);
+    padding: 18px;
+    border-radius: 18px;
+}
+
+.pagina-servico .header-servico h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 4px;
+}
+
+.pagina-servico .header-servico h2::after {
+    display: none;
+}
+
+.pagina-servico .header-servico p {
+    color: #636e72;
+    font-size: 1.05rem;
+}
+
+/* Grid de profissionais */
+.cards-profissionais {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    justify-content: center;
+}
+
+.card-profissional {
+    background: #ffffff;
+    padding: 28px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    transition: all 0.35s ease;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.card-profissional:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(76, 185, 81, 0.15);
+    border-color: rgba(76, 185, 81, 0.2);
+}
+
+.card-profissional .avatar {
+    width: 76px;
+    height: 76px;
+    background: linear-gradient(135deg, rgba(76, 185, 81, 0.12), rgba(76, 185, 81, 0.06));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 32px;
+    color: #4cb951;
+    transition: all 0.3s ease;
+}
+
+.card-profissional:hover .avatar {
+    background: linear-gradient(135deg, rgba(76, 185, 81, 0.2), rgba(76, 185, 81, 0.1));
+    transform: scale(1.05);
+}
+
+.card-profissional h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 2px;
+}
+
+.card-profissional .experiencia {
+    color: #636e72;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.card-profissional .experiencia i {
+    font-size: 0.85rem;
+    color: #4cb951;
+    margin-right: 4px;
+}
+
+.card-profissional .estrelas {
+    color: #fdcb6e;
+    font-size: 18px;
+    letter-spacing: 3px;
+    margin: 8px 0;
+}
+
+.card-profissional .preco {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #4cb951;
+    margin: 12px 0 16px;
+}
+
+.card-profissional .preco::before {
+    content: "⟡ ";
+}
+
+.card-profissional .btn-contratar {
+    background: linear-gradient(135deg, #4cb951 0%, #43a047 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.card-profissional .btn-contratar:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(76, 185, 81, 0.35);
+}
+
+.card-profissional .btn-contratar i {
+    margin-right: 8px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 992px) {
+    .cards {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+    
+    .cards-profissionais {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    header .container {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    header .logo h1 {
+        font-size: 1.5rem;
+    }
+
+    nav ul {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+
+    nav ul li a {
+        font-size: 0.9rem;
+    }
+
+    .hero {
+        padding: 50px 16px 40px;
+    }
+
+    .hero h2 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    section {
+        padding: 40px 0;
+    }
+
+    section h2 {
+        font-size: 1.8rem;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .cards-profissionais {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .agendamento-box {
+        padding: 24px 20px;
+    }
+
+    .pagina-servico .header-servico h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h2 {
+        font-size: 1.6rem;
+    }
+
+    section h2 {
+        font-size: 1.5rem;
+    }
+
+    .card {
+        padding: 22px 16px;
+    }
+
+    .card-profissional {
+        padding: 20px 16px;
+    }
+
+    .card i {
+        font-size: 36px;
+        padding: 12px;
+    }
+}

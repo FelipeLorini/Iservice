@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Meu Painel | IService - Cliente</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-broom"></i>
+                <h1>IService</h1>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="dashboard-cliente.html" class="active">Meu Painel</a></li>
+                    <li><a href="profissionais.html">Profissionais</a></li>
+                    <li><a href="#" id="logoutBtn">Sair</a></li>
+                </ul>
+            </nav>
+            <div class="menu-hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <div class="user-welcome">
+                        <i class="fas fa-user-circle"></i>
+                        <div>
+                            <h2>Olá, <span id="userName">Cliente</span></h2>
+                            <p>Bem-vindo ao seu painel de controle</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <h3 id="servicosContratados">0</h3>
+                            <p>Serviços contratados</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-star"></i>
+                        <div>
+                            <h3 id="avaliacoesFeitas">0</h3>
+                            <p>Avaliações feitas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <div>
+                            <h3 id="profissionaisFavoritos">0</h3>
+                            <p>Favoritos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-tabs">
+                    <button class="dashboard-tab active" data-tab="servicos">Meus Serviços</button>
+                    <button class="dashboard-tab" data-tab="agendamentos">Agendamentos</button>
+                    <button class="dashboard-tab" data-tab="perfil">Meu Perfil</button>
+                </div>
+
+                <div id="tab-servicos" class="dashboard-content active">
+                    <div class="servicos-contratados">
+                        <h3>Histórico de serviços</h3>
+                        <div id="listaServicos" class="lista-servicos">
+                            <p class="sem-dados">Nenhum serviço contratado ainda.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-agendamentos" class="dashboard-content">
+                    <div class="agendamentos">
+                        <h3>Próximos agendamentos</h3>
+                        <div id="listaAgendamentos" class="lista-agendamentos">
+                            <p class="sem-dados">Nenhum agendamento pendente.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-perfil" class="dashboard-content">
+                    <div class="perfil-form">
+                        <h3>Meus dados</h3>
+                        <form id="perfilForm">
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="perfilNome" placeholder="Nome completo">
+                                </div>
+                                <div class="input-group">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="perfilTelefone" placeholder="Telefone">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="perfilEmail" placeholder="E-mail" readonly>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" id="perfilEndereco" placeholder="Endereço">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="dashboard-cliente.js"></script>
+    <script src="menu.js"></script>
+</body>
+</html>

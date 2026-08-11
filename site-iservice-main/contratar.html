@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Contratar</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .contratar-container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .contratar-container h2 {
+            text-align: center;
+            color: #4cb951;
+            margin-bottom: 5px;
+        }
+
+        .contratar-container .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group textarea {
+            height: 70px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #4cb951;
+            outline: none;
+        }
+
+        .btn-contratar {
+            width: 100%;
+            padding: 14px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .btn-contratar:hover {
+            background: #4cb951;
+        }
+
+        .msg {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .msg.sucesso {
+            color: #2e7d32;
+        }
+
+        .msg.erro {
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>IService</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- FORMULÁRIO DE CONTRATAÇÃO -->
+    <div class="contratar-container">
+        <h2><i class="fas fa-handshake"></i> Contratar Profissional</h2>
+        <p class="subtitulo">Preencha os dados para alugar um prestador</p>
+
+        <form id="formContratar">
+            <div class="form-group">
+                <label for="tipoServico">Tipo de serviço</label>
+                <select id="tipoServico" required>
+                    <option value="">Selecione o serviço...</option>
+                    <option value="faxina">Faxina / Limpeza</option>
+                    <option value="jardinagem">Jardinagem</option>
+                    <option value="reparos">Reparos em geral</option>
+                    <option value="eletrica">Elétrica</option>
+                    <option value="pintura">Pintura</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dataServico">Data do serviço</label>
+                <input type="date" id="dataServico" required>
+            </div>
+
+            <div class="form-group">
+                <label for="horarioServico">Horário</label>
+                <select id="horarioServico" required>
+                    <option value="">Selecione o horário...</option>
+                    <option value="08:00">08:00</option>
+                    <option value="09:00">09:00</option>
+                    <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="16:00">16:00</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="endereco">Endereço completo</label>
+                <input type="text" id="endereco" placeholder="Rua, número, bairro - Taquara/RS" required>
+            </div>
+
+            <div class="form-group">
+                <label for="observacao">Observação (opcional)</label>
+                <textarea id="observacao" placeholder="Detalhes sobre o serviço..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-contratar">Solicitar Profissional</button>
+        </form>
+
+        <p class="msg" id="msgContratar"></p>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("formContratar").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const servico = document.getElementById("tipoServico").value;
+            const data = document.getElementById("dataServico").value;
+            const horario = document.getElementById("horarioServico").value;
+            const endereco = document.getElementById("endereco").value;
+            const observacao = document.getElementById("observacao").value;
+            const msg = document.getElementById("msgContratar");
+
+            // Validação
+            if (!servico || !data || !horario || !endereco) {
+                msg.textContent = "Preencha todos os campos obrigatórios!";
+                msg.className = "msg erro";
+                return;
+            }
+
+            // Verifica se a data é futura
+            const dataSelecionada = new Date(data + "T" + horario);
+            const hoje = new Date();
+
+            if (dataSelecionada <= hoje) {
+                msg.textContent = "Escolha uma data e horário futuros!";
+                msg.className = "msg erro";
+                return;
+            }
+
+            // Salva no localStorage
+            const contratacao = {
+                servico: servico,
+                data: data,
+                horario: horario,
+                endereco: endereco,
+                observacao: observacao
+            };
+
+            let contratacoes = JSON.parse(localStorage.getItem("contratacoes")) || [];
+            contratacoes.push(contratacao);
+            localStorage.setItem("contratacoes", JSON.stringify(contratacoes));
+
+            // Sucesso
+            msg.textContent = "Solicitação enviada com sucesso!";
+            msg.className = "msg sucesso";
+
+            // Limpa o formulário
+            document.getElementById("formContratar").reset();
+        });
+    </script>
+</body>
+</html>

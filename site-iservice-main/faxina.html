@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Faxina</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .servicos-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .servicos-container h2 {
+            color: #2d3436;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .servicos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .servico-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: 0.3s;
+            border: 1px solid #e8ecf0;
+        }
+
+        .servico-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .servico-card h3 {
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+
+        .servico-card .experiencia {
+            color: #636e72;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .servico-card .preco {
+            color: #4cb951;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .servico-card .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-contratar {
+            flex: 1;
+            padding: 10px 16px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-contratar:hover {
+            background: #43a047;
+        }
+
+        .btn-chat {
+            flex: 1;
+            padding: 10px 16px;
+            background: #0984e3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-chat:hover {
+            background: #0770c4;
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #636e72;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-voltar:hover {
+            color: #4cb951;
+        }
+
+        .msg-status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .servicos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>IService</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="profissionais.html">Serviços</a></li>
+                    <li><a href="dashboard-cliente.html">Dashboard</a></li>
+                    <li><a href="login.html">Sair</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="servicos-container">
+        <a href="profissionais.html" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+
+        <h2><i class="fas fa-broom"></i> Faxina</h2>
+
+        <div class="servicos-grid" id="listaServicos">
+        </div>
+
+        <p id="msgStatus" class="msg-status"></p>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        async function carregarServicos() {
+            try {
+                const resposta = await fetch('http://localhost:3000/api/servicos/categoria/faxina', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    document.getElementById('msgStatus').textContent = dados.mensagem || 'Erro ao carregar servicos';
+                    return;
+                }
+
+                const lista = document.getElementById('listaServicos');
+
+                if (dados.length === 0) {
+                    lista.innerHTML = '<p style="text-align:center;color:#636e72;">Nenhum servico de faxina disponivel no momento.</p>';
+                    return;
+                }
+
+                lista.innerHTML = dados.map(servico => `
+                    <div class="servico-card">
+                        <h3>${servico.nome}</h3>
+                        <p style="color:#636e72;font-size:14px;">${servico.descricao || 'Descricao nao informada'}</p>
+                        <p class="experiencia"><i class="fas fa-user"></i> Prestador: ${servico.prestador_id?.nome || 'Nao informado'}</p>
+                        <p class="preco">R$ ${servico.preco.toFixed(2)}</p>
+                        <div class="botoes">
+                            <button class="btn-contratar" onclick="contratar('${servico._id}')">
+                                <i class="fas fa-calendar-plus"></i> Contratar
+                            </button>
+                            <button class="btn-chat" onclick="abrirChat('${servico.prestador_id?._id || servico.prestador_id}')">
+                                <i class="fas fa-comment-dots"></i> Conversar
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (erro) {
+                document.getElementById('msgStatus').textContent = 'Erro ao conectar com o servidor';
+            }
+        }
+
+        async function contratar(servicoId) {
+            const data = prompt('Digite a data do servico (formato: YYYY-MM-DD):');
+            if (!data) return;
+
+            const hora = prompt('Digite a hora do servico (formato: HH:MM):');
+            if (!hora) return;
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/agendamentos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ servico_id: servicoId, data, hora })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    alert(dados.mensagem || 'Erro ao agendar');
+                    return;
+                }
+
+                alert('Servico agendado com sucesso!');
+                window.location.href = 'dashboard-cliente.html';
+
+            } catch (erro) {
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        async function abrirChat(prestadorId) {
+            if (!prestadorId) {
+                alert('Prestador nao identificado');
+                return;
+            }
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/chat/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prestador_id: prestadorId })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    alert(dados.mensagem || 'Erro ao iniciar chat');
+                    return;
+                }
+
+                window.location.href = `chat.html?chatId=${dados.chat._id}`;
+
+            } catch (erro) {
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        carregarServicos();
+    </script>
+
+</body>
+</html>

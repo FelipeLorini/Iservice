@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Meu Perfil</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header .logo h1 {
+            font-size: 24px;
+            color: #2d3436;
+            font-weight: 700;
+        }
+
+        header .logo h1 i {
+            color: #4cb951;
+        }
+
+        header nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        header nav ul li a {
+            color: #636e72;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        header nav ul li a:hover {
+            color: #4cb951;
+        }
+
+        header nav ul li a.active {
+            color: #4cb951;
+            font-weight: 600;
+        }
+
+        header nav ul li a.btn-sair {
+            background: #fee8e8;
+            color: #e74c3c;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        header nav ul li a.btn-sair:hover {
+            background: #fdd4d4;
+            color: #c0392b;
+        }
+
+        .perfil-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 24px;
+        }
+
+        .perfil-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border: 1px solid #e8ecf0;
+        }
+
+        .perfil-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .perfil-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #4cb951;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .perfil-header .info h2 {
+            color: #2d3436;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .perfil-header .info p {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .perfil-header .info .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #4cb951;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fafbfc;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #4cb951;
+            outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(76, 185, 81, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-salvar {
+            width: 100%;
+            padding: 14px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-salvar:hover {
+            background: #43a047;
+            transform: scale(1.01);
+        }
+
+        .msg-status {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #e8ecf0;
+            margin: 24px 0;
+        }
+
+        .dias-semana {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .dias-semana label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 400;
+            font-size: 14px;
+            color: #2d3436;
+            cursor: pointer;
+        }
+
+        .dias-semana input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4cb951;
+            cursor: pointer;
+        }
+
+        .horario-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .horario-group label {
+            font-weight: 400;
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .horario-group input[type="time"] {
+            padding: 10px 14px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fafbfc;
+            transition: 0.2s;
+        }
+
+        .horario-group input[type="time"]:focus {
+            border-color: #4cb951;
+            outline: none;
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e8ecf0;
+            padding: 20px 0;
+            text-align: center;
+            color: #b2bec3;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .perfil-card {
+                padding: 20px;
+            }
+
+            .perfil-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            header nav ul {
+                gap: 12px;
+            }
+
+            header nav ul li a {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-handshake"></i> IService</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="dashboard-prestador.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="profissionais.html"><i class="fas fa-briefcase"></i> Profissionais</a></li>
+                    <li><a href="perfil_prestador.html" class="active"><i class="fas fa-user-cog"></i> Perfil</a></li>
+                    <li><a href="login.html" class="btn-sair" id="btnSair"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="perfil-container">
+        <div class="perfil-card">
+            <div class="perfil-header">
+                <div class="perfil-avatar" id="avatar">P</div>
+                <div class="info">
+                    <h2 id="nomeUsuario">Carregando...</h2>
+                    <p id="emailUsuario">carregando@email.com</p>
+                    <span class="badge"><i class="fas fa-check-circle"></i> Prestador</span>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <form id="formPerfil">
+                <div class="form-group">
+                    <label for="nome">Nome completo</label>
+                    <input type="text" id="nome" placeholder="Seu nome completo">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="text" id="telefone" placeholder="(11) 99999-9999">
+                </div>
+
+                <div class="form-group">
+                    <label for="especialidade">Especialidade</label>
+                    <select id="especialidade">
+                        <option value="faxina">Faxina</option>
+                        <option value="jardinagem">Jardinagem</option>
+                        <option value="reparos">Reparos</option>
+                        <option value="eletrica">Elétrica</option>
+                        <option value="pintura">Pintura</option>
+                        <option value="encanamento">Encanamento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao">Descrição profissional</label>
+                    <textarea id="descricao" placeholder="Descreva sua experiência, habilidades e serviços que oferece..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="preco">Valor médio por serviço (R$)</label>
+                    <input type="number" id="preco" placeholder="Ex: 120">
+                </div>
+
+                <hr class="divider">
+
+                <h3 style="color:#2d3436;font-size:16px;margin-bottom:16px;"><i class="fas fa-calendar-alt" style="color:#4cb951;"></i> Disponibilidade</h3>
+
+                <div class="dias-semana" id="diasSemana">
+                    <label><input type="checkbox" value="segunda"> Segunda</label>
+                    <label><input type="checkbox" value="terca"> Terça</label>
+                    <label><input type="checkbox" value="quarta"> Quarta</label>
+                    <label><input type="checkbox" value="quinta"> Quinta</label>
+                    <label><input type="checkbox" value="sexta"> Sexta</label>
+                    <label><input type="checkbox" value="sabado"> Sábado</label>
+                    <label><input type="checkbox" value="domingo"> Domingo</label>
+                </div>
+
+                <div class="form-group">
+                    <div class="horario-group">
+                        <label>Das <input type="time" id="horaInicio" value="08:00"></label>
+                        <label>até <input type="time" id="horaFim" value="18:00"></label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-salvar"><i class="fas fa-save"></i> Salvar alterações</button>
+            </form>
+
+            <p id="msgStatus" class="msg-status"></p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('btnSair').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            window.location.href = 'login.html';
+        });
+
+        document.getElementById('avatar').textContent = (usuario.nome || 'P')[0].toUpperCase();
+        document.getElementById('nomeUsuario').textContent = usuario.nome || 'Prestador';
+        document.getElementById('emailUsuario').textContent = usuario.email || '';
+
+        document.getElementById('nome').value = usuario.nome || '';
+        document.getElementById('telefone').value = usuario.telefone || '';
+
+        const perfilSalvo = JSON.parse(localStorage.getItem('perfilPrestador')) || {};
+
+        if (perfilSalvo.especialidade) {
+            document.getElementById('especialidade').value = perfilSalvo.especialidade;
+        }
+
+        if (perfilSalvo.descricao) {
+            document.getElementById('descricao').value = perfilSalvo.descricao;
+        }
+
+        if (perfilSalvo.preco) {
+            document.getElementById('preco').value = perfilSalvo.preco;
+        }
+
+        if (perfilSalvo.dias) {
+            document.querySelectorAll('#diasSemana input[type="checkbox"]').forEach(cb => {
+                cb.checked = perfilSalvo.dias.includes(cb.value);
+            });
+        }
+
+        if (perfilSalvo.horaInicio) {
+            document.getElementById('horaInicio').value = perfilSalvo.horaInicio;
+        }
+
+        if (perfilSalvo.horaFim) {
+            document.getElementById('horaFim').value = perfilSalvo.horaFim;
+        }
+
+        document.getElementById('formPerfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const especialidade = document.getElementById('especialidade').value;
+            const descricao = document.getElementById('descricao').value.trim();
+            const preco = parseFloat(document.getElementById('preco').value);
+            const dias = Array.from(document.querySelectorAll('#diasSemana input[type="checkbox"]:checked')).map(cb => cb.value);
+            const horaInicio = document.getElementById('horaInicio').value;
+            const horaFim = document.getElementById('horaFim').value;
+            const msg = document.getElementById('msgStatus');
+
+            msg.textContent = '';
+            msg.style.color = '#e74c3c';
+
+            if (!nome) {
+                msg.textContent = 'Preencha seu nome.';
+                return;
+            }
+
+            const perfil = {
+                nome,
+                telefone,
+                especialidade,
+                descricao,
+                preco,
+                dias,
+                horaInicio,
+                horaFim
+            };
+
+            localStorage.setItem('perfilPrestador', JSON.stringify(perfil));
+
+            msg.style.color = '#4cb951';
+            msg.textContent = 'Perfil atualizado com sucesso!';
+
+            document.getElementById('avatar').textContent = nome[0].toUpperCase();
+            document.getElementById('nomeUsuario').textContent = nome;
+        });
+    </script>
+
+</body>
+</html>
