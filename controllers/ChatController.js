@@ -218,3 +218,4 @@ exports.getUnreadCount = async (req, res) => {
     res.status(500).json({ mensagem: 'Erro ao buscar nao lidas', erro: error.message });
   }
 };
+
