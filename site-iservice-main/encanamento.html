@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Encanamento</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .pagina-servico {
+            padding: 30px 0;
+        }
+        .pagina-servico .header-servico {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .pagina-servico .header-servico i {
+            font-size: 50px;
+            color: #4cb951;
+            margin-bottom: 10px;
+        }
+        .pagina-servico .header-servico h2 {
+            color: #4cb951;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        .pagina-servico .header-servico p {
+            color: #666;
+            font-size: 16px;
+        }
+        .cards-profissionais {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .card-profissional {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+        .card-profissional:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 24px rgba(76, 185, 81, 0.15);
+            border-color: #4cb951;
+        }
+        .card-profissional .avatar {
+            width: 70px;
+            height: 70px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 30px;
+            color: #4cb951;
+        }
+        .card-profissional h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        .card-profissional .experiencia {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .card-profissional .experiencia i {
+            font-size: 13px;
+            color: #4cb951;
+            margin-right: 4px;
+        }
+        .card-profissional .estrelas {
+            color: #ffc107;
+            font-size: 20px;
+            letter-spacing: 3px;
+            margin: 8px 0;
+        }
+        .card-profissional .preco {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4cb951;
+            margin: 10px 0 15px;
+        }
+        .card-profissional .btn-contratar {
+            background: #4cb951;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .card-profissional .btn-contratar:hover {
+            background: #43a047;
+            transform: scale(1.02);
+        }
+        .card-profissional .btn-contratar i {
+            margin-right: 8px;
+        }
+        @media (max-width: 768px) {
+            .cards-profissionais {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 18px;
+            }
+        }
+        @media (max-width: 480px) {
+            .cards-profissionais {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .pagina-servico .header-servico h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="theme.css">
+    
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>IService</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="cadastro.html">Cadastro</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="pagina-servico">
+        <div class="container">
+            <div class="header-servico">
+                <i class="fas fa-water"></i>
+                <h2>Encanamento</h2>
+                <p>Reparos e instalações hidráulicas em geral.</p>
+            </div>
+            <div class="cards-profissionais">
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Patrícia Lima</h3>
+                    <p class="experiencia"><i class="fas fa-clock"></i> 7 anos de experiência</p>
+                    <div class="estrelas">★★★★★</div>
+                    <p class="preco">R$ 170,00/dia</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        <i class="fas fa-handshake"></i> Contratar
+                    </button>
+                </div>
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Jorge Ribeiro</h3>
+                    <p class="experiencia"><i class="fas fa-clock"></i> 12 anos de experiência</p>
+                    <div class="estrelas">★★★★★</div>
+                    <p class="preco">R$ 210,00/dia</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        <i class="fas fa-handshake"></i> Contratar
+                    </button>
+                </div>
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Lucas Martins</h3>
+                    <p class="experiencia"><i class="fas fa-clock"></i> 3 anos de experiência</p>
+                    <div class="estrelas">★★★★☆</div>
+                    <p class="preco">R$ 130,00/dia</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        <i class="fas fa-handshake"></i> Contratar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+</body>
+</html>

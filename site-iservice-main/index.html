@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Serviços Domésticos em Taquara/RS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero {
+            background: #4cb951;
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+        }
+
+        .hero h2 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+
+        .hero h2 i {
+            margin-right: 10px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .hero .btn-hero {
+            background: white;
+            color: #4cb951;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .hero .btn-hero:hover {
+            background: #f0f0f0;
+            transform: scale(1.03);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 30px;
+        }
+
+        .section-title span {
+            color: #4cb951;
+        }
+
+        .cards-servicos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .cards-profissionais {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .card-servico {
+            background: white;
+            padding: 25px 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid #eee;
+            transition: 0.3s;
+        }
+
+        .card-servico:hover {
+            border-color: #4cb951;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(76, 185, 81, 0.15);
+        }
+
+        .card-servico i {
+            font-size: 40px;
+            color: #4cb951;
+            margin-bottom: 12px;
+        }
+
+        .card-servico h3 {
+            font-size: 1.1rem;
+            color: #2d3436;
+            margin-bottom: 6px;
+        }
+
+        .card-servico p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .card-servico .btn-ver {
+            background: #4cb951;
+            color: white;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card-servico .btn-ver:hover {
+            background: #43a047;
+        }
+
+        .card-profissional {
+            background: white;
+            padding: 20px 16px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid #eee;
+            transition: 0.3s;
+        }
+
+        .card-profissional:hover {
+            border-color: #4cb951;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(76, 185, 81, 0.15);
+        }
+
+        .card-profissional .avatar {
+            width: 60px;
+            height: 60px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 26px;
+            color: #4cb951;
+            transition: 0.3s;
+        }
+
+        .card-profissional:hover .avatar {
+            background: #c8e6c9;
+            transform: scale(1.05);
+        }
+
+        .card-profissional h3 {
+            font-size: 1rem;
+            color: #2d3436;
+            margin-bottom: 2px;
+        }
+
+        .card-profissional .especialidade {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+        }
+
+        .card-profissional .nota {
+            font-size: 0.9rem;
+            color: #f39c12;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-profissional .btn-contratar {
+            background: #4cb951;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .card-profissional .btn-contratar:hover {
+            background: #43a047;
+        }
+
+        .agendamento-box {
+            background: white;
+            padding: 25px;
+            max-width: 480px;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #4cb951;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 185, 81, 0.1);
+        }
+
+        #btnAgendar {
+            width: 100%;
+            padding: 12px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #btnAgendar:hover {
+            background: #43a047;
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .cards-servicos {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+
+            .cards-profissionais {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 30px 15px;
+                border-radius: 0 0 20px 20px;
+            }
+
+            .hero h2 {
+                font-size: 1.4rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .cards-servicos {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .cards-profissionais {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .card-servico {
+                padding: 18px 12px;
+            }
+
+            .card-profissional {
+                padding: 15px 10px;
+            }
+
+            .card-profissional .avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            .agendamento-box {
+                padding: 18px 14px;
+            }
+        }
+    </style>
+
+        <link rel="stylesheet" href="theme.css">
+
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-broom"></i> IService</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#profissionais">Profissionais</a></li>
+                    <li><a href="#agendamento">Agendamento</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="cadastro.html">Criar Conta</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="container">
+            <h2><i class="fas fa-handshake"></i> Conectamos você ao profissional certo</h2>
+            <p>Encontre os melhores prestadores de serviços em Taquara/RS.</p>
+            <button class="btn-hero" onclick="window.location.href='contratar.html'">
+                <i class="fas fa-search"></i> Encontrar
+            </button>
+        </div>
+    </section>
+
+    <section id="servicos">
+        <div class="container">
+            <h2 class="section-title">Nossos <span>Serviços</span></h2>
+
+            <div class="cards cards-servicos">
+
+                <div class="card card-servico">
+                    <i class="fas fa-broom"></i>
+                    <h3>Faxina</h3>
+                    <p>Limpeza completa da sua casa.</p>
+                    <button class="btn-ver" onclick="window.location.href='faxina.html'">
+                        Ver
+                    </button>
+                </div>
+
+                <div class="card card-servico">
+                    <i class="fas fa-seedling"></i>
+                    <h3>Jardinagem</h3>
+                    <p>Cuidamos do seu jardim.</p>
+                    <button class="btn-ver" onclick="window.location.href='jardinagem.html'">
+                        Ver
+                    </button>
+                </div>
+
+                <div class="card card-servico">
+                    <i class="fas fa-tools"></i>
+                    <h3>Reparos</h3>
+                    <p>Pequenos reparos e manutenções.</p>
+                    <button class="btn-ver" onclick="window.location.href='reparos.html'">
+                        Ver
+                    </button>
+                </div>
+
+                <div class="card card-servico">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Elétrica</h3>
+                    <p>Instalações e reparos elétricos.</p>
+                    <button class="btn-ver" onclick="window.location.href='eletrica.html'">
+                        Ver
+                    </button>
+                </div>
+
+                <div class="card card-servico">
+                    <i class="fas fa-paint-roller"></i>
+                    <h3>Pintura</h3>
+                    <p>Pintura interna e externa.</p>
+                    <button class="btn-ver" onclick="window.location.href='pintura.html'">
+                        Ver
+                    </button>
+                </div>
+
+                <div class="card card-servico">
+                    <i class="fas fa-water"></i>
+                    <h3>Encanamento</h3>
+                    <p>Reparos hidráulicos em geral.</p>
+                    <button class="btn-ver" onclick="window.location.href='encanamento.html'">
+                        Ver
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="profissionais">
+        <div class="container">
+            <h2 class="section-title">Profissionais</h2>
+
+            <div class="cards cards-profissionais">
+
+                <div class="card card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Maria Silva</h3>
+                    <p class="especialidade">Faxina</p>
+                    <p class="nota">★ 4.5</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        Contratar
+                    </button>
+                </div>
+
+                <div class="card card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>João Mendes</h3>
+                    <p class="especialidade">Jardinagem</p>
+                    <p class="nota">★ 5.0</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        Contratar
+                    </button>
+                </div>
+
+                <div class="card card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Carlos Souza</h3>
+                    <p class="especialidade">Reparos</p>
+                    <p class="nota">★ 3.5</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        Contratar
+                    </button>
+                </div>
+
+                <div class="card card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Ana Oliveira</h3>
+                    <p class="especialidade">Elétrica</p>
+                    <p class="nota">★ 4.8</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        Contratar
+                    </button>
+                </div>
+
+                <div class="card card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Roberto Silva</h3>
+                    <p class="especialidade">Pintura</p>
+                    <p class="nota">★ 4.2</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        Contratar
+                    </button>
+                </div>
+
+                <div class="card card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Patrícia Lima</h3>
+                    <p class="especialidade">Encanamento</p>
+                    <p class="nota">★ 4.9</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">
+                        Contratar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="agendamento">
+        <div class="container">
+            <h2 class="section-title">Agendar</h2>
+
+            <div class="agendamento-box">
+                <div class="form-group">
+                    <label for="servico">Serviço</label>
+                    <select id="servico">
+                        <option value="">Selecione...</option>
+                        <option value="faxina">Faxina</option>
+                        <option value="jardinagem">Jardinagem</option>
+                        <option value="reparos">Reparos</option>
+                        <option value="eletrica">Elétrica</option>
+                        <option value="pintura">Pintura</option>
+                        <option value="encanamento">Encanamento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="data">Data</label>
+                    <input type="date" id="data">
+                </div>
+
+                <div class="form-group">
+                    <label for="horario">Horário</label>
+                    <select id="horario">
+                        <option value="">Selecione...</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                    </select>
+                </div>
+
+                <button id="btnAgendar">Agendar</button>
+                <p id="msgAgendamento" style="margin-top: 12px; text-align: center; font-size: 0.9rem;"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
