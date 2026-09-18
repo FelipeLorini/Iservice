@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Serviços Domésticos em Taquara/RS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-flex {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            text-align: left;
+        }
+
+        .hero-texto {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .hero-lista {
+            list-style: none;
+            margin: 0 0 30px 0;
+            padding: 0;
+        }
+
+        .hero-lista li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-soft);
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .hero-lista li i {
+            color: var(--green-light);
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .hero-lista li strong {
+            color: var(--text);
+        }
+
+        .hero-imagem {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .hero-imagem img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--green);
+        }
+
+        .como-contratar {
+            padding: 70px 0;
+            background: var(--bg-2);
+        }
+
+        .como-contratar .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .como-contratar .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 50px;
+            letter-spacing: -0.5px;
+        }
+
+        .como-contratar .section-title span {
+            color: var(--green-light);
+        }
+
+        .steps-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .step-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(75, 159, 61, 0.06);
+            border: 1px solid rgba(75, 159, 61, 0.18);
+            color: var(--muted);
+            cursor: pointer;
+            padding: 14px 26px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .step-tab-btn .step-numero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(75, 159, 61, 0.14);
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+
+        .step-tab-btn:hover {
+            border-color: rgba(75, 159, 61, 0.38);
+            color: var(--text-soft);
+        }
+
+        .step-tab-btn.ativo {
+            background: linear-gradient(135deg, #4B9F3D 0%, #1F7F15 100%);
+            border-color: transparent;
+            color: #F5FFEE;
+            box-shadow: 0 8px 30px rgba(75, 159, 61, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .step-tab-btn.ativo .step-numero {
+            background: rgba(255, 255, 255, 0.25);
+            color: #F5FFEE;
+        }
+
+        .step-conteudo {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInStep 0.4s ease;
+        }
+
+        @keyframes fadeInStep {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-conteudo.ativo {
+            display: flex;
+        }
+
+        .step-phone {
+            width: 230px;
+            height: 320px;
+            background: linear-gradient(135deg, #4B9F3D 0%, #1F7F15 100%);
+            border-radius: 34px;
+            padding: 22px 18px;
+            box-shadow: 0 20px 50px rgba(75, 159, 61, 0.3);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .step-phone::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 5px;
+        }
+
+        .step-phone .phone-linha {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 12px;
+            color: #2d3436;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .step-phone .phone-linha i {
+            color: #1F7F15;
+            font-size: 13px;
+        }
+
+        .step-phone .phone-badge {
+            margin-top: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            font-weight: 800;
+            color: #1F7F15;
+            font-size: 18px;
+        }
+
+        .step-info {
+            max-width: 380px;
+            text-align: left;
+        }
+
+        .step-info span {
+            display: inline-block;
+            background: rgba(75, 159, 61, 0.14);
+            border: 1px solid rgba(75, 159, 61, 0.28);
+            color: var(--green-light);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 5px 14px;
+            border-radius: 50px;
+            margin-bottom: 12px;
+        }
+
+        .step-info h3 {
+            font-size: 26px;
+            color: var(--text);
+            margin: 8px 0 16px;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        .step-info p {
+            color: var(--text-soft);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .step-info p strong {
+            color: var(--text);
+        }
+
+        @media (max-width: 768px) {
+            .hero-flex {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-lista li {
+                justify-content: center;
+            }
+
+            .step-conteudo {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-info {
+                text-align: center;
+            }
+
+            .steps-tabs {
+                gap: 10px;
+            }
+
+            .step-tab-btn {
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+
+            .step-tab-btn .step-numero {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+            }
+
+            .step-info h3 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>IService</h1>
+            </div>
+            <nav>
+                <ul class="menu">
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#profissionais">Profissionais</a></li>
+                    <li><a href="#agendamento">Agendamento</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="cadastro.html">Criar Conta</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="container hero-flex">
+            <div class="hero-texto">
+                <h2>Serviços domésticos com <span>praticidade e qualidade</span></h2>
+
+                <ul class="hero-lista">
+                    <li><i class="fas fa-check-circle"></i> <span><strong>Mais de 300 serviços</strong> realizados em Taquara/RS</span></li>
+                    <li><i class="fas fa-shield-alt"></i> <span>Profissionais <strong>avaliados pela comunidade</strong></span></li>
+                    <li><i class="fas fa-bolt"></i> <span>Agendamento rápido, <strong>ainda hoje</strong></span></li>
+                </ul>
+
+                <button class="btn-hero" onclick="window.location.href='contratar.html'">
+                    <i class="fas fa-search"></i> Encontrar profissional
+                </button>
+            </div>
+
+            <div class="hero-imagem">
+                <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800" alt="Profissional de serviços domésticos trabalhando">
+            </div>
+        </div>
+    </section>
+
+    <section class="como-contratar">
+        <div class="container">
+            <h2 class="section-title">Como <span>contratar?</span></h2>
+
+            <div class="steps-tabs">
+                <button class="step-tab-btn ativo" data-passo="1">
+                    <span class="step-numero">1</span> Passo
+                </button>
+                <button class="step-tab-btn" data-passo="2">
+                    <span class="step-numero">2</span> Passo
+                </button>
+                <button class="step-tab-btn" data-passo="3">
+                    <span class="step-numero">3</span> Passo
+                </button>
+            </div>
+
+            <div class="step-conteudo ativo" data-passo-conteudo="1">
+                <div class="step-phone">
+                    <div class="phone-linha"><i class="fas fa-broom"></i> Faxina Residencial</div>
+                    <div class="phone-linha"><i class="fas fa-calendar"></i> Hoje, 14:00</div>
+                    <div class="phone-linha"><i class="fas fa-map-marker-alt"></i> Taquara/RS</div>
+                    <div class="phone-badge">R$ 120,00</div>
+                </div>
+                <div class="step-info">
+                    <span>1º PASSO</span>
+                    <h3>Escolha o serviço, na data e hora que preferir</h3>
+                    <p>Busque entre os <strong>profissionais cadastrados</strong> por categoria, veja avaliações e preços, e escolha o dia e horário que combinam com você.</p>
+                </div>
+            </div>
+
+            <div class="step-conteudo" data-passo-conteudo="2">
+                <div class="step-phone">
+                    <div class="phone-linha"><i class="fas fa-user"></i> Maria Faxineira</div>
+                    <div class="phone-linha"><i class="fas fa-star"></i> 4.8 (32 avaliações)</div>
+                    <div class="phone-linha"><i class="fas fa-comment-dots"></i> Conversar antes</div>
+                    <div class="phone-badge">Confirmar</div>
+                </div>
+                <div class="step-info">
+                    <span>2º PASSO</span>
+                    <h3>Converse com o prestador e confirme os detalhes</h3>
+                    <p>Use o <strong>chat direto pela plataforma</strong> pra alinhar detalhes do serviço antes de confirmar o agendamento.</p>
+                </div>
+            </div>
+
+            <div class="step-conteudo" data-passo-conteudo="3">
+                <div class="step-phone">
+                    <div class="phone-linha"><i class="fas fa-check-circle"></i> Serviço finalizado</div>
+                    <div class="phone-linha"><i class="fas fa-star"></i> Avaliar prestador</div>
+                    <div class="phone-linha"><i class="fas fa-heart"></i> Favoritar pra próxima</div>
+                    <div class="phone-badge">Concluído</div>
+                </div>
+                <div class="step-info">
+                    <span>3º PASSO</span>
+                    <h3>Receba o serviço e avalie a experiência</h3>
+                    <p>Depois que o serviço for concluído, <strong>avalie o prestador</strong> e favorite pra contratar de novo sempre que precisar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicos">
+        <div class="container">
+            <h2>Nossos <span>Serviços</span></h2>
+
+            <div class="cards">
+                <div class="card">
+                    <i class="fas fa-broom"></i>
+                    <h3>Faxina</h3>
+                    <p>Limpeza completa da sua casa.</p>
+                    <button onclick="window.location.href='faxina.html'">Ver</button>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-seedling"></i>
+                    <h3>Jardinagem</h3>
+                    <p>Cuidamos do seu jardim.</p>
+                    <button onclick="window.location.href='jardinagem.html'">Ver</button>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-tools"></i>
+                    <h3>Reparos</h3>
+                    <p>Pequenos reparos e manutenções.</p>
+                    <button onclick="window.location.href='reparos.html'">Ver</button>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Elétrica</h3>
+                    <p>Instalações e reparos elétricos.</p>
+                    <button onclick="window.location.href='eletrica.html'">Ver</button>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-paint-roller"></i>
+                    <h3>Pintura</h3>
+                    <p>Pintura interna e externa.</p>
+                    <button onclick="window.location.href='pintura.html'">Ver</button>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-water"></i>
+                    <h3>Encanamento</h3>
+                    <p>Reparos hidráulicos em geral.</p>
+                    <button onclick="window.location.href='encanamento.html'">Ver</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="profissionais">
+        <div class="container">
+            <h2>Profissionais</h2>
+
+            <div class="cards-profissionais">
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Maria Silva</h3>
+                    <p class="experiencia"><i class="fas fa-briefcase"></i> Faxina</p>
+                    <p class="estrelas">★★★★★</p>
+                    <p class="preco">R$ 120,00</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">Contratar</button>
+                </div>
+
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>João Mendes</h3>
+                    <p class="experiencia"><i class="fas fa-briefcase"></i> Jardinagem</p>
+                    <p class="estrelas">★★★★★</p>
+                    <p class="preco">R$ 150,00</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">Contratar</button>
+                </div>
+
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Carlos Souza</h3>
+                    <p class="experiencia"><i class="fas fa-briefcase"></i> Reparos</p>
+                    <p class="estrelas">★★★★☆</p>
+                    <p class="preco">R$ 100,00</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">Contratar</button>
+                </div>
+
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Ana Oliveira</h3>
+                    <p class="experiencia"><i class="fas fa-briefcase"></i> Elétrica</p>
+                    <p class="estrelas">★★★★★</p>
+                    <p class="preco">R$ 180,00</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">Contratar</button>
+                </div>
+
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Roberto Silva</h3>
+                    <p class="experiencia"><i class="fas fa-briefcase"></i> Pintura</p>
+                    <p class="estrelas">★★★★☆</p>
+                    <p class="preco">R$ 200,00</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">Contratar</button>
+                </div>
+
+                <div class="card-profissional">
+                    <div class="avatar"><i class="fas fa-user"></i></div>
+                    <h3>Patrícia Lima</h3>
+                    <p class="experiencia"><i class="fas fa-briefcase"></i> Encanamento</p>
+                    <p class="estrelas">★★★★★</p>
+                    <p class="preco">R$ 160,00</p>
+                    <button class="btn-contratar" onclick="window.location.href='contratar.html'">Contratar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="agendamento">
+        <div class="container">
+            <h2>Agendar</h2>
+
+            <div class="agendamento-box">
+                <div class="form-group">
+                    <label for="servico">Serviço</label>
+                    <select id="servico">
+                        <option value="">Selecione...</option>
+                        <option value="faxina">Faxina</option>
+                        <option value="jardinagem">Jardinagem</option>
+                        <option value="reparos">Reparos</option>
+                        <option value="eletrica">Elétrica</option>
+                        <option value="pintura">Pintura</option>
+                        <option value="encanamento">Encanamento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="data">Data</label>
+                    <input type="date" id="data">
+                </div>
+
+                <div class="form-group">
+                    <label for="horario">Horário</label>
+                    <select id="horario">
+                        <option value="">Selecione...</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                    </select>
+                </div>
+
+                <button id="btnAgendar">Agendar</button>
+                <p id="msgAgendamento" class="msg-sucesso" style="display:none;"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+               <div class="footer-logo"><img src="logo.png" alt="IService" class="footer-logo-img"></div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.querySelectorAll('.step-tab-btn').forEach(function(botao) {
+            botao.addEventListener('click', function() {
+                var passo = this.dataset.passo;
+
+                document.querySelectorAll('.step-tab-btn').forEach(function(b) {
+                    b.classList.remove('ativo');
+                });
+                this.classList.add('ativo');
+
+                document.querySelectorAll('.step-conteudo').forEach(function(c) {
+                    c.classList.remove('ativo');
+                });
+                document.querySelector('[data-passo-conteudo="' + passo + '"]').classList.add('ativo');
+            });
+        });
+    </script>
+
+</body>
+</html>

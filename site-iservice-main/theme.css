@@ -1,0 +1,351 @@
+
+
+.login-container,
+.cadastro-container,
+.perfil-container,
+.perfil-card,
+.perfil-header,
+.contratar-container,
+.servicos-container,
+.servico-card,
+.servico-item,
+.profissionais-container,
+.dashboard-container,
+.dashboard-header,
+.stat-card,
+.chat-card,
+.chat-wrapper,
+.chat-header,
+.chat-footer,
+.card,
+.card-profissional,
+.agendamento-box,
+.form-servico,
+.search-bar,
+.container-search,
+.filter-group,
+.empty-state,
+.horario-group,
+.dias-semana,
+.tipo-cadastro,
+.resultados-info {
+    background: linear-gradient(160deg, #16281F 0%, #101C16 100%) !important;
+    color: var(--text, #D0FFB6) !important;
+    border: 1px solid rgba(75, 159, 61, 0.18) !important;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45) !important;
+}
+
+.chat-header,
+.dashboard-header {
+    background: linear-gradient(120deg, #123021 0%, #0E1D15 100%) !important;
+}
+
+.chat-messages {
+    background: #0B1410 !important;
+    border: 1px solid rgba(75, 159, 61, 0.14) !important;
+}
+
+h1, h2, h3, h4, h5,
+.section-title,
+.chat-nome,
+.nome,
+.especialidade,
+.categoria {
+    color: var(--text, #D0FFB6) !important;
+}
+
+p, label, li, td, th, small,
+.subtitulo, .descricao, .info, .experiencia,
+.chat-status, .chat-info, .email, .telefone,
+.resultados-info, .nota, .status, .msg-status {
+    color: var(--text-soft, #A4DF8E) !important;
+}
+
+.section-title span,
+h2 span,
+.preco,
+.green { color: #77BF65 !important; }
+
+a, .links a, .login-link a, .voltar, .back-btn { color: #77BF65 !important; }
+
+a:hover { color: #A4DF8E !important; }
+
+.hero {
+    background:
+        radial-gradient(700px 300px at 50% 0%, rgba(75, 159, 61, 0.28), transparent 70%),
+        linear-gradient(135deg, #123021 0%, #0B1410 100%) !important;
+    color: var(--text, #D0FFB6) !important;
+    border-bottom: 1px solid rgba(75, 159, 61, 0.28) !important;
+}
+
+.hero h2, .hero p { color: #D0FFB6 !important; }
+
+.hero .btn-hero {
+    background: linear-gradient(135deg, #4B9F3D 0%, #1F7F15 100%) !important;
+    color: #F5FFEE !important;
+    box-shadow: 0 8px 30px rgba(75, 159, 61, 0.4) !important;
+}
+
+.hero .btn-hero:hover {
+    background: linear-gradient(135deg, #77BF65 0%, #4B9F3D 100%) !important;
+    transform: translateY(-2px) scale(1.02);
+}
+
+input,
+select,
+textarea,
+.input-icone input,
+.search-input {
+    background: #0E1B14 !important;
+    color: #D0FFB6 !important;
+    border: 1px solid rgba(75, 159, 61, 0.20) !important;
+    border-radius: 10px;
+}
+
+input::placeholder,
+textarea::placeholder,
+.search-input::placeholder { color: #77BF65 !important; }
+
+input:focus,
+select:focus,
+textarea:focus,
+.input-icone input:focus,
+.search-input:focus {
+    border-color: #4B9F3D !important;
+    outline: none !important;
+    box-shadow: 0 0 0 4px rgba(75, 159, 61, 0.16) !important;
+}
+
+select option { background: #0E1B14; color: #D0FFB6; }
+
+.input-icone i { color: #77BF65 !important; }
+
+button,
+.btn-entrar,
+.btn-cadastrar,
+.btn-salvar,
+.btn-buscar,
+.btn-contratar,
+.btn-chat,
+.btn-ver,
+.btn-hero,
+.tipo-btn.active {
+    background: linear-gradient(135deg, #4B9F3D 0%, #1F7F15 100%) !important;
+    color: #F5FFEE !important;
+    border: none !important;
+    font-weight: 700 !important;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+button:hover,
+.btn-entrar:hover,
+.btn-cadastrar:hover,
+.btn-salvar:hover,
+.btn-buscar:hover,
+.btn-contratar:hover,
+.btn-chat:hover,
+.btn-ver:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 10px 30px rgba(75, 159, 61, 0.38) !important;
+    transform: translateY(-2px);
+}
+
+.btn-voltar,
+.back-btn,
+.btn-sair,
+.tipo-btn {
+    background: rgba(75, 159, 61, 0.10) !important;
+    color: #A4DF8E !important;
+    border: 1px solid rgba(75, 159, 61, 0.28) !important;
+}
+
+.btn-sair {
+    color: #77BF65 !important;
+    background: rgba(31, 127, 21, 0.10) !important;
+    border-color: rgba(31, 127, 21, 0.28) !important;
+}
+
+.icon,
+.avatar,
+.chat-avatar,
+.perfil-avatar {
+    background: linear-gradient(135deg, #4B9F3D 0%, #1F7F15 100%) !important;
+    color: #F5FFEE !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(75, 159, 61, 0.3) !important;
+}
+
+.badge,
+.status,
+.confirmado {
+    background: rgba(75, 159, 61, 0.14) !important;
+    color: #77BF65 !important;
+    border: 1px solid rgba(75, 159, 61, 0.3) !important;
+}
+
+.estrelas, .star.filled { color: #A4DF8E !important; }
+
+.categoria {
+    background: #A4DF8E !important;
+    color: #12360D !important;
+    font-weight: 700 !important;
+}
+
+.btn-favorito {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #A4DF8E !important;
+    border: 1px solid rgba(75, 159, 61, 0.3) !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    font-weight: 400 !important;
+    font-size: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+}
+
+.btn-favorito:hover {
+    background: rgba(75, 159, 61, 0.22) !important;
+    transform: scale(1.1);
+    box-shadow: none !important;
+}
+
+.btn-favorito.favoritado {
+    background: rgba(164, 223, 142, 0.22) !important;
+    color: #D0FFB6 !important;
+    border-color: rgba(164, 223, 142, 0.5) !important;
+}
+
+.logo-img {
+    height: 42px;
+    width: auto;
+    display: block;
+    background: white;
+    padding: 5px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.footer-logo-img {
+    height: 52px;
+    width: auto;
+    display: inline-block;
+    background: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+}
+
+.msg-erro, .red { color: #1F7F15 !important; }
+
+.divider {
+    border-color: rgba(75, 159, 61, 0.18) !important;
+    background: rgba(75, 159, 61, 0.18) !important;
+    color: #77BF65 !important;
+}
+
+.mensagem.enviada, .msg.enviada {
+    background: linear-gradient(135deg, #4B9F3D 0%, #1F7F15 100%) !important;
+    color: #F5FFEE !important;
+}
+
+.mensagem.recebida, .msg.recebida {
+    background: #17281F !important;
+    color: #D0FFB6 !important;
+    border: 1px solid rgba(75, 159, 61, 0.18) !important;
+}
+
+.sem-mensagens, .empty-state { color: #77BF65 !important; }
+
+
+.stat-card.blue i, .blue { color: #77BF65 !important; }
+.stat-card.green i, .green { color: #77BF65 !important; }
+.stat-card.orange i, .orange { color: #A4DF8E !important; }
+.stat-card.purple i, .purple { color: #1F7F15 !important; }
+
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0B1410; }
+::-webkit-scrollbar-thumb { background: rgba(75, 159, 61, 0.35); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(75, 159, 61, 0.6); }
+
+header,
+nav,
+.header,
+.navbar,
+.nav,
+.topbar,
+.menu,
+.navbar-container,
+header .container,
+nav .container {
+    background: var(--bg-2) !important;
+    background-color: var(--bg-2) !important;
+    background-image: none !important;
+    box-shadow: 0 1px 0 rgba(75, 159, 61, 0.18) !important;
+}
+
+header,
+nav,
+.header,
+.navbar {
+    border-bottom: 1px solid rgba(75, 159, 61, 0.22) !important;
+}
+
+header a,
+nav a,
+.header a,
+.navbar a,
+.menu a {
+    color: #D0FFB6 !important;
+}
+
+header a:hover,
+nav a:hover,
+.header a:hover,
+.navbar a:hover {
+    color: var(--green) !important;
+}
+
+header .logo,
+nav .logo,
+.logo,
+.brand,
+.logo span,
+.brand span {
+    color: var(--green) !important;
+    text-shadow: 0 0 12px rgba(75, 159, 61, 0.35);
+}
+
+.btn-sair,
+.logout,
+.btn-logout,
+a[href*="logout"],
+a[href*="sair"],
+button[onclick*="logout"] {
+    background: rgba(31, 127, 21, 0.14) !important;
+    background-image: none !important;
+    color: #A4DF8E !important;
+    border: 1px solid rgba(31, 127, 21, 0.35) !important;
+    border-radius: 999px !important;
+    padding: 8px 16px !important;
+}
+
+.btn-sair:hover,
+.logout:hover,
+.btn-logout:hover,
+a[href*="logout"]:hover,
+a[href*="sair"]:hover {
+    background: rgba(31, 127, 21, 0.24) !important;
+    color: #D0FFB6 !important;
+}
+
+body > header,
+body > nav,
+#header,
+#navbar {
+    color: #D0FFB6 !important;
+}

@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Meu Perfil</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header .logo h1 {
+            font-size: 24px;
+            color: #2d3436;
+            font-weight: 700;
+        }
+
+        header .logo h1 i {
+            color: #4cb951;
+        }
+
+        header nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        header nav ul li a {
+            color: #636e72;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        header nav ul li a:hover {
+            color: #4cb951;
+        }
+
+        header nav ul li a.active {
+            color: #4cb951;
+            font-weight: 600;
+        }
+
+        header nav ul li a.btn-sair {
+            background: #fee8e8;
+            color: #e74c3c;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        header nav ul li a.btn-sair:hover {
+            background: #fdd4d4;
+            color: #c0392b;
+        }
+
+        .perfil-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 24px;
+        }
+
+        .perfil-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border: 1px solid #e8ecf0;
+        }
+
+        .perfil-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .perfil-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #4cb951;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .perfil-header .info h2 {
+            color: #2d3436;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .perfil-header .info p {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .perfil-header .info .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #4cb951;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fafbfc;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #4cb951;
+            outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(76, 185, 81, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-salvar {
+            width: 100%;
+            padding: 14px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-salvar:hover {
+            background: #43a047;
+            transform: scale(1.01);
+        }
+
+        .msg-status {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #e8ecf0;
+            margin: 24px 0;
+        }
+
+        .dias-semana {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .dias-semana label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 400;
+            font-size: 14px;
+            color: #2d3436;
+            cursor: pointer;
+        }
+
+        .dias-semana input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4cb951;
+            cursor: pointer;
+        }
+
+        .horario-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .horario-group label {
+            font-weight: 400;
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .horario-group input[type="time"] {
+            padding: 10px 14px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fafbfc;
+            transition: 0.2s;
+        }
+
+        .horario-group input[type="time"]:focus {
+            border-color: #4cb951;
+            outline: none;
+        }
+
+        .secao-titulo {
+            color: #2d3436;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .secao-titulo i {
+            color: #4cb951;
+        }
+
+        .media-avaliacoes {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .media-avaliacoes .nota {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f39c12;
+        }
+
+        .media-avaliacoes .estrelas {
+            color: #f39c12;
+        }
+
+        .media-avaliacoes .total {
+            color: #636e72;
+            font-size: 13px;
+        }
+
+        .lista-avaliacoes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .avaliacao-item {
+            border: 1px solid #e8ecf0;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .avaliacao-item .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .avaliacao-item .nome-cliente {
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 14px;
+        }
+
+        .avaliacao-item .estrelas {
+            color: #f39c12;
+            font-size: 13px;
+        }
+
+        .avaliacao-item .comentario {
+            color: #636e72;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .portfolio-item {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e8ecf0;
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .portfolio-item .btn-remover-foto {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .portfolio-add {
+            display: flex;
+            gap: 10px;
+        }
+
+        .portfolio-add input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid #e8ecf0;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .portfolio-add button {
+            padding: 10px 18px;
+            background: #4cb951;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e8ecf0;
+            padding: 20px 0;
+            text-align: center;
+            color: #b2bec3;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .perfil-card {
+                padding: 20px;
+            }
+
+            .perfil-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            header nav ul {
+                gap: 12px;
+            }
+
+            header nav ul li a {
+                font-size: 13px;
+            }
+        }
+    </style>
+
+     <link rel="stylesheet" href="theme.css">
+     
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="logo.png" alt="IService" class="logo-img">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="dashboard-prestador.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="profissionais.html"><i class="fas fa-briefcase"></i> Profissionais</a></li>
+                    <li><a href="perfil_prestador.html" class="active"><i class="fas fa-user-cog"></i> Perfil</a></li>
+                    <li><a href="login.html" class="btn-sair" id="btnSair"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="perfil-container">
+        <div class="perfil-card">
+            <div class="perfil-header">
+                <div class="perfil-avatar" id="avatar">P</div>
+                <div class="info">
+                    <h2 id="nomeUsuario">Carregando...</h2>
+                    <p id="emailUsuario">carregando@email.com</p>
+                    <span class="badge"><i class="fas fa-check-circle"></i> Prestador</span>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <form id="formPerfil">
+                <div class="form-group">
+                    <label for="nome">Nome completo</label>
+                    <input type="text" id="nome" placeholder="Seu nome completo">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="text" id="telefone" placeholder="(11) 99999-9999">
+                </div>
+
+                <div class="form-group">
+                    <label for="especialidade">Especialidade</label>
+                    <select id="especialidade">
+                        <option value="faxina">Faxina</option>
+                        <option value="jardinagem">Jardinagem</option>
+                        <option value="reparos">Reparos</option>
+                        <option value="eletrica">Elétrica</option>
+                        <option value="pintura">Pintura</option>
+                        <option value="encanamento">Encanamento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao">Descrição profissional</label>
+                    <textarea id="descricao" placeholder="Descreva sua experiência, habilidades e serviços que oferece..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="preco">Valor médio por serviço (R$)</label>
+                    <input type="number" id="preco" placeholder="Ex: 120">
+                </div>
+
+                <hr class="divider">
+
+                <h3 style="color:#2d3436;font-size:16px;margin-bottom:16px;"><i class="fas fa-calendar-alt" style="color:#4cb951;"></i> Disponibilidade</h3>
+
+                <div class="dias-semana" id="diasSemana">
+                    <label><input type="checkbox" value="segunda"> Segunda</label>
+                    <label><input type="checkbox" value="terca"> Terça</label>
+                    <label><input type="checkbox" value="quarta"> Quarta</label>
+                    <label><input type="checkbox" value="quinta"> Quinta</label>
+                    <label><input type="checkbox" value="sexta"> Sexta</label>
+                    <label><input type="checkbox" value="sabado"> Sábado</label>
+                    <label><input type="checkbox" value="domingo"> Domingo</label>
+                </div>
+
+                <div class="form-group">
+                    <div class="horario-group">
+                        <label>Das <input type="time" id="horaInicio" value="08:00"></label>
+                        <label>até <input type="time" id="horaFim" value="18:00"></label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-salvar"><i class="fas fa-save"></i> Salvar alterações</button>
+            </form>
+
+            <p id="msgStatus" class="msg-status"></p>
+
+            <hr class="divider">
+
+            <h3 class="secao-titulo"><i class="fas fa-images"></i> Portfólio de trabalhos</h3>
+
+            <div class="portfolio-grid" id="portfolioGrid"></div>
+
+            <div class="portfolio-add">
+                <input type="text" id="portfolioUrlInput" placeholder="Cole a URL de uma foto do seu trabalho">
+                <button type="button" id="btnAdicionarFoto"><i class="fas fa-plus"></i> Adicionar</button>
+            </div>
+
+            <hr class="divider">
+
+            <h3 class="secao-titulo"><i class="fas fa-star"></i> Avaliações recebidas</h3>
+
+            <div class="media-avaliacoes" id="mediaAvaliacoes">
+                <span class="nota">-</span>
+                <div>
+                    <div class="estrelas"><i class="far fa-star"></i></div>
+                    <div class="total">Sem avaliações ainda</div>
+                </div>
+            </div>
+
+            <div class="lista-avaliacoes" id="listaAvaliacoes"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('btnSair').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            window.location.href = 'login.html';
+        });
+
+        document.getElementById('avatar').textContent = (usuario.nome || 'P')[0].toUpperCase();
+        document.getElementById('nomeUsuario').textContent = usuario.nome || 'Prestador';
+        document.getElementById('emailUsuario').textContent = usuario.email || '';
+
+        document.getElementById('nome').value = usuario.nome || '';
+        document.getElementById('telefone').value = usuario.telefone || '';
+
+        const perfilSalvo = JSON.parse(localStorage.getItem('perfilPrestador')) || {};
+
+        if (perfilSalvo.especialidade) {
+            document.getElementById('especialidade').value = perfilSalvo.especialidade;
+        }
+
+        if (perfilSalvo.descricao) {
+            document.getElementById('descricao').value = perfilSalvo.descricao;
+        }
+
+        if (perfilSalvo.preco) {
+            document.getElementById('preco').value = perfilSalvo.preco;
+        }
+
+        if (perfilSalvo.dias) {
+            document.querySelectorAll('#diasSemana input[type="checkbox"]').forEach(cb => {
+                cb.checked = perfilSalvo.dias.includes(cb.value);
+            });
+        }
+
+        if (perfilSalvo.horaInicio) {
+            document.getElementById('horaInicio').value = perfilSalvo.horaInicio;
+        }
+
+        if (perfilSalvo.horaFim) {
+            document.getElementById('horaFim').value = perfilSalvo.horaFim;
+        }
+
+        document.getElementById('formPerfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const especialidade = document.getElementById('especialidade').value;
+            const descricao = document.getElementById('descricao').value.trim();
+            const preco = parseFloat(document.getElementById('preco').value);
+            const dias = Array.from(document.querySelectorAll('#diasSemana input[type="checkbox"]:checked')).map(cb => cb.value);
+            const horaInicio = document.getElementById('horaInicio').value;
+            const horaFim = document.getElementById('horaFim').value;
+            const msg = document.getElementById('msgStatus');
+
+            msg.textContent = '';
+            msg.style.color = '#e74c3c';
+
+            if (!nome) {
+                msg.textContent = 'Preencha seu nome.';
+                return;
+            }
+
+            const perfil = {
+                nome,
+                telefone,
+                especialidade,
+                descricao,
+                preco,
+                dias,
+                horaInicio,
+                horaFim
+            };
+
+            localStorage.setItem('perfilPrestador', JSON.stringify(perfil));
+
+            msg.style.color = '#4cb951';
+            msg.textContent = 'Perfil atualizado com sucesso!';
+
+            document.getElementById('avatar').textContent = nome[0].toUpperCase();
+            document.getElementById('nomeUsuario').textContent = nome;
+        });
+
+        const API_URL = 'http://localhost:3000/api';
+        const usuarioId = usuario.id;
+        let portifolioAtual = [];
+
+        async function carregarPortifolio() {
+            try {
+                const resposta = await fetch(`${API_URL}/usuario/${usuarioId}/perfil`);
+                const dados = await resposta.json();
+                if (resposta.ok) {
+                    portifolioAtual = dados.portifolio || [];
+                    renderizarPortifolio();
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar portifolio:', erro);
+            }
+        }
+
+        function renderizarPortifolio() {
+            const grid = document.getElementById('portfolioGrid');
+            if (portifolioAtual.length === 0) {
+                grid.innerHTML = '<p style="color:#b2bec3;font-size:13px;">Nenhuma foto adicionada ainda.</p>';
+                return;
+            }
+            grid.innerHTML = portifolioAtual.map((url, i) => `
+                <div class="portfolio-item">
+                    <img src="${url}" alt="Foto do trabalho" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                    <button type="button" class="btn-remover-foto" onclick="removerFoto(${i})"><i class="fas fa-times"></i></button>
+                </div>
+            `).join('');
+        }
+
+        async function salvarPortifolio() {
+            try {
+                await fetch(`${API_URL}/usuario/portifolio`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ portifolio: portifolioAtual })
+                });
+            } catch (erro) {
+                console.error('Erro ao salvar portifolio:', erro);
+            }
+        }
+
+        function removerFoto(indice) {
+            portifolioAtual.splice(indice, 1);
+            renderizarPortifolio();
+            salvarPortifolio();
+        }
+
+        document.getElementById('btnAdicionarFoto').addEventListener('click', function() {
+            const input = document.getElementById('portfolioUrlInput');
+            const url = input.value.trim();
+            if (!url) return;
+
+            portifolioAtual.push(url);
+            input.value = '';
+            renderizarPortifolio();
+            salvarPortifolio();
+        });
+
+        async function carregarAvaliacoes() {
+            try {
+                const respMedia = await fetch(`${API_URL}/avaliacoes/prestador/${usuarioId}/media`);
+                const media = await respMedia.json();
+
+                if (respMedia.ok && media.total > 0) {
+                    document.getElementById('mediaAvaliacoes').innerHTML = `
+                        <span class="nota">${media.media}</span>
+                        <div>
+                            <div class="estrelas">${gerarEstrelas(media.media)}</div>
+                            <div class="total">${media.total} avaliações</div>
+                        </div>
+                    `;
+                }
+
+                const respLista = await fetch(`${API_URL}/avaliacoes/prestador/${usuarioId}`);
+                const lista = await respLista.json();
+
+                const container = document.getElementById('listaAvaliacoes');
+                if (!respLista.ok || lista.length === 0) {
+                    container.innerHTML = '<p style="color:#b2bec3;font-size:13px;">Você ainda não recebeu avaliações.</p>';
+                    return;
+                }
+
+                container.innerHTML = lista.map(a => `
+                    <div class="avaliacao-item">
+                        <div class="topo">
+                            <span class="nome-cliente">${a.cliente_id?.nome || 'Cliente'}</span>
+                            <span class="estrelas">${gerarEstrelas(a.nota)}</span>
+                        </div>
+                        <p class="comentario">${a.comentario || 'Sem comentário.'}</p>
+                    </div>
+                `).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar avaliacoes:', erro);
+            }
+        }
+
+        function gerarEstrelas(nota) {
+            const cheia = Math.round(nota);
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                html += i <= cheia ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+            }
+            return html;
+        }
+
+        carregarPortifolio();
+        carregarAvaliacoes();
+    </script>
+    <script src="notificacoes.js"></script>
+
+</body>
+</html>

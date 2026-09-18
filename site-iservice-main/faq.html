@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IService - Central de Ajuda</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header .logo h1 {
+            font-size: 24px;
+            color: #2d3436;
+            font-weight: 700;
+        }
+
+        header .logo h1 i {
+            color: #4cb951;
+        }
+
+        header nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        header nav ul li a {
+            color: #636e72;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        header nav ul li a:hover {
+            color: #4cb951;
+        }
+
+        header nav ul li a.active {
+            color: #4cb951;
+            font-weight: 600;
+        }
+
+        .hero-faq {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 50px 0 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-faq h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .hero-faq h2 i {
+            color: #4cb951;
+            margin-right: 10px;
+        }
+
+        .hero-faq p {
+            color: rgba(255,255,255,0.7);
+            font-weight: 300;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 24px;
+        }
+
+        .faq-categoria {
+            margin-bottom: 28px;
+        }
+
+        .faq-categoria h3 {
+            color: #2d3436;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            color: #4cb951;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e8ecf0;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .faq-pergunta {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 14px;
+        }
+
+        .faq-pergunta i {
+            color: #4cb951;
+            transition: transform 0.2s;
+        }
+
+        .faq-item.aberto .faq-pergunta i {
+            transform: rotate(180deg);
+        }
+
+        .faq-resposta {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+            padding: 0 20px;
+            color: #636e72;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .faq-item.aberto .faq-resposta {
+            max-height: 300px;
+            padding: 0 20px 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: #b2bec3;
+        }
+
+        .empty-state i {
+            font-size: 56px;
+            display: block;
+            margin-bottom: 16px;
+            color: #dce1e8;
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e8ecf0;
+            padding: 20px 0;
+            text-align: center;
+            color: #b2bec3;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            header nav ul {
+                gap: 12px;
+            }
+
+            header nav ul li a {
+                font-size: 13px;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="theme.css">
+
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="logo.png" alt="IService" class="logo-img">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="profissionais.html"><i class="fas fa-briefcase"></i> Profissionais</a></li>
+                    <li><a href="faq.html" class="active"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="login.html"><i class="fas fa-sign-in-alt"></i> Entrar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero-faq">
+        <div class="container">
+            <h2><i class="fas fa-question-circle"></i> Central de Ajuda</h2>
+            <p>Tire suas dúvidas sobre o IService</p>
+        </div>
+    </div>
+
+    <div class="faq-container" id="faqContainer">
+        <div class="empty-state">
+            <i class="fas fa-spinner"></i>
+            <h3>Carregando perguntas...</h3>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 IService - Taquara/RS</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        const nomesCategorias = {
+            geral: 'Geral',
+            conta: 'Conta',
+            pedidos: 'Pedidos e propostas',
+            avaliacoes: 'Avaliações',
+            favoritos: 'Favoritos'
+        };
+
+        async function carregarFaqs() {
+            const container = document.getElementById('faqContainer');
+
+            try {
+                const resposta = await fetch(`${API_URL}/faq`);
+                const faqs = await resposta.json();
+
+                if (!resposta.ok || faqs.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-question-circle"></i>
+                            <h3>Nenhuma pergunta cadastrada ainda</h3>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const porCategoria = {};
+                faqs.forEach(f => {
+                    const cat = f.categoria || 'geral';
+                    if (!porCategoria[cat]) porCategoria[cat] = [];
+                    porCategoria[cat].push(f);
+                });
+
+                container.innerHTML = Object.keys(porCategoria).map(cat => `
+                    <div class="faq-categoria">
+                        <h3>${nomesCategorias[cat] || cat}</h3>
+                        ${porCategoria[cat].map(f => `
+                            <div class="faq-item">
+                                <div class="faq-pergunta" onclick="this.closest('.faq-item').classList.toggle('aberto')">
+                                    ${f.pergunta}
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="faq-resposta">${f.resposta}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+
+            } catch (erro) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Erro ao carregar as perguntas</h3>
+                        <p>Não foi possível conectar ao servidor.</p>
+                    </div>
+                `;
+            }
+        }
+
+        carregarFaqs();
+    </script>
+    <script src="notificacoes.js"></script>
+
+</body>
+</html>
