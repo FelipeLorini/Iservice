@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Pintura</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="page-head">
+            <div class="container">
+                <a href="index.html#servicos" class="back-link"><i class="fas fa-arrow-left"></i> Todas as categorias</a>
+                <div class="page-head-inner">
+                    <div>
+                        <span class="head-icon"><i class="fas fa-paint-roller"></i></span>
+                        <span class="kicker">Categoria</span>
+                        <h1 class="page-title">Pintura</h1>
+                        <p class="page-sub">Pintura interna e externa com acabamento de qualidade.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container">
+                <div class="results-bar">
+                    <span><strong>3</strong> profissionais disponíveis</span>
+                    <a href="index.html#servicos" class="text-link">Ver outras categorias <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="grid-3">
+                    <article class="listing card-profissional">
+                        <div class="listing-top">
+                            <span class="avatar-wrap"><span class="avatar">R</span></span>
+                            <div>
+                                <h3 class="listing-name">Roberto Silva</h3>
+                                <div class="listing-rating"><span class="stars" aria-label="4 de 5 estrelas"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></span> <small>4,0</small></div>
+                            </div>
+                        </div>
+                        <div class="listing-body">
+                            <span class="tag"><i class="fas fa-clock"></i>8 anos de experiência</span>
+                        </div>
+                        <div class="listing-price"><span>Valor por dia</span><strong>R$ 170,00</strong></div>
+                        <div class="listing-actions">
+                            <a class="btn btn-primary btn-sm btn-contratar" href="contratar.html"><i class="fas fa-handshake"></i> Contratar</a>
+                        </div>
+                    </article>
+                    <article class="listing card-profissional">
+                        <div class="listing-top">
+                            <span class="avatar-wrap"><span class="avatar">V</span></span>
+                            <div>
+                                <h3 class="listing-name">Vinícius Costa</h3>
+                                <div class="listing-rating"><span class="stars" aria-label="5 de 5 estrelas"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span> <small>5,0</small></div>
+                            </div>
+                        </div>
+                        <div class="listing-body">
+                            <span class="tag"><i class="fas fa-clock"></i>4 anos de experiência</span>
+                        </div>
+                        <div class="listing-price"><span>Valor por dia</span><strong>R$ 140,00</strong></div>
+                        <div class="listing-actions">
+                            <a class="btn btn-primary btn-sm btn-contratar" href="contratar.html"><i class="fas fa-handshake"></i> Contratar</a>
+                        </div>
+                    </article>
+                    <article class="listing card-profissional">
+                        <div class="listing-top">
+                            <span class="avatar-wrap"><span class="avatar">E</span></span>
+                            <div>
+                                <h3 class="listing-name">Eduardo Ramos</h3>
+                                <div class="listing-rating"><span class="stars" aria-label="5 de 5 estrelas"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span> <small>5,0</small></div>
+                            </div>
+                        </div>
+                        <div class="listing-body">
+                            <span class="tag"><i class="fas fa-clock"></i>13 anos de experiência</span>
+                        </div>
+                        <div class="listing-price"><span>Valor por dia</span><strong>R$ 220,00</strong></div>
+                        <div class="listing-actions">
+                            <a class="btn btn-primary btn-sm btn-contratar" href="contratar.html"><i class="fas fa-handshake"></i> Contratar</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

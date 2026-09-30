@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Dashboard Cliente</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-head">
+            <div class="container page-head-inner">
+                <div>
+                    <span class="kicker">Painel do cliente</span>
+                    <h1 class="page-title">Olá, <span class="accent" id="nomeCliente">Cliente</span></h1>
+                    <p class="page-sub">Acompanhe seus agendamentos, pedidos e profissionais favoritos.</p>
+                </div>
+                <div class="page-actions">
+                    <a href="#novoPedido" class="btn btn-ghost btn-md" id="atalhoNovoPedido"><i class="fas fa-plus"></i> Novo pedido</a>
+                    <a href="profissionais.html" class="btn btn-primary btn-md"><i class="fas fa-search"></i> Buscar profissionais</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container">
+                <section class="stats" aria-label="Resumo do painel">
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-calendar-check"></i></span>
+                        <div><span class="stat-value" id="totalServicos">0</span><span class="stat-label">Serviços contratados</span></div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-clock"></i></span>
+                        <div><span class="stat-value" id="pendentes">0</span><span class="stat-label">Pendentes</span></div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-star"></i></span>
+                        <div><span class="stat-value" id="totalAvaliacoes">0</span><span class="stat-label">Avaliações feitas</span></div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-heart"></i></span>
+                        <div><span class="stat-value" id="totalFavoritos">0</span><span class="stat-label">Favoritos</span></div>
+                    </div>
+                </section>
+
+                <div class="layout">
+                    <div class="stack">
+                        <section class="panel" aria-labelledby="tituloAgendamentos">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloAgendamentos"><span class="panel-icon"><i class="fas fa-calendar-alt"></i></span>Próximos agendamentos</h2>
+                                <span class="panel-meta" id="metaAgendamentos"></span>
+                            </header>
+                            <div class="panel-body flush">
+                                <div class="list" id="listaAgendamentos">
+                                    <div class="empty"><i class="fas fa-calendar-plus"></i><strong>Nenhum agendamento pendente</strong><p>Encontre um profissional e agende seu primeiro serviço.</p></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="panel" id="novoPedido" aria-labelledby="tituloPedidos">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloPedidos"><span class="panel-icon"><i class="fas fa-file-invoice-dollar"></i></span>Meus pedidos e propostas</h2>
+                            </header>
+                            <div class="panel-body">
+                                <form class="form-section" id="formPedido" novalidate>
+                                    <h3 class="section-label"><i class="fas fa-paper-plane"></i>Publicar um pedido</h3>
+                                    <p class="section-desc">Descreva o que você precisa e receba propostas de prestadores da categoria.</p>
+                                    <div class="form-grid">
+                                        <div class="field">
+                                            <label for="pedidoTitulo">Título do pedido</label>
+                                            <input type="text" id="pedidoTitulo" placeholder="Ex.: Limpeza pós-obra">
+                                        </div>
+                                        <div class="field">
+                                            <label for="pedidoCategoria">Categoria</label>
+                                            <select id="pedidoCategoria">
+                                            <option value="faxina">Faxina</option>
+                                    <option value="jardinagem">Jardinagem</option>
+                                    <option value="reparos">Reparos</option>
+                                    <option value="eletrica">Elétrica</option>
+                                    <option value="pintura">Pintura</option>
+                                    <option value="encanamento">Encanamento</option>
+                                            </select>
+                                        </div>
+                                        <div class="field field-full">
+                                            <label for="pedidoDescricao">Descrição</label>
+                                            <textarea id="pedidoDescricao" placeholder="Descreva o que você precisa..."></textarea>
+                                        </div>
+                                        <div class="field">
+                                            <label for="pedidoData">Data desejada <span class="optional">(opcional)</span></label>
+                                            <input type="date" id="pedidoData">
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="submit" class="btn btn-primary btn-md" id="btnCriarPedido"><i class="fas fa-paper-plane"></i> Publicar pedido</button>
+                                        </div>
+                                    </div>
+                                    <p id="msgPedido" class="inline-msg form-feedback" role="status"></p>
+                                </form>
+
+                                <div class="form-section">
+                                    <h3 class="section-label"><i class="fas fa-inbox"></i>Pedidos publicados</h3>
+                                    <div id="listaPedidos">
+                                        <div class="empty empty-sm"><i class="fas fa-inbox"></i>Nenhum pedido publicado ainda.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <aside class="stack aside-grid">
+                        <section class="panel" aria-labelledby="tituloDados">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloDados"><span class="panel-icon"><i class="fas fa-user-circle"></i></span>Meus dados</h2>
+                                <a href="perfil_cliente.html" class="btn btn-ghost btn-xs"><i class="fas fa-pen"></i> Editar</a>
+                            </header>
+                            <div class="panel-body">
+                                <div class="person person-head">
+                                    <span class="avatar" id="avatarCliente">C</span>
+                                    <div>
+                                        <span class="row-title" id="nomePerfil">Carregando...</span>
+                                        <span class="row-sub" id="emailPerfil"></span>
+                                    </div>
+                                </div>
+                                <div class="meta">
+                                    <span><i class="fas fa-phone"></i><span id="telefonePerfil">Telefone não informado</span></span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="panel" aria-labelledby="tituloFavoritos">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloFavoritos"><span class="panel-icon"><i class="fas fa-heart"></i></span>Favoritos</h2>
+                            </header>
+                            <div class="panel-body flush">
+                                <div class="list" id="listaFavoritos">
+                                    <div class="empty empty-sm"><i class="fas fa-heart"></i>Nenhum favorito ainda.</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="panel span-2" aria-labelledby="tituloHistorico">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloHistorico"><span class="panel-icon"><i class="fas fa-history"></i></span>Histórico de serviços</h2>
+                            </header>
+                            <div class="panel-body flush">
+                                <div class="list" id="listaServicos">
+                                    <div class="empty empty-sm"><i class="fas fa-box-open"></i>Nenhum serviço concluído ainda.</div>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modalAvaliacao" role="dialog" aria-modal="true" aria-labelledby="tituloModalAvaliacao">
+        <div class="modal">
+            <div class="modal-head">
+                <span class="panel-icon"><i class="fas fa-star"></i></span>
+                <div>
+                    <h3 class="modal-title" id="tituloModalAvaliacao">Avaliar prestador</h3>
+                    <p class="modal-sub">Sua opinião ajuda outros clientes a escolher.</p>
+                </div>
+            </div>
+            <div class="field">
+                <label>Sua nota</label>
+                <div class="rating-input" id="modalEstrelas">
+                    <i class="far fa-star" data-valor="1" role="button" tabindex="0" aria-label="1 estrela"></i>
+                    <i class="far fa-star" data-valor="2" role="button" tabindex="0" aria-label="2 estrelas"></i>
+                    <i class="far fa-star" data-valor="3" role="button" tabindex="0" aria-label="3 estrelas"></i>
+                    <i class="far fa-star" data-valor="4" role="button" tabindex="0" aria-label="4 estrelas"></i>
+                    <i class="far fa-star" data-valor="5" role="button" tabindex="0" aria-label="5 estrelas"></i>
+                </div>
+            </div>
+            <div class="field">
+                <label for="modalComentario">Comentário <span class="optional">(opcional)</span></label>
+                <textarea id="modalComentario" placeholder="Conte como foi o serviço..."></textarea>
+            </div>
+            <p class="inline-msg" id="msgAvaliacao" role="status"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost btn-md" id="btnCancelarAvaliacao">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-md" id="btnConfirmarAvaliacao"><i class="fas fa-paper-plane"></i> Enviar avaliação</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        } else if (usuario.tipo === 'prestador') {
+            window.location.href = 'dashboard-prestador.html';
+        }
+
+        const API_URL = 'http://localhost:3000/api';
+        const esc = IS.esc;
+
+        document.getElementById('nomeCliente').textContent = usuario.nome || 'Cliente';
+        document.getElementById('nomePerfil').textContent = usuario.nome || 'Cliente';
+        document.getElementById('emailPerfil').textContent = usuario.email || '';
+        document.getElementById('avatarCliente').textContent = IS.inicial(usuario.nome || 'C');
+        document.getElementById('telefonePerfil').textContent = usuario.telefone || 'Telefone não informado';
+        document.getElementById('pedidoData').min = new Date().toISOString().split('T')[0];
+
+        document.getElementById('atalhoNovoPedido').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('novoPedido').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => document.getElementById('pedidoTitulo').focus({ preventScroll: true }), 400);
+        });
+
+        function plural(n, um, varios) {
+            return n + ' ' + (n === 1 ? um : varios);
+        }
+
+        async function carregarAgendamentos() {
+            try {
+                const resposta = await fetch(`${API_URL}/agendamentos/cliente`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                const container = document.getElementById('listaAgendamentos');
+                const historico = document.getElementById('listaServicos');
+
+                if (!resposta.ok || dados.length === 0) {
+                    container.innerHTML = IS.vazio('fa-calendar-plus', 'Nenhum agendamento pendente', 'Encontre um profissional e agende seu primeiro serviço.');
+                    historico.innerHTML = IS.vazio('fa-box-open', '', 'Nenhum serviço concluído ainda.', 'empty-sm');
+                    document.getElementById('pendentes').textContent = '0';
+                    document.getElementById('totalServicos').textContent = '0';
+                    document.getElementById('metaAgendamentos').textContent = '';
+                    return;
+                }
+
+                const ativos = dados
+                    .filter(a => a.status === 'pendente' || a.status === 'confirmado')
+                    .sort((a, b) => new Date(a.data) - new Date(b.data));
+                const passados = dados
+                    .filter(a => a.status !== 'pendente' && a.status !== 'confirmado')
+                    .sort((a, b) => new Date(b.data) - new Date(a.data));
+
+                document.getElementById('pendentes').textContent = ativos.length;
+                document.getElementById('totalServicos').textContent = dados.length;
+                document.getElementById('metaAgendamentos').textContent = ativos.length ? plural(ativos.length, 'agendamento', 'agendamentos') : '';
+
+                if (ativos.length === 0) {
+                    container.innerHTML = IS.vazio('fa-calendar-plus', 'Nenhum agendamento pendente', 'Encontre um profissional e agende um novo serviço.');
+                } else {
+                    container.innerHTML = ativos.map(a => {
+                        const dia = IS.dataTile(a.data);
+                        return `
+                            <div class="appt list-row">
+                                <div class="date-tile" aria-hidden="true"><b>${dia.dia}</b><span>${dia.mes}</span></div>
+                                <div>
+                                    <span class="row-title cap">${esc(a.servico_id?.nome || 'Serviço')}</span>
+                                    <div class="meta">
+                                        <span><i class="fas fa-user"></i>${esc(a.prestador_id?.nome || 'Prestador')}</span>
+                                        <span><i class="fas fa-calendar"></i>${IS.data(a.data)}</span>
+                                        <span><i class="fas fa-clock"></i>${esc(a.hora)}</span>
+                                    </div>
+                                </div>
+                                <div class="row-side">
+                                    ${IS.badge(a.status)}
+                                    <div class="row-actions">
+                                        <button type="button" class="btn btn-danger btn-xs" onclick="cancelarAgendamento('${esc(a._id)}')">Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                if (passados.length === 0) {
+                    historico.innerHTML = IS.vazio('fa-box-open', '', 'Nenhum serviço concluído ainda.', 'empty-sm');
+                } else {
+                    historico.innerHTML = passados.map(a => `
+                        <div class="hist list-row">
+                            <div class="hist-top">
+                                <span class="row-title cap">${esc(a.servico_id?.nome || 'Serviço')}</span>
+                                ${IS.badge(a.status)}
+                            </div>
+                            <div class="meta">
+                                <span><i class="fas fa-user"></i>${esc(a.prestador_id?.nome || 'Prestador')}</span>
+                                <span><i class="fas fa-calendar"></i>${IS.data(a.data)}</span>
+                            </div>
+                            ${a.status === 'finalizado' ? `<button type="button" class="btn btn-soft btn-xs btn-avaliar" onclick="abrirModalAvaliacao('${esc(a.prestador_id?._id || a.prestador_id)}', '${esc(a.servico_id?._id || a.servico_id)}', '${esc(a._id)}')"><i class="fas fa-star"></i> Avaliar</button>` : ''}
+                        </div>
+                    `).join('');
+                }
+
+            } catch (erro) {
+                console.error('Erro ao carregar agendamentos:', erro);
+            }
+        }
+
+        async function cancelarAgendamento(agendamentoId) {
+            if (!confirm('Cancelar este agendamento? O prestador verá o status como cancelado.')) return;
+
+            try {
+                const resposta = await fetch(`${API_URL}/agendamentos/${agendamentoId}/cancelar`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao cancelar agendamento.', 'error');
+                    return;
+                }
+
+                IS.toast('Agendamento cancelado.');
+                carregarAgendamentos();
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        let notaSelecionada = 0;
+        let avaliacaoContexto = {};
+
+        function abrirModalAvaliacao(prestadorId, servicoId, agendamentoId) {
+            avaliacaoContexto = { prestadorId, servicoId, agendamentoId };
+            notaSelecionada = 0;
+            document.getElementById('modalComentario').value = '';
+            IS.msg(document.getElementById('msgAvaliacao'), '');
+            atualizarEstrelasModal();
+            IS.abrirModal('modalAvaliacao');
+        }
+
+        function atualizarEstrelasModal() {
+            document.querySelectorAll('#modalEstrelas i').forEach(estrela => {
+                const valor = parseInt(estrela.dataset.valor);
+                estrela.classList.toggle('ativa', valor <= notaSelecionada);
+                estrela.classList.toggle('fas', valor <= notaSelecionada);
+                estrela.classList.toggle('far', valor > notaSelecionada);
+            });
+        }
+
+        document.querySelectorAll('#modalEstrelas i').forEach(estrela => {
+            const escolher = function () {
+                notaSelecionada = parseInt(estrela.dataset.valor);
+                atualizarEstrelasModal();
+            };
+            estrela.addEventListener('click', escolher);
+            estrela.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    escolher();
+                }
+            });
+        });
+
+        document.getElementById('btnCancelarAvaliacao').addEventListener('click', function () {
+            IS.fecharModal('modalAvaliacao');
+        });
+
+        document.getElementById('btnConfirmarAvaliacao').addEventListener('click', async function () {
+            const msg = document.getElementById('msgAvaliacao');
+
+            if (notaSelecionada === 0) {
+                IS.msg(msg, 'Selecione uma nota de 1 a 5 estrelas.', 'error');
+                return;
+            }
+
+            const comentario = document.getElementById('modalComentario').value.trim();
+
+            try {
+                const resposta = await fetch(`${API_URL}/avaliacoes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        prestador_id: avaliacaoContexto.prestadorId,
+                        servico_id: avaliacaoContexto.servicoId,
+                        agendamento_id: avaliacaoContexto.agendamentoId,
+                        nota: notaSelecionada,
+                        comentario
+                    })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.msg(msg, dados.mensagem || 'Erro ao enviar avaliação.', 'error');
+                    return;
+                }
+
+                IS.fecharModal('modalAvaliacao');
+                IS.toast('Avaliação enviada com sucesso!');
+                carregarAgendamentos();
+
+            } catch (erro) {
+                IS.msg(msg, 'Erro ao conectar com o servidor.', 'error');
+            }
+        });
+
+        async function carregarFavoritos() {
+            try {
+                const resposta = await fetch(`${API_URL}/favoritos`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                document.getElementById('totalFavoritos').textContent = resposta.ok ? dados.length : '0';
+
+                const container = document.getElementById('listaFavoritos');
+                if (!resposta.ok || dados.length === 0) {
+                    container.innerHTML = IS.vazio('fa-heart', '', 'Nenhum favorito ainda. Toque no coração de um profissional para salvá-lo aqui.', 'empty-sm');
+                    return;
+                }
+
+                container.innerHTML = dados.map(f => {
+                    const prestador = f.prestador_id || {};
+                    const prestadorId = prestador._id || f.prestador_id;
+                    return `
+                        <div class="person list-row">
+                            <span class="avatar avatar-sm">${esc(IS.inicial(prestador.nome || 'P'))}</span>
+                            <div>
+                                <span class="row-title">${esc(prestador.nome || 'Prestador')}</span>
+                                <span class="row-sub">Profissional favorito</span>
+                            </div>
+                            <div class="row-actions">
+                                <button type="button" class="btn-icon" title="Conversar" aria-label="Conversar com ${esc(prestador.nome || 'prestador')}" onclick="abrirChat('${esc(prestadorId)}')"><i class="fas fa-comment-dots"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar favoritos:', erro);
+            }
+        }
+
+        async function abrirChat(prestadorId) {
+            if (!prestadorId) {
+                IS.toast('Prestador não identificado.', 'error');
+                return;
+            }
+
+            try {
+                const resposta = await fetch(`${API_URL}/chat/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prestador_id: prestadorId })
+                });
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao iniciar chat.', 'error');
+                    return;
+                }
+
+                window.location.href = `chat.html?chatId=${dados.chat._id}`;
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        const STATUS_PEDIDO = { aberto: 'aberto', 'em andamento': 'em andamento', cancelado: 'cancelado', finalizado: 'finalizado' };
+
+        async function carregarPedidos() {
+            try {
+                const resposta = await fetch(`${API_URL}/pedidos/cliente`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const pedidos = await resposta.json();
+
+                const container = document.getElementById('listaPedidos');
+                if (!resposta.ok || pedidos.length === 0) {
+                    container.innerHTML = IS.vazio('fa-inbox', '', 'Nenhum pedido publicado ainda.', 'empty-sm');
+                    return;
+                }
+
+                container.innerHTML = pedidos.map(p => {
+                    const cat = IS.categoria(p.categoria);
+                    return `
+                        <article class="order" id="pedido-${esc(p._id)}">
+                            <div class="order-top">
+                                <div>
+                                    <div class="order-title">${esc(p.titulo)} ${IS.badge(STATUS_PEDIDO[p.status] || 'finalizado')}</div>
+                                    <div class="meta">
+                                        <span><i class="fas ${cat.icone}"></i>${esc(cat.nome)}</span>
+                                        ${p.data_desejada ? `<span><i class="fas fa-calendar"></i>${IS.data(p.data_desejada)}</span>` : ''}
+                                    </div>
+                                    <p class="order-desc">${esc(p.descricao)}</p>
+                                </div>
+                                ${p.status === 'aberto' ? `<button type="button" class="btn btn-ghost btn-xs" onclick="cancelarPedido('${esc(p._id)}')">Cancelar pedido</button>` : ''}
+                            </div>
+                            <div class="proposals" id="propostas-${esc(p._id)}"></div>
+                        </article>
+                    `;
+                }).join('');
+
+                pedidos.filter(p => p.status === 'aberto').forEach(p => carregarPropostasDoPedido(p._id));
+
+            } catch (erro) {
+                console.error('Erro ao carregar pedidos:', erro);
+            }
+        }
+
+        async function carregarPropostasDoPedido(pedidoId) {
+            try {
+                const resposta = await fetch(`${API_URL}/propostas/pedido/${pedidoId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const propostas = await resposta.json();
+
+                const container = document.getElementById(`propostas-${pedidoId}`);
+                if (!container || !resposta.ok || propostas.length === 0) return;
+
+                container.innerHTML = `
+                    <div class="proposals-label">Propostas recebidas (${propostas.length})</div>
+                    ${propostas.map(p => `
+                        <div class="proposal">
+                            <span class="avatar avatar-sm">${esc(IS.inicial(p.prestador_id?.nome || 'P'))}</span>
+                            <div>
+                                <span class="row-title">${esc(p.prestador_id?.nome || 'Prestador')}</span>
+                                <span class="row-sub"><b>${IS.moeda(p.valor)}</b> · Prazo: ${esc(p.prazo)}</span>
+                            </div>
+                            ${p.status === 'enviada'
+                                ? `<button type="button" class="btn btn-primary btn-xs btn-aceitar-proposta" onclick="aceitarProposta('${esc(p._id)}')"><i class="fas fa-check"></i> Aceitar</button>`
+                                : IS.badge(p.status === 'aceita' ? 'aceita' : 'recusada')}
+                        </div>
+                    `).join('')}
+                `;
+            } catch (erro) {
+                console.error('Erro ao carregar propostas:', erro);
+            }
+        }
+
+        async function aceitarProposta(propostaId) {
+            if (!confirm('Aceitar esta proposta? Um agendamento será criado automaticamente.')) return;
+
+            try {
+                const resposta = await fetch(`${API_URL}/propostas/${propostaId}/aceitar`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao aceitar proposta.', 'error');
+                    return;
+                }
+
+                IS.toast('Proposta aceita! O agendamento foi criado.');
+                carregarPedidos();
+                carregarAgendamentos();
+
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        async function cancelarPedido(pedidoId) {
+            if (!confirm('Cancelar este pedido? Os prestadores não poderão mais enviar propostas.')) return;
+
+            try {
+                const resposta = await fetch(`${API_URL}/pedidos/${pedidoId}/cancelar`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao cancelar pedido.', 'error');
+                    return;
+                }
+
+                IS.toast('Pedido cancelado.');
+                carregarPedidos();
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        document.getElementById('formPedido').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const titulo = document.getElementById('pedidoTitulo').value.trim();
+            const categoria = document.getElementById('pedidoCategoria').value;
+            const descricao = document.getElementById('pedidoDescricao').value.trim();
+            const data_desejada = document.getElementById('pedidoData').value;
+            const msg = document.getElementById('msgPedido');
+            const botao = document.getElementById('btnCriarPedido');
+
+            IS.msg(msg, '');
+
+            if (!titulo || !descricao) {
+                IS.msg(msg, 'Preencha o título e a descrição do pedido.', 'error');
+                return;
+            }
+
+            botao.disabled = true;
+
+            try {
+                const resposta = await fetch(`${API_URL}/pedidos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ titulo, categoria, descricao, data_desejada })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.msg(msg, dados.mensagem || 'Erro ao publicar pedido.', 'error');
+                    return;
+                }
+
+                document.getElementById('pedidoTitulo').value = '';
+                document.getElementById('pedidoDescricao').value = '';
+                document.getElementById('pedidoData').value = '';
+
+                IS.msg(msg, 'Pedido publicado com sucesso!', 'success');
+                carregarPedidos();
+
+            } catch (erro) {
+                IS.msg(msg, 'Erro ao conectar com o servidor.', 'error');
+            } finally {
+                botao.disabled = false;
+            }
+        });
+
+        carregarAgendamentos();
+        carregarFavoritos();
+        carregarPedidos();
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

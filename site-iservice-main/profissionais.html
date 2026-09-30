@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Profissionais</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-head">
+            <div class="container page-head-inner">
+                <div>
+                    <span class="kicker">Profissionais</span>
+                    <h1 class="page-title">Nossos <span class="accent">profissionais</span></h1>
+                    <p class="page-sub">Encontre os melhores prestadores de serviços em Taquara/RS, com preços e avaliações reais.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container">
+                <form class="toolbar" id="formBusca" role="search" novalidate>
+                    <div class="field toolbar-search input-icon">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="buscaInput" placeholder="Buscar por nome ou serviço..." aria-label="Buscar por nome ou serviço">
+                    </div>
+                    <div class="field">
+                        <select id="filtroCategoria" aria-label="Categoria">
+                            <option value="todos">Todas as categorias</option>
+                            <option value="faxina">Faxina</option>
+                                    <option value="jardinagem">Jardinagem</option>
+                                    <option value="reparos">Reparos</option>
+                                    <option value="eletrica">Elétrica</option>
+                                    <option value="pintura">Pintura</option>
+                                    <option value="encanamento">Encanamento</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <select id="filtroOrdenacao" aria-label="Ordenação">
+                            <option value="nome">Ordenar por nome</option>
+                            <option value="preco_asc">Menor preço</option>
+                            <option value="preco_desc">Maior preço</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-md" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
+                </form>
+
+                <div class="results-bar">
+                    <span>Mostrando <strong id="totalResultados">0</strong> profissionais</span>
+                </div>
+
+                <div class="grid-3" id="listaProfissionais">
+                    <div class="empty"><i class="fas fa-spinner fa-spin"></i><strong>Carregando profissionais…</strong></div>
+                </div>
+
+                <nav class="pagination" id="paginacao" aria-label="Paginação"></nav>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modalContratar" role="dialog" aria-modal="true" aria-labelledby="tituloModalContratar">
+        <div class="modal">
+            <div class="modal-head">
+                <span class="panel-icon"><i class="fas fa-calendar-plus"></i></span>
+                <div>
+                    <h3 class="modal-title" id="tituloModalContratar">Agendar serviço</h3>
+                    <p class="modal-sub">Escolha a data e o horário que preferir.</p>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="contratarData">Data</label>
+                    <input type="date" id="contratarData">
+                </div>
+                <div class="field">
+                    <label for="contratarHora">Horário</label>
+                    <input type="time" id="contratarHora">
+                </div>
+            </div>
+
+            <p class="inline-msg modal-erro form-feedback" id="contratarErro" role="alert"></p>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost btn-md" id="btnCancelarContratar">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-md" id="btnConfirmarContratar"><i class="fas fa-check"></i> Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        const esc = IS.esc;
+        let profissionais = [];
+
+        async function carregarProfissionais() {
+            try {
+                const resposta = await fetch('http://localhost:3000/api/servicos', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok || dados.length === 0) {
+                    document.getElementById('listaProfissionais').innerHTML =
+                        IS.vazio('fa-user-slash', 'Nenhum profissional encontrado', 'Não há serviços cadastrados no momento.');
+                    document.getElementById('totalResultados').textContent = '0';
+                    return;
+                }
+
+                profissionais = dados;
+                aplicarFiltros();
+
+            } catch (erro) {
+                console.error('Erro:', erro);
+                document.getElementById('listaProfissionais').innerHTML =
+                    IS.vazio('fa-triangle-exclamation', 'Erro ao carregar', 'Não foi possível conectar ao servidor.', 'is-error');
+            }
+        }
+
+        let paginaAtual = 1;
+        const ITENS_POR_PAGINA = 6;
+
+        function aplicarFiltros(resetarPagina = true) {
+            const busca = document.getElementById('buscaInput').value.toLowerCase().trim();
+            const categoria = document.getElementById('filtroCategoria').value;
+            const ordenacao = document.getElementById('filtroOrdenacao').value;
+
+            let filtrados = profissionais.filter(s => {
+                const nomeMatch = s.nome.toLowerCase().includes(busca);
+                const prestadorMatch = s.prestador_id?.nome?.toLowerCase().includes(busca) || false;
+                const catMatch = categoria === 'todos' || s.categoria === categoria;
+                return (nomeMatch || prestadorMatch) && catMatch;
+            });
+
+            if (ordenacao === 'nome') {
+                filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
+            } else if (ordenacao === 'preco_asc') {
+                filtrados.sort((a, b) => a.preco - b.preco);
+            } else if (ordenacao === 'preco_desc') {
+                filtrados.sort((a, b) => b.preco - a.preco);
+            }
+
+            if (resetarPagina) {
+                paginaAtual = 1;
+            }
+
+            document.getElementById('totalResultados').textContent = filtrados.length;
+
+            const container = document.getElementById('listaProfissionais');
+
+            if (filtrados.length === 0) {
+                container.innerHTML = IS.vazio('fa-user-slash', 'Nenhum profissional encontrado', 'Tente ajustar os filtros ou faça uma nova busca.');
+                document.getElementById('paginacao').innerHTML = '';
+                return;
+            }
+
+            const totalPaginas = Math.max(1, Math.ceil(filtrados.length / ITENS_POR_PAGINA));
+            if (paginaAtual > totalPaginas) {
+                paginaAtual = totalPaginas;
+            }
+
+            const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+            const paginaItens = filtrados.slice(inicio, inicio + ITENS_POR_PAGINA);
+
+            container.innerHTML = paginaItens.map(s => {
+                const prestador = s.prestador_id || {};
+                const prestadorId = prestador._id || s.prestador_id;
+                const favoritado = favoritosIds.has(prestadorId);
+                const cat = IS.categoria(s.categoria);
+                return `
+                    <article class="listing card-profissional">
+                        ${usuario.tipo === 'cliente' ? `
+                        <button type="button" class="btn-favorito ${favoritado ? 'favoritado' : ''}" data-prestador="${esc(prestadorId)}" onclick="alternarFavorito('${esc(prestadorId)}', this)" title="Favoritar" aria-pressed="${favoritado}" aria-label="Favoritar ${esc(prestador.nome || 'profissional')}">
+                            <i class="fa-heart ${favoritado ? 'fas' : 'far'}"></i>
+                        </button>` : ''}
+                        <div class="listing-top">
+                            <span class="avatar-wrap">
+                                <span class="avatar">${esc(IS.inicial(prestador.nome || 'P'))}</span>
+                                <span class="status-online status-${esc(prestadorId)}" title="Status"></span>
+                            </span>
+                            <div>
+                                <h3 class="listing-name">${esc(prestador.nome || 'Profissional')}</h3>
+                                <div class="listing-rating avaliacao-${esc(prestadorId)}"><span class="sem-avaliacao">Sem avaliações ainda</span></div>
+                            </div>
+                        </div>
+                        <div class="listing-body">
+                            <span class="tag"><i class="fas ${cat.icone}"></i>${esc(cat.nome)}</span>
+                            <p class="listing-service">${esc(s.nome)}</p>
+                            <p class="listing-desc">${esc(s.descricao || 'Descrição não informada')}</p>
+                        </div>
+                        <div class="listing-price"><span>Preço do serviço</span><strong>${IS.moeda(s.preco)}</strong></div>
+                        <div class="listing-actions">
+                            <button type="button" class="btn btn-ghost btn-sm btn-chat" onclick="abrirChat('${esc(prestadorId)}')"><i class="fas fa-comment-dots"></i> Conversar</button>
+                            <button type="button" class="btn btn-primary btn-sm btn-contratar" onclick="contratar('${esc(s._id)}')"><i class="fas fa-calendar-plus"></i> Contratar</button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            carregarDadosExtrasCards(paginaItens);
+            renderizarPaginacao(totalPaginas);
+        }
+
+        function renderizarPaginacao(totalPaginas) {
+            const container = document.getElementById('paginacao');
+
+            if (totalPaginas <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = `<button type="button" class="pagina-btn" onclick="irParaPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''} aria-label="Página anterior"><i class="fas fa-chevron-left"></i></button>`;
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                html += `<button type="button" class="pagina-btn ${i === paginaAtual ? 'ativa' : ''}" onclick="irParaPagina(${i})" ${i === paginaAtual ? 'aria-current="page"' : ''}>${i}</button>`;
+            }
+
+            html += `<button type="button" class="pagina-btn" onclick="irParaPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled' : ''} aria-label="Próxima página"><i class="fas fa-chevron-right"></i></button>`;
+
+            container.innerHTML = html;
+        }
+
+        function irParaPagina(numero) {
+            paginaAtual = numero;
+            aplicarFiltros(false);
+            window.scrollTo({ top: document.getElementById('formBusca').getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+        }
+
+        let favoritosIds = new Set();
+
+        async function carregarFavoritos() {
+            if (usuario.tipo !== 'cliente') return;
+            try {
+                const resposta = await fetch('http://localhost:3000/api/favoritos', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+                if (resposta.ok) {
+                    favoritosIds = new Set(dados.map(f => f.prestador_id?._id || f.prestador_id));
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar favoritos:', erro);
+            }
+        }
+
+        async function alternarFavorito(prestadorId, botao) {
+            try {
+                const marcar = !favoritosIds.has(prestadorId);
+                if (!marcar) {
+                    await fetch(`http://localhost:3000/api/favoritos/${prestadorId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    favoritosIds.delete(prestadorId);
+                } else {
+                    await fetch('http://localhost:3000/api/favoritos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ prestador_id: prestadorId })
+                    });
+                    favoritosIds.add(prestadorId);
+                }
+
+                document.querySelectorAll(`.btn-favorito[data-prestador="${prestadorId}"]`).forEach(b => {
+                    b.classList.toggle('favoritado', marcar);
+                    b.setAttribute('aria-pressed', String(marcar));
+                    b.querySelector('i').classList.toggle('fas', marcar);
+                    b.querySelector('i').classList.toggle('far', !marcar);
+                });
+
+                IS.toast(marcar ? 'Profissional adicionado aos favoritos.' : 'Profissional removido dos favoritos.');
+            } catch (erro) {
+                IS.toast('Erro ao atualizar favoritos.', 'error');
+            }
+        }
+
+        const cacheExtras = {};
+
+        async function carregarDadosExtrasCards(lista) {
+            const prestadoresUnicos = [...new Set(lista.map(s => s.prestador_id?._id || s.prestador_id).filter(Boolean))];
+
+            prestadoresUnicos.forEach(async prestadorId => {
+                try {
+                    if (!cacheExtras[prestadorId]) {
+                        const [respMedia, respPerfil] = await Promise.all([
+                            fetch(`http://localhost:3000/api/avaliacoes/prestador/${prestadorId}/media`),
+                            fetch(`http://localhost:3000/api/usuario/${prestadorId}/perfil`)
+                        ]);
+                        cacheExtras[prestadorId] = {
+                            media: respMedia.ok ? await respMedia.json() : { total: 0 },
+                            perfil: respPerfil.ok ? await respPerfil.json() : {}
+                        };
+                    }
+
+                    const { media, perfil } = cacheExtras[prestadorId];
+
+                    if (media.total > 0) {
+                        document.querySelectorAll(`.avaliacao-${CSS.escape(prestadorId)}`).forEach(el => {
+                            el.innerHTML = `<i class="fas fa-star"></i> ${esc(media.media)} <small>(${media.total} ${media.total === 1 ? 'avaliação' : 'avaliações'})</small>`;
+                        });
+                    }
+
+                    document.querySelectorAll(`.status-${CSS.escape(prestadorId)}`).forEach(el => {
+                        el.classList.toggle('online', !!perfil.online);
+                        el.title = perfil.online ? 'Online agora' : 'Offline';
+                    });
+                } catch (erro) {
+                    console.error('Erro ao carregar dados do prestador:', erro);
+                }
+            });
+        }
+
+        let servicoParaContratar = null;
+
+        function contratar(servicoId) {
+            servicoParaContratar = servicoId;
+            document.getElementById('contratarData').value = '';
+            document.getElementById('contratarData').min = new Date().toISOString().split('T')[0];
+            document.getElementById('contratarHora').value = '';
+            IS.msg(document.getElementById('contratarErro'), '');
+            IS.abrirModal('modalContratar');
+        }
+
+        document.getElementById('btnCancelarContratar').addEventListener('click', function () {
+            IS.fecharModal('modalContratar');
+        });
+
+        document.getElementById('btnConfirmarContratar').addEventListener('click', async function () {
+            const data = document.getElementById('contratarData').value;
+            const hora = document.getElementById('contratarHora').value;
+            const erro = document.getElementById('contratarErro');
+
+            IS.msg(erro, '');
+
+            if (!data || !hora) {
+                IS.msg(erro, 'Preencha a data e o horário do serviço.', 'error');
+                return;
+            }
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/agendamentos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ servico_id: servicoParaContratar, data, hora })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.msg(erro, dados.mensagem || 'Erro ao agendar', 'error');
+                    return;
+                }
+
+                IS.fecharModal('modalContratar');
+                IS.toast('Serviço agendado com sucesso!');
+                setTimeout(() => {
+                    window.location.href = usuario.tipo === 'cliente' ? 'dashboard-cliente.html' : 'dashboard-prestador.html';
+                }, 900);
+
+            } catch (falha) {
+                IS.msg(erro, 'Erro ao conectar com o servidor', 'error');
+            }
+        });
+
+        async function abrirChat(prestadorId) {
+            if (!prestadorId) {
+                IS.toast('Prestador não identificado.', 'error');
+                return;
+            }
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/chat/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prestador_id: prestadorId })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao iniciar chat.', 'error');
+                    return;
+                }
+
+                window.location.href = `chat.html?chatId=${dados.chat._id}`;
+
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        document.getElementById('formBusca').addEventListener('submit', function (e) {
+            e.preventDefault();
+            aplicarFiltros();
+        });
+
+        document.getElementById('filtroCategoria').addEventListener('change', () => aplicarFiltros());
+        document.getElementById('filtroOrdenacao').addEventListener('change', () => aplicarFiltros());
+
+        (async function iniciar() {
+            await carregarFavoritos();
+            await carregarProfissionais();
+        })();
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Dashboard Prestador</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-head">
+            <div class="container page-head-inner">
+                <div>
+                    <span class="kicker">Painel do prestador</span>
+                    <h1 class="page-title">Olá, <span class="accent" id="nomePrestador">prestador</span></h1>
+                    <p class="page-sub">Acompanhe seus agendamentos, serviços e propostas em um só lugar.</p>
+                </div>
+                <div class="page-actions">
+                    <span class="status-pill">Online</span>
+                    <a href="#novoServico" class="btn btn-primary btn-md" id="atalhoNovoServico"><i class="fas fa-plus"></i> Novo serviço</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container">
+                <section class="stats stats-5" aria-label="Resumo do painel">
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-briefcase"></i></span>
+                        <div><span class="stat-value" id="totalServicos">0</span><span class="stat-label">Serviços oferecidos</span></div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-calendar-check"></i></span>
+                        <div><span class="stat-value" id="totalAgendamentos">0</span><span class="stat-label">Agendamentos</span></div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-clock"></i></span>
+                        <div><span class="stat-value" id="pendentes">0</span><span class="stat-label">Pendentes</span></div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-ban"></i></span>
+                        <div><span class="stat-value" id="cancelados">0</span><span class="stat-label">Cancelados</span></div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-icon"><i class="fas fa-star"></i></span>
+                        <div><span class="stat-value" id="mediaAvaliacaoStat">-</span><span class="stat-label">Avaliação média</span></div>
+                    </div>
+                </section>
+
+                <div class="layout">
+                    <div class="stack">
+                        <section class="panel" aria-labelledby="tituloAgendamentos">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloAgendamentos"><span class="panel-icon"><i class="fas fa-calendar-alt"></i></span>Agendamentos</h2>
+                                <span class="panel-meta" id="metaAgendamentos"></span>
+                            </header>
+                            <div class="panel-body flush">
+                                <div class="list" id="listaAgendamentos">
+                                    <div class="empty"><i class="fas fa-calendar-plus"></i><strong>Nenhum agendamento recebido</strong><p>Quando um cliente contratar você, o agendamento aparece aqui.</p></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="panel" aria-labelledby="tituloServicos">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloServicos"><span class="panel-icon"><i class="fas fa-list"></i></span>Meus serviços</h2>
+                                <span class="panel-meta" id="metaServicos"></span>
+                            </header>
+                            <div class="panel-body flush">
+                                <div class="list" id="listaServicos">
+                                    <div class="empty"><i class="fas fa-box-open"></i><strong>Nenhum serviço cadastrado ainda</strong><p>Cadastre seu primeiro serviço no formulário ao lado.</p></div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <aside class="stack aside-grid">
+                        <section class="panel span-2" id="novoServico" aria-labelledby="tituloNovoServico">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloNovoServico"><span class="panel-icon"><i class="fas fa-plus"></i></span>Cadastrar novo serviço</h2>
+                            </header>
+                            <form class="panel-body form-auto" id="formServico" novalidate>
+                                <div class="field field-full">
+                                    <label for="servicoNome">Nome do serviço</label>
+                                    <input type="text" id="servicoNome" placeholder="Ex.: Faxina completa">
+                                </div>
+                                <div class="field">
+                                    <label for="servicoCategoria">Categoria</label>
+                                    <select id="servicoCategoria">
+                                    <option value="faxina">Faxina</option>
+                                    <option value="jardinagem">Jardinagem</option>
+                                    <option value="reparos">Reparos</option>
+                                    <option value="eletrica">Elétrica</option>
+                                    <option value="pintura">Pintura</option>
+                                    <option value="encanamento">Encanamento</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="servicoPreco">Preço (R$)</label>
+                                    <input type="number" id="servicoPreco" placeholder="Ex.: 120" min="0" step="0.01" inputmode="decimal">
+                                </div>
+                                <div class="field field-full">
+                                    <label for="servicoDescricao">Descrição</label>
+                                    <textarea id="servicoDescricao" placeholder="O que está incluso no serviço?"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <p id="msgServico" class="inline-msg" role="status"></p>
+                                    <button type="submit" class="btn btn-primary btn-md" id="btnCadastrarServico"><i class="fas fa-save"></i> Cadastrar serviço</button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <section class="panel" aria-labelledby="tituloPedidos">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloPedidos"><span class="panel-icon"><i class="fas fa-bullhorn"></i></span>Pedidos na minha área</h2>
+                            </header>
+                            <div class="panel-body flush">
+                                <div id="listaPedidosAbertos">
+                                    <div class="empty empty-sm"><i class="fas fa-inbox"></i>Nenhum pedido aberto no momento.</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="panel" aria-labelledby="tituloPropostas">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloPropostas"><span class="panel-icon"><i class="fas fa-paper-plane"></i></span>Propostas enviadas</h2>
+                            </header>
+                            <div class="panel-body flush">
+                                <div id="listaMinhasPropostas">
+                                    <div class="empty empty-sm"><i class="fas fa-file-invoice"></i>Você ainda não enviou propostas.</div>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario || usuario.tipo !== 'prestador') {
+            window.location.href = 'login.html';
+        }
+
+        const API_URL = 'http://localhost:3000/api';
+        const usuarioId = usuario.id;
+        const esc = IS.esc;
+
+        document.getElementById('nomePrestador').textContent = usuario.nome || 'prestador';
+
+        document.getElementById('atalhoNovoServico').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('novoServico').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => document.getElementById('servicoNome').focus({ preventScroll: true }), 400);
+        });
+
+        function plural(n, um, varios) {
+            return n + ' ' + (n === 1 ? um : varios);
+        }
+
+        async function carregarServicos() {
+            try {
+                const resposta = await fetch(`${API_URL}/servicos/prestador`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                const container = document.getElementById('listaServicos');
+
+                if (!resposta.ok || dados.length === 0) {
+                    container.innerHTML = IS.vazio('fa-box-open', 'Nenhum serviço cadastrado ainda', 'Cadastre seu primeiro serviço no formulário ao lado.');
+                    document.getElementById('totalServicos').textContent = '0';
+                    document.getElementById('metaServicos').textContent = '';
+                    return;
+                }
+
+                document.getElementById('totalServicos').textContent = dados.length;
+                document.getElementById('metaServicos').textContent = plural(dados.length, 'serviço', 'serviços');
+
+                container.innerHTML = dados.map(s => {
+                    const cat = IS.categoria(s.categoria);
+                    const preco = Number(s.preco);
+                    return `
+                        <div class="svc-row list-row">
+                            <span class="tile"><i class="fas ${cat.icone}"></i></span>
+                            <div class="svc-main">
+                                <span class="row-title cap">${esc(s.nome)}</span>
+                                <span class="row-sub">${esc(s.descricao || cat.nome)}</span>
+                            </div>
+                            <span class="tag">${esc(cat.nome)}</span>
+                            <span class="price ${preco < 0 ? 'is-negative' : ''}">${IS.moeda(preco)}</span>
+                            ${IS.badge('ativo', 'svc-status')}
+                            <div class="svc-tags"><span class="tag">${esc(cat.nome)}</span>${IS.badge('ativo')}</div>
+                            <button type="button" class="btn-icon is-danger svc-action" title="Remover serviço" aria-label="Remover ${esc(s.nome)}" onclick="removerServico('${esc(s._id)}')"><i class="fas fa-trash-can"></i></button>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (erro) {
+                console.error('Erro ao carregar servicos:', erro);
+            }
+        }
+
+        async function removerServico(servicoId) {
+            if (!confirm('Remover este serviço? Ele deixará de aparecer para os clientes.')) return;
+
+            try {
+                const resposta = await fetch(`${API_URL}/servicos/${servicoId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao remover serviço.', 'error');
+                    return;
+                }
+
+                IS.toast('Serviço removido.');
+                carregarServicos();
+                carregarPedidosAbertos();
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        const ORDEM_STATUS = { pendente: 0, confirmado: 1, finalizado: 2, cancelado: 3 };
+
+        async function carregarAgendamentos() {
+            try {
+                const resposta = await fetch(`${API_URL}/agendamentos/prestador`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dados = await resposta.json();
+
+                const container = document.getElementById('listaAgendamentos');
+
+                if (!resposta.ok || dados.length === 0) {
+                    container.innerHTML = IS.vazio('fa-calendar-plus', 'Nenhum agendamento recebido', 'Quando um cliente contratar você, o agendamento aparece aqui.');
+                    document.getElementById('totalAgendamentos').textContent = '0';
+                    document.getElementById('pendentes').textContent = '0';
+                    document.getElementById('cancelados').textContent = '0';
+                    document.getElementById('metaAgendamentos').textContent = '';
+                    return;
+                }
+
+                const pendentes = dados.filter(a => a.status === 'pendente').length;
+                const cancelados = dados.filter(a => a.status === 'cancelado').length;
+
+                document.getElementById('totalAgendamentos').textContent = dados.length;
+                document.getElementById('pendentes').textContent = pendentes;
+                document.getElementById('cancelados').textContent = cancelados;
+                document.getElementById('metaAgendamentos').textContent = pendentes
+                    ? plural(pendentes, 'aguardando resposta', 'aguardando resposta')
+                    : plural(dados.length, 'agendamento', 'agendamentos');
+
+                const ordenados = [...dados].sort((a, b) =>
+                    (ORDEM_STATUS[a.status] ?? 9) - (ORDEM_STATUS[b.status] ?? 9) || new Date(a.data) - new Date(b.data));
+
+                container.innerHTML = ordenados.map(a => {
+                    const dia = IS.dataTile(a.data);
+                    let acoes = '';
+                    if (a.status === 'pendente') {
+                        acoes = `
+                            <button type="button" class="btn btn-primary btn-xs" onclick="atualizarAgendamento('${esc(a._id)}', 'confirmado')"><i class="fas fa-check"></i> Confirmar</button>
+                            <button type="button" class="btn btn-danger btn-xs" onclick="atualizarAgendamento('${esc(a._id)}', 'cancelado')">Recusar</button>`;
+                    } else if (a.status === 'confirmado') {
+                        acoes = `<button type="button" class="btn btn-soft btn-xs" onclick="atualizarAgendamento('${esc(a._id)}', 'finalizado')"><i class="fas fa-flag-checkered"></i> Concluir</button>`;
+                    }
+                    return `
+                        <div class="appt list-row">
+                            <div class="date-tile" aria-hidden="true"><b>${dia.dia}</b><span>${dia.mes}</span></div>
+                            <div>
+                                <span class="row-title cap">${esc(a.servico_id?.nome || 'Serviço')}</span>
+                                <div class="meta">
+                                    <span><i class="fas fa-user"></i>${esc(a.cliente_id?.nome || 'Cliente')}</span>
+                                    <span><i class="fas fa-calendar"></i>${IS.data(a.data)}</span>
+                                    <span><i class="fas fa-clock"></i>${esc(a.hora)}</span>
+                                </div>
+                            </div>
+                            <div class="row-side">
+                                ${IS.badge(a.status)}
+                                ${acoes ? `<div class="row-actions">${acoes}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (erro) {
+                console.error('Erro ao carregar agendamentos:', erro);
+            }
+        }
+
+        async function atualizarAgendamento(agendamentoId, status) {
+            const textos = {
+                confirmado: 'Agendamento confirmado.',
+                cancelado: 'Agendamento recusado.',
+                finalizado: 'Serviço marcado como concluído.'
+            };
+
+            if (status === 'cancelado' && !confirm('Recusar este agendamento? O cliente verá o status como cancelado.')) return;
+            if (status === 'finalizado' && !confirm('Marcar este serviço como concluído? O cliente poderá avaliá-lo.')) return;
+
+            try {
+                const resposta = await fetch(`${API_URL}/agendamentos/${agendamentoId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao atualizar agendamento.', 'error');
+                    return;
+                }
+
+                IS.toast(textos[status] || 'Agendamento atualizado.');
+                carregarAgendamentos();
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        document.getElementById('formServico').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('servicoNome').value.trim();
+            const descricao = document.getElementById('servicoDescricao').value.trim();
+            const preco = parseFloat(document.getElementById('servicoPreco').value);
+            const categoria = document.getElementById('servicoCategoria').value;
+            const msg = document.getElementById('msgServico');
+            const botao = document.getElementById('btnCadastrarServico');
+
+            IS.msg(msg, '');
+
+            if (!nome || !descricao || !preco) {
+                IS.msg(msg, 'Preencha todos os campos.', 'error');
+                return;
+            }
+
+            botao.disabled = true;
+
+            try {
+                const resposta = await fetch(`${API_URL}/servicos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ nome, descricao, preco, categoria })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.msg(msg, dados.mensagem || 'Erro ao cadastrar serviço.', 'error');
+                    return;
+                }
+
+                IS.msg(msg, 'Serviço cadastrado com sucesso!', 'success');
+
+                document.getElementById('servicoNome').value = '';
+                document.getElementById('servicoDescricao').value = '';
+                document.getElementById('servicoPreco').value = '';
+
+                carregarServicos();
+                carregarAgendamentos();
+                carregarPedidosAbertos();
+
+            } catch (erro) {
+                IS.msg(msg, 'Erro ao conectar com o servidor.', 'error');
+            } finally {
+                botao.disabled = false;
+            }
+        });
+
+        async function carregarMediaAvaliacao() {
+            try {
+                const resposta = await fetch(`${API_URL}/avaliacoes/prestador/${usuarioId}/media`);
+                const media = await resposta.json();
+                document.getElementById('mediaAvaliacaoStat').textContent = media.total > 0 ? media.media : '-';
+            } catch (erro) {
+                console.error('Erro ao carregar media de avaliacao:', erro);
+            }
+        }
+
+        let servicosDoPrestador = [];
+
+        async function carregarPedidosAbertos() {
+            try {
+                const respServicos = await fetch(`${API_URL}/servicos/prestador`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                servicosDoPrestador = await respServicos.json();
+
+                const categorias = [...new Set((Array.isArray(servicosDoPrestador) ? servicosDoPrestador : []).map(s => s.categoria))];
+                const container = document.getElementById('listaPedidosAbertos');
+
+                if (categorias.length === 0) {
+                    container.innerHTML = IS.vazio('fa-inbox', '', 'Cadastre um serviço para ver pedidos da sua área.', 'empty-sm');
+                    return;
+                }
+
+                const resposta = await fetch(`${API_URL}/pedidos/abertos`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const pedidos = await resposta.json();
+
+                const pedidosDaMinhaArea = resposta.ok ? pedidos.filter(p => categorias.includes(p.categoria)) : [];
+
+                const rascunho = {};
+                container.querySelectorAll('input').forEach(campo => { if (campo.value) rascunho[campo.id] = campo.value; });
+
+                if (pedidosDaMinhaArea.length === 0) {
+                    container.innerHTML = IS.vazio('fa-inbox', '', 'Nenhum pedido aberto no momento.', 'empty-sm');
+                    return;
+                }
+
+                container.innerHTML = pedidosDaMinhaArea.map(p => {
+                    const cat = IS.categoria(p.categoria);
+                    return `
+                        <div class="request">
+                            <div class="request-top">
+                                <span class="row-title wrap cap">${esc(p.titulo)}</span>
+                                <span class="tag"><i class="fas ${cat.icone}"></i>${esc(cat.nome)}</span>
+                            </div>
+                            <p>${esc(p.descricao)}</p>
+                            <div class="proposal-form">
+                                <input class="input" type="number" id="valor-${esc(p._id)}" placeholder="Valor (R$)" min="0" step="0.01" aria-label="Valor da proposta">
+                                <input class="input" type="text" id="prazo-${esc(p._id)}" placeholder="Prazo (ex.: 2 dias)" aria-label="Prazo da proposta">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="enviarProposta('${esc(p._id)}', this)"><i class="fas fa-paper-plane"></i> Enviar proposta</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                Object.keys(rascunho).forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (campo) campo.value = rascunho[id];
+                });
+
+            } catch (erro) {
+                console.error('Erro ao carregar pedidos abertos:', erro);
+            }
+        }
+
+        async function enviarProposta(pedidoId, botao) {
+            const campoValor = document.getElementById(`valor-${pedidoId}`);
+            const campoPrazo = document.getElementById(`prazo-${pedidoId}`);
+            const valor = parseFloat(campoValor.value);
+            const prazo = campoPrazo.value.trim();
+
+            if (!valor || !prazo) {
+                IS.toast('Preencha o valor e o prazo da proposta.', 'error');
+                (!valor ? campoValor : campoPrazo).focus();
+                return;
+            }
+
+            if (botao) botao.disabled = true;
+
+            try {
+                const resposta = await fetch(`${API_URL}/propostas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ pedido_id: pedidoId, valor, prazo })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao enviar proposta.', 'error');
+                    return;
+                }
+
+                IS.toast('Proposta enviada com sucesso!');
+                campoValor.value = '';
+                campoPrazo.value = '';
+                carregarPedidosAbertos();
+                carregarMinhasPropostas();
+
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            } finally {
+                if (botao) botao.disabled = false;
+            }
+        }
+
+        async function carregarMinhasPropostas() {
+            try {
+                const resposta = await fetch(`${API_URL}/propostas/prestador`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const propostas = await resposta.json();
+
+                const container = document.getElementById('listaMinhasPropostas');
+
+                if (!resposta.ok || propostas.length === 0) {
+                    container.innerHTML = IS.vazio('fa-file-invoice', '', 'Você ainda não enviou propostas.', 'empty-sm');
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="mt-head"><span>Serviço</span><span>Valor</span><span>Status</span></div>
+                    ${propostas.map(p => `
+                        <div class="mt-row">
+                            <div>
+                                <span class="row-title cap">${esc(p.pedido_id?.titulo || 'Pedido')}</span>
+                                ${p.prazo ? `<span class="row-sub">Prazo: ${esc(p.prazo)}</span>` : ''}
+                            </div>
+                            <span class="price">${IS.moeda(p.valor)}</span>
+                            ${IS.badge(p.status)}
+                        </div>
+                    `).join('')}
+                `;
+
+            } catch (erro) {
+                console.error('Erro ao carregar minhas propostas:', erro);
+            }
+        }
+
+        carregarServicos();
+        carregarAgendamentos();
+        carregarMediaAvaliacao();
+        carregarPedidosAbertos();
+        carregarMinhasPropostas();
+
+        setInterval(() => {
+            carregarServicos();
+            carregarAgendamentos();
+            carregarPedidosAbertos();
+            carregarMinhasPropostas();
+        }, 30000);
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

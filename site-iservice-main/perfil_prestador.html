@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Meu Perfil</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-head">
+            <div class="container page-head-inner">
+                <div>
+                    <span class="kicker">Meu perfil</span>
+                    <h1 class="page-title">Perfil profissional</h1>
+                    <p class="page-sub">Mantenha seus dados atualizados. É assim que os clientes encontram e escolhem você.</p>
+                </div>
+                <div class="page-actions">
+                    <a href="dashboard-prestador.html" class="btn btn-ghost btn-md"><i class="fas fa-gauge-high"></i> Ir para o painel</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container layout layout-profile">
+                <aside class="sticky-col">
+                    <section class="panel profile-card" aria-label="Resumo do perfil">
+                        <div class="panel-body">
+                            <span class="avatar avatar-lg" id="avatar">P</span>
+                            <div>
+                                <h2 class="profile-name" id="nomeUsuario">Carregando...</h2>
+                                <p class="profile-email" id="emailUsuario"></p>
+                                <span class="tag"><i class="fas fa-circle-check"></i> Prestador</span>
+                            </div>
+                        </div>
+                        <ul class="info-list">
+                            <li>
+                                <span class="tile"><i class="fas fa-star"></i></span>
+                                <div><small>Avaliação média</small><span class="val" id="resumoNota">Sem avaliações ainda</span></div>
+                            </li>
+                            <li>
+                                <span class="tile"><i class="fas fa-briefcase"></i></span>
+                                <div><small>Especialidade</small><span class="val" id="resumoEspecialidade">—</span></div>
+                            </li>
+                            <li>
+                                <span class="tile"><i class="fas fa-phone"></i></span>
+                                <div><small>Telefone</small><span class="val" id="resumoTelefone">Não informado</span></div>
+                            </li>
+                            <li>
+                                <span class="tile"><i class="fas fa-clock"></i></span>
+                                <div><small>Atendimento</small><span class="val" id="resumoHorario">—</span></div>
+                            </li>
+                        </ul>
+                    </section>
+                </aside>
+
+                <div class="stack">
+                    <form class="panel" id="formPerfil" novalidate>
+                        <header class="panel-head">
+                            <h2 class="panel-title"><span class="panel-icon"><i class="fas fa-id-card"></i></span>Informações do perfil</h2>
+                        </header>
+                        <div class="panel-body">
+                            <div class="form-section">
+                                <h3 class="section-label">Dados profissionais</h3>
+                                <div class="form-grid">
+                                    <div class="field">
+                                        <label for="nome">Nome completo</label>
+                                        <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name">
+                                    </div>
+                                    <div class="field">
+                                        <label for="telefone">Telefone</label>
+                                        <input type="tel" id="telefone" placeholder="(51) 99999-9999" autocomplete="tel">
+                                    </div>
+                                    <div class="field">
+                                        <label for="especialidade">Especialidade</label>
+                                        <select id="especialidade">
+                                        <option value="faxina">Faxina</option>
+                                    <option value="jardinagem">Jardinagem</option>
+                                    <option value="reparos">Reparos</option>
+                                    <option value="eletrica">Elétrica</option>
+                                    <option value="pintura">Pintura</option>
+                                    <option value="encanamento">Encanamento</option>
+                                        </select>
+                                    </div>
+                                    <div class="field">
+                                        <label for="preco">Valor médio por serviço (R$)</label>
+                                        <input type="number" id="preco" placeholder="Ex.: 120" min="0" step="0.01" inputmode="decimal">
+                                    </div>
+                                    <div class="field field-full">
+                                        <label for="descricao">Descrição profissional</label>
+                                        <textarea id="descricao" placeholder="Descreva sua experiência, habilidades e serviços que oferece..."></textarea>
+                                        <span class="hint">Clientes leem esta descrição antes de contratar. Seja claro sobre o que está incluso.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h3 class="section-label">Disponibilidade</h3>
+                                <p class="section-desc">Selecione os dias e o horário em que você atende.</p>
+                                <div class="day-picker" id="diasSemana" role="group" aria-label="Dias de atendimento">
+                                    <label class="day-chip"><input type="checkbox" value="segunda"><span>Seg</span></label>
+                                    <label class="day-chip"><input type="checkbox" value="terca"><span>Ter</span></label>
+                                    <label class="day-chip"><input type="checkbox" value="quarta"><span>Qua</span></label>
+                                    <label class="day-chip"><input type="checkbox" value="quinta"><span>Qui</span></label>
+                                    <label class="day-chip"><input type="checkbox" value="sexta"><span>Sex</span></label>
+                                    <label class="day-chip"><input type="checkbox" value="sabado"><span>Sáb</span></label>
+                                    <label class="day-chip"><input type="checkbox" value="domingo"><span>Dom</span></label>
+                                </div>
+                                <div class="form-grid narrow">
+                                    <div class="field">
+                                        <label for="horaInicio">Das</label>
+                                        <input type="time" id="horaInicio" value="08:00">
+                                    </div>
+                                    <div class="field">
+                                        <label for="horaFim">Até</label>
+                                        <input type="time" id="horaFim" value="18:00">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="panel-foot">
+                            <p id="msgStatus" class="inline-msg msg-status" role="status"></p>
+                            <button type="submit" class="btn btn-primary btn-md btn-salvar"><i class="fas fa-save"></i> Salvar alterações</button>
+                        </footer>
+                    </form>
+
+                    <section class="panel" aria-labelledby="tituloPortfolio">
+                        <header class="panel-head">
+                            <h2 class="panel-title" id="tituloPortfolio"><span class="panel-icon"><i class="fas fa-images"></i></span>Portfólio de trabalhos</h2>
+                            <span class="panel-meta" id="metaPortfolio"></span>
+                        </header>
+                        <div class="panel-body">
+                            <div class="portfolio-grid" id="portfolioGrid"></div>
+                            <div class="portfolio-add">
+                                <input class="input" type="url" id="portfolioUrlInput" placeholder="Cole a URL de uma foto do seu trabalho" aria-label="URL da foto">
+                                <button type="button" class="btn btn-primary btn-md" id="btnAdicionarFoto"><i class="fas fa-plus"></i> Adicionar foto</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="tituloAvaliacoes">
+                        <header class="panel-head">
+                            <h2 class="panel-title" id="tituloAvaliacoes"><span class="panel-icon"><i class="fas fa-star"></i></span>Avaliações recebidas</h2>
+                        </header>
+                        <div class="panel-body">
+                            <div class="rating-summary" id="mediaAvaliacoes">
+                                <span class="rating-number">–</span>
+                                <div>
+                                    <span class="stars"><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></span>
+                                    <div class="rating-total">Sem avaliações ainda</div>
+                                </div>
+                            </div>
+                            <div class="reviews" id="listaAvaliacoes"></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        const esc = IS.esc;
+
+        const NOMES_DIAS = { segunda: 'Seg', terca: 'Ter', quarta: 'Qua', quinta: 'Qui', sexta: 'Sex', sabado: 'Sáb', domingo: 'Dom' };
+
+        document.getElementById('avatar').textContent = IS.inicial(usuario.nome || 'P');
+        document.getElementById('nomeUsuario').textContent = usuario.nome || 'Prestador';
+        document.getElementById('emailUsuario').textContent = usuario.email || '';
+
+        document.getElementById('nome').value = usuario.nome || '';
+        document.getElementById('telefone').value = usuario.telefone || '';
+
+        const perfilSalvo = JSON.parse(localStorage.getItem('perfilPrestador')) || {};
+
+        if (perfilSalvo.especialidade) {
+            document.getElementById('especialidade').value = perfilSalvo.especialidade;
+        }
+
+        if (perfilSalvo.descricao) {
+            document.getElementById('descricao').value = perfilSalvo.descricao;
+        }
+
+        if (perfilSalvo.preco) {
+            document.getElementById('preco').value = perfilSalvo.preco;
+        }
+
+        if (perfilSalvo.telefone && !usuario.telefone) {
+            document.getElementById('telefone').value = perfilSalvo.telefone;
+        }
+
+        if (perfilSalvo.dias) {
+            document.querySelectorAll('#diasSemana input[type="checkbox"]').forEach(cb => {
+                cb.checked = perfilSalvo.dias.includes(cb.value);
+            });
+        }
+
+        if (perfilSalvo.horaInicio) {
+            document.getElementById('horaInicio').value = perfilSalvo.horaInicio;
+        }
+
+        if (perfilSalvo.horaFim) {
+            document.getElementById('horaFim').value = perfilSalvo.horaFim;
+        }
+
+        function atualizarResumo() {
+            const especialidade = document.getElementById('especialidade').value;
+            const telefone = document.getElementById('telefone').value.trim();
+            const dias = Array.from(document.querySelectorAll('#diasSemana input[type="checkbox"]:checked')).map(cb => NOMES_DIAS[cb.value]);
+            const horaInicio = document.getElementById('horaInicio').value;
+            const horaFim = document.getElementById('horaFim').value;
+
+            document.getElementById('resumoEspecialidade').textContent = IS.categoria(especialidade).nome;
+            document.getElementById('resumoTelefone').textContent = telefone || 'Não informado';
+            document.getElementById('resumoHorario').textContent = dias.length
+                ? `${dias.join(', ')} · ${horaInicio}–${horaFim}`
+                : 'Dias não definidos';
+        }
+
+        atualizarResumo();
+
+        document.getElementById('formPerfil').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const especialidade = document.getElementById('especialidade').value;
+            const descricao = document.getElementById('descricao').value.trim();
+            const preco = parseFloat(document.getElementById('preco').value);
+            const dias = Array.from(document.querySelectorAll('#diasSemana input[type="checkbox"]:checked')).map(cb => cb.value);
+            const horaInicio = document.getElementById('horaInicio').value;
+            const horaFim = document.getElementById('horaFim').value;
+            const msg = document.getElementById('msgStatus');
+
+            IS.msg(msg, '');
+
+            if (!nome) {
+                IS.msg(msg, 'Preencha seu nome.', 'error');
+                document.getElementById('nome').focus();
+                return;
+            }
+
+            const perfil = {
+                nome,
+                telefone,
+                especialidade,
+                descricao,
+                preco,
+                dias,
+                horaInicio,
+                horaFim
+            };
+
+            localStorage.setItem('perfilPrestador', JSON.stringify(perfil));
+
+            IS.msg(msg, 'Perfil atualizado com sucesso!', 'success');
+
+            document.getElementById('avatar').textContent = IS.inicial(nome);
+            document.getElementById('nomeUsuario').textContent = nome;
+            atualizarResumo();
+        });
+
+        const API_URL = 'http://localhost:3000/api';
+        const usuarioId = usuario.id;
+        let portifolioAtual = [];
+
+        async function carregarPortifolio() {
+            try {
+                const resposta = await fetch(`${API_URL}/usuario/${usuarioId}/perfil`);
+                const dados = await resposta.json();
+                if (resposta.ok) {
+                    portifolioAtual = dados.portifolio || [];
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar portifolio:', erro);
+            }
+            renderizarPortifolio();
+        }
+
+        function renderizarPortifolio() {
+            const grid = document.getElementById('portfolioGrid');
+            document.getElementById('metaPortfolio').textContent = portifolioAtual.length
+                ? `${portifolioAtual.length} ${portifolioAtual.length === 1 ? 'foto' : 'fotos'}`
+                : '';
+
+            if (portifolioAtual.length === 0) {
+                grid.innerHTML = `
+                    <div class="portfolio-empty">
+                        <i class="fas fa-camera"></i>
+                        <span>Nenhuma foto adicionada ainda. Mostre seus melhores trabalhos para passar mais confiança aos clientes.</span>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = portifolioAtual.map((url, i) => `
+                <figure class="portfolio-item">
+                    <img src="${esc(url)}" alt="Foto ${i + 1} do portfólio" loading="lazy" onerror="this.parentElement.classList.add('is-broken'); this.remove();">
+                    <button type="button" class="btn-remover-foto" onclick="removerFoto(${i})" title="Remover foto" aria-label="Remover foto ${i + 1}"><i class="fas fa-times"></i></button>
+                </figure>
+            `).join('');
+        }
+
+        async function salvarPortifolio() {
+            try {
+                await fetch(`${API_URL}/usuario/portifolio`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ portifolio: portifolioAtual })
+                });
+            } catch (erro) {
+                console.error('Erro ao salvar portifolio:', erro);
+                IS.toast('Não foi possível salvar o portfólio.', 'error');
+            }
+        }
+
+        function removerFoto(indice) {
+            portifolioAtual.splice(indice, 1);
+            renderizarPortifolio();
+            salvarPortifolio();
+        }
+
+        function adicionarFoto() {
+            const input = document.getElementById('portfolioUrlInput');
+            const url = input.value.trim();
+            if (!url) {
+                input.focus();
+                return;
+            }
+
+            portifolioAtual.push(url);
+            input.value = '';
+            renderizarPortifolio();
+            salvarPortifolio();
+            IS.toast('Foto adicionada ao portfólio.');
+        }
+
+        document.getElementById('btnAdicionarFoto').addEventListener('click', adicionarFoto);
+        document.getElementById('portfolioUrlInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                adicionarFoto();
+            }
+        });
+
+        async function carregarAvaliacoes() {
+            try {
+                const respMedia = await fetch(`${API_URL}/avaliacoes/prestador/${usuarioId}/media`);
+                const media = await respMedia.json();
+
+                if (respMedia.ok && media.total > 0) {
+                    document.getElementById('mediaAvaliacoes').innerHTML = `
+                        <span class="rating-number">${esc(media.media)}</span>
+                        <div>
+                            ${IS.estrelas(media.media)}
+                            <div class="rating-total">${media.total} ${media.total === 1 ? 'avaliação' : 'avaliações'}</div>
+                        </div>
+                    `;
+                    document.getElementById('resumoNota').innerHTML = `${esc(media.media)} <span class="muted">· ${media.total} ${media.total === 1 ? 'avaliação' : 'avaliações'}</span>`;
+                }
+
+                const respLista = await fetch(`${API_URL}/avaliacoes/prestador/${usuarioId}`);
+                const lista = await respLista.json();
+
+                const container = document.getElementById('listaAvaliacoes');
+                if (!respLista.ok || lista.length === 0) {
+                    container.innerHTML = IS.vazio('fa-comment-dots', '', 'Você ainda não recebeu avaliações. Elas aparecem aqui depois que um cliente avalia um serviço concluído.', 'empty-sm');
+                    return;
+                }
+
+                container.innerHTML = lista.map(a => `
+                    <article class="review">
+                        <div class="review-top">
+                            <span class="avatar avatar-sm">${esc(IS.inicial(a.cliente_id?.nome || 'C'))}</span>
+                            <div><span class="row-title">${esc(a.cliente_id?.nome || 'Cliente')}</span></div>
+                            ${IS.estrelas(a.nota)}
+                        </div>
+                        <p class="comentario">${esc(a.comentario || 'Sem comentário.')}</p>
+                    </article>
+                `).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar avaliacoes:', erro);
+            }
+        }
+
+        carregarPortifolio();
+        carregarAvaliacoes();
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

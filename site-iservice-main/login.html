@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Login</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth">
+        <div class="container auth-grid">
+            <div class="auth-copy">
+                <span class="kicker">Bem-vindo de volta</span>
+                <h1>Entre e continue <span class="accent">de onde parou</span></h1>
+                <p>Acesse sua conta para contratar profissionais ou divulgar seus serviços em Taquara/RS.</p>
+                <ul class="check-list">
+                    <li><i class="fas fa-check"></i> Acompanhe seus agendamentos em tempo real</li>
+                    <li><i class="fas fa-check"></i> Converse com os prestadores pelo chat</li>
+                    <li><i class="fas fa-check"></i> Receba notificações de propostas e avaliações</li>
+                </ul>
+            </div>
+
+            <div class="form-card login-container">
+                <div class="form-card-head">
+                    <h2>Entrar na conta</h2>
+                    <p>Acesse para contratar ou divulgar serviços.</p>
+                </div>
+
+                <form id="loginForm" novalidate>
+                    <div class="field">
+                        <label for="email">E-mail</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Digite seu e-mail" autocomplete="email" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="senha">Senha</label>
+                            <a href="#" class="text-link">Esqueci minha senha</a>
+                        </div>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="senha" placeholder="Digite sua senha" autocomplete="current-password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-md btn-block btn-entrar"><i class="fas fa-arrow-right-to-bracket"></i> Entrar</button>
+                </form>
+
+                <p class="inline-msg msg-erro" id="msgLogin" role="alert"></p>
+
+                <div class="form-card-foot">
+                    Não tem conta? <a href="cadastro.html">Crie uma aqui</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+            const msg = document.getElementById("msgLogin");
+            const botao = this.querySelector('button[type="submit"]');
+
+            IS.msg(msg, '');
+
+            if (!email || !senha) {
+                IS.msg(msg, 'Preencha e-mail e senha.', 'error');
+                return;
+            }
+
+            botao.disabled = true;
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.msg(msg, dados.mensagem || "Erro ao fazer login", 'error');
+                    botao.disabled = false;
+                    return;
+                }
+
+                localStorage.setItem('token', dados.token);
+                localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+
+                IS.msg(msg, "Login realizado com sucesso!", 'success');
+
+                setTimeout(() => {
+                    if (dados.usuario.tipo === 'cliente') {
+                        window.location.href = "dashboard-cliente.html";
+                    } else if (dados.usuario.tipo === 'prestador') {
+                        window.location.href = "dashboard-prestador.html";
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                }, 1000);
+
+            } catch (erro) {
+                IS.msg(msg, "Erro ao conectar com o servidor", 'error');
+                botao.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Conversa</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="chat-page">
+        <div class="container">
+            <section class="chat-card chat-wrapper" aria-label="Conversa">
+                <header class="chat-header">
+                    <a href="javascript:history.back()" class="btn-icon back-btn" title="Voltar" aria-label="Voltar"><i class="fas fa-arrow-left"></i></a>
+                    <div class="chat-info">
+                        <span class="avatar chat-avatar" id="chatAvatar">P</span>
+                        <div>
+                            <div class="chat-nome" id="chatNome">Prestador</div>
+                            <div class="chat-status">Online</div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="chat-messages" id="chatMessages" aria-live="polite">
+                    <div class="empty sem-mensagens"><i class="fas fa-comment-dots"></i><strong>Nenhuma mensagem ainda</strong><p>Envie uma mensagem para iniciar a conversa.</p></div>
+                </div>
+
+                <form class="chat-footer" id="formMensagem" autocomplete="off">
+                    <input class="input" type="text" id="mensagemInput" placeholder="Digite sua mensagem..." aria-label="Mensagem">
+                    <button type="submit" class="btn btn-primary btn-md" id="btnEnviar"><i class="fas fa-paper-plane"></i><span>Enviar</span></button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        const esc = IS.esc;
+        const urlParams = new URLSearchParams(window.location.search);
+        const chatId = urlParams.get('chatId');
+
+        const messagesContainer = document.getElementById('chatMessages');
+        const inputMensagem = document.getElementById('mensagemInput');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const chatNome = document.getElementById('chatNome');
+        const chatAvatar = document.getElementById('chatAvatar');
+
+        if (!chatId) {
+            messagesContainer.innerHTML = IS.vazio('fa-triangle-exclamation', 'Chat não identificado', 'Abra a conversa a partir do perfil de um profissional.', 'is-error');
+        }
+
+        let ultimaAssinatura = '';
+
+        async function carregarChat() {
+            if (!chatId) return;
+
+            try {
+                const resposta = await fetch(`http://localhost:3000/api/chat/${chatId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    messagesContainer.innerHTML = IS.vazio('fa-triangle-exclamation', 'Erro ao carregar mensagens', dados.mensagem || '', 'is-error');
+                    return;
+                }
+
+                if (dados.chat && dados.chat.participants) {
+                    const outro = dados.chat.participants.find(p => p._id !== usuario.id);
+                    if (outro) {
+                        chatNome.textContent = outro.nome || 'Prestador';
+                        chatAvatar.textContent = IS.inicial(outro.nome || 'P');
+                    }
+                }
+
+                const messages = dados.messages || [];
+                const assinatura = messages.length + '|' + (messages.length ? (messages[messages.length - 1].createdAt || messages[messages.length - 1].content) : '');
+                if (assinatura === ultimaAssinatura) return;
+                ultimaAssinatura = assinatura;
+
+                if (messages.length === 0) {
+                    messagesContainer.innerHTML = IS.vazio('fa-comment-dots', 'Nenhuma mensagem ainda', 'Envie uma mensagem para iniciar a conversa.', 'sem-mensagens');
+                    return;
+                }
+
+                messagesContainer.innerHTML = messages.map(msg => {
+                    const isEnviada = msg.sender === usuario.id;
+                    const hora = new Date(msg.createdAt || msg.data_envio || Date.now());
+                    const horaStr = hora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    return `
+                        <div class="mensagem ${isEnviada ? 'enviada' : 'recebida'}">
+                            ${esc(msg.content)}
+                            <span class="hora">${horaStr}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            } catch (erro) {
+                messagesContainer.innerHTML = IS.vazio('fa-triangle-exclamation', 'Erro ao conectar com o servidor', 'Verifique sua conexão e tente novamente.', 'is-error');
+                ultimaAssinatura = '';
+            }
+        }
+
+        async function enviarMensagem() {
+            const content = inputMensagem.value.trim();
+            if (!content || !chatId) return;
+
+            const btnOriginal = btnEnviar.innerHTML;
+            btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Enviando...</span>';
+            btnEnviar.disabled = true;
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/chat/message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ chat_id: chatId, content })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao enviar mensagem.', 'error');
+                    return;
+                }
+
+                inputMensagem.value = '';
+                carregarChat();
+
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            } finally {
+                btnEnviar.innerHTML = btnOriginal;
+                btnEnviar.disabled = false;
+                inputMensagem.focus();
+            }
+        }
+
+        document.getElementById('formMensagem').addEventListener('submit', function (e) {
+            e.preventDefault();
+            enviarMensagem();
+        });
+
+        carregarChat();
+        setInterval(carregarChat, 5000);
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

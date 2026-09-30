@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Meu Perfil</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-head">
+            <div class="container page-head-inner">
+                <div>
+                    <span class="kicker">Meu perfil</span>
+                    <h1 class="page-title">Minha conta</h1>
+                    <p class="page-sub">Confira e atualize seus dados de contato. Eles são usados pelos prestadores para falar com você.</p>
+                </div>
+                <div class="page-actions">
+                    <a href="dashboard-cliente.html" class="btn btn-ghost btn-md"><i class="fas fa-gauge-high"></i> Ir para o painel</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container layout layout-profile">
+                <aside class="sticky-col">
+                    <section class="panel profile-card" aria-label="Resumo da conta">
+                        <div class="panel-body">
+                            <span class="avatar avatar-lg" id="avatar">C</span>
+                            <div>
+                                <h2 class="profile-name" id="nomeUsuario">Carregando...</h2>
+                                <p class="profile-email" id="emailUsuario"></p>
+                                <span class="tag"><i class="fas fa-circle-check"></i> Cliente</span>
+                            </div>
+                        </div>
+                        <ul class="info-list">
+                            <li>
+                                <span class="tile"><i class="fas fa-phone"></i></span>
+                                <div><small>Telefone</small><span class="val" id="resumoTelefone">Não informado</span></div>
+                            </li>
+                            <li>
+                                <span class="tile"><i class="fas fa-envelope"></i></span>
+                                <div><small>E-mail de acesso</small><span class="val" id="resumoEmail">—</span></div>
+                            </li>
+                        </ul>
+                    </section>
+                </aside>
+
+                <div class="stack">
+                    <form class="panel" id="formPerfil" novalidate>
+                        <header class="panel-head">
+                            <h2 class="panel-title"><span class="panel-icon"><i class="fas fa-id-card"></i></span>Dados pessoais</h2>
+                        </header>
+                        <div class="panel-body">
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label for="nome">Nome completo</label>
+                                    <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name">
+                                </div>
+                                <div class="field">
+                                    <label for="telefone">Telefone</label>
+                                    <input type="tel" id="telefone" placeholder="(51) 99999-9999" autocomplete="tel">
+                                </div>
+                                <div class="field field-full">
+                                    <label for="email">E-mail</label>
+                                    <input type="email" id="email" placeholder="seu@email.com" disabled>
+                                    <span class="hint">O e-mail é usado para entrar na conta e não pode ser alterado aqui.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="panel-foot">
+                            <p id="msgStatus" class="inline-msg msg-status" role="status"></p>
+                            <button type="submit" class="btn btn-primary btn-md btn-salvar"><i class="fas fa-save"></i> Salvar alterações</button>
+                        </footer>
+                    </form>
+
+                    <section class="panel" aria-labelledby="tituloAtalhos">
+                        <header class="panel-head">
+                            <h2 class="panel-title" id="tituloAtalhos"><span class="panel-icon"><i class="fas fa-compass"></i></span>Acesso rápido</h2>
+                        </header>
+                        <div class="panel-body flush">
+                            <div class="list">
+                                <a class="link-row list-row" href="dashboard-cliente.html">
+                                    <span class="tile"><i class="fas fa-calendar-check"></i></span>
+                                    <span><span class="row-title">Meus agendamentos</span><span class="row-sub">Acompanhe e cancele agendamentos</span></span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                                <a class="link-row list-row" href="profissionais.html">
+                                    <span class="tile"><i class="fas fa-search"></i></span>
+                                    <span><span class="row-title">Buscar profissionais</span><span class="row-sub">Compare preços e avaliações</span></span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                                <a class="link-row list-row" href="faq.html">
+                                    <span class="tile"><i class="fas fa-circle-question"></i></span>
+                                    <span><span class="row-title">Central de ajuda</span><span class="row-sub">Tire suas dúvidas sobre o IService</span></span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        function preencherResumo(dados) {
+            document.getElementById('avatar').textContent = IS.inicial(dados.nome || 'C');
+            document.getElementById('nomeUsuario').textContent = dados.nome || 'Cliente';
+            document.getElementById('emailUsuario').textContent = dados.email || '';
+            document.getElementById('resumoEmail').textContent = dados.email || '—';
+            document.getElementById('resumoTelefone').textContent = dados.telefone || 'Não informado';
+        }
+
+        preencherResumo(usuario);
+
+        document.getElementById('nome').value = usuario.nome || '';
+        document.getElementById('telefone').value = usuario.telefone || '';
+        document.getElementById('email').value = usuario.email || '';
+
+        document.getElementById('formPerfil').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const msg = document.getElementById('msgStatus');
+
+            IS.msg(msg, '');
+
+            if (!nome) {
+                IS.msg(msg, 'Preencha seu nome.', 'error');
+                document.getElementById('nome').focus();
+                return;
+            }
+
+            const usuarioAtualizado = {
+                ...usuario,
+                nome: nome,
+                telefone: telefone
+            };
+
+            localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado));
+
+            IS.msg(msg, 'Perfil atualizado com sucesso!', 'success');
+            preencherResumo(usuarioAtualizado);
+        });
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

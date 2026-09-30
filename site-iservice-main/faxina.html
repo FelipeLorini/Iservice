@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Faxina</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="page-head">
+            <div class="container">
+                <a href="index.html#servicos" class="back-link"><i class="fas fa-arrow-left"></i> Todas as categorias</a>
+                <div class="page-head-inner">
+                    <div>
+                        <span class="head-icon"><i class="fas fa-broom"></i></span>
+                        <span class="kicker">Categoria</span>
+                        <h1 class="page-title">Faxina</h1>
+                        <p class="page-sub">Limpeza completa da sua casa com profissionais avaliados pela comunidade de Taquara/RS.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container">
+                <div class="results-bar">
+                    <span id="resumoResultados">Carregando profissionais…</span>
+                    <a href="profissionais.html" class="text-link">Ver todas as categorias <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="grid-3" id="listaServicos"></div>
+
+                <p id="msgStatus" class="inline-msg msg-status form-feedback" role="status"></p>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modalContratar" role="dialog" aria-modal="true" aria-labelledby="tituloModalContratar">
+        <div class="modal">
+            <div class="modal-head">
+                <span class="panel-icon"><i class="fas fa-calendar-plus"></i></span>
+                <div>
+                    <h3 class="modal-title" id="tituloModalContratar">Agendar serviço</h3>
+                    <p class="modal-sub">Escolha a data e o horário que preferir.</p>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="contratarData">Data</label>
+                    <input type="date" id="contratarData">
+                </div>
+                <div class="field">
+                    <label for="contratarHora">Horário</label>
+                    <input type="time" id="contratarHora">
+                </div>
+            </div>
+
+            <p class="inline-msg modal-erro form-feedback" id="contratarErro" role="alert"></p>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost btn-md" id="btnCancelarContratar">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-md" id="btnConfirmarContratar"><i class="fas fa-check"></i> Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        if (!token || !usuario) {
+            window.location.href = 'login.html';
+        }
+
+        const esc = IS.esc;
+
+        async function carregarServicos() {
+            const lista = document.getElementById('listaServicos');
+            const resumo = document.getElementById('resumoResultados');
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/servicos/categoria/faxina', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    resumo.textContent = '';
+                    lista.innerHTML = IS.vazio('fa-triangle-exclamation', 'Erro ao carregar serviços', dados.mensagem || 'Tente novamente em instantes.', 'is-error');
+                    return;
+                }
+
+                if (dados.length === 0) {
+                    resumo.textContent = 'Nenhum profissional disponível';
+                    lista.innerHTML = IS.vazio('fa-broom', 'Nenhum serviço de faxina disponível no momento', 'Volte mais tarde ou veja outras categorias.');
+                    return;
+                }
+
+                resumo.innerHTML = `<strong>${dados.length}</strong> ${dados.length === 1 ? 'serviço disponível' : 'serviços disponíveis'}`;
+
+                lista.innerHTML = dados.map(servico => {
+                    const prestador = servico.prestador_id || {};
+                    const prestadorId = prestador._id || servico.prestador_id;
+                    return `
+                        <article class="listing servico-card">
+                            <div class="listing-top">
+                                <span class="avatar-wrap"><span class="avatar">${esc(IS.inicial(prestador.nome || 'P'))}</span></span>
+                                <div>
+                                    <h3 class="listing-name">${esc(prestador.nome || 'Não informado')}</h3>
+                                    <div class="listing-rating"><span class="sem-avaliacao"><i class="fas fa-user"></i> Prestador</span></div>
+                                </div>
+                            </div>
+                            <div class="listing-body">
+                                <span class="tag"><i class="fas fa-broom"></i>Faxina</span>
+                                <p class="listing-service">${esc(servico.nome)}</p>
+                                <p class="listing-desc">${esc(servico.descricao || 'Descrição não informada')}</p>
+                            </div>
+                            <div class="listing-price"><span>Preço do serviço</span><strong>${IS.moeda(servico.preco)}</strong></div>
+                            <div class="listing-actions">
+                                <button type="button" class="btn btn-ghost btn-sm btn-chat" onclick="abrirChat('${esc(prestadorId)}')"><i class="fas fa-comment-dots"></i> Conversar</button>
+                                <button type="button" class="btn btn-primary btn-sm btn-contratar" onclick="contratar('${esc(servico._id)}')"><i class="fas fa-calendar-plus"></i> Contratar</button>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+            } catch (erro) {
+                resumo.textContent = '';
+                lista.innerHTML = IS.vazio('fa-triangle-exclamation', 'Erro ao conectar com o servidor', 'Verifique sua conexão e tente novamente.', 'is-error');
+            }
+        }
+
+        let servicoParaContratar = null;
+
+        function contratar(servicoId) {
+            servicoParaContratar = servicoId;
+            document.getElementById('contratarData').value = '';
+            document.getElementById('contratarData').min = new Date().toISOString().split('T')[0];
+            document.getElementById('contratarHora').value = '';
+            IS.msg(document.getElementById('contratarErro'), '');
+            IS.abrirModal('modalContratar');
+        }
+
+        document.getElementById('btnCancelarContratar').addEventListener('click', function () {
+            IS.fecharModal('modalContratar');
+        });
+
+        document.getElementById('btnConfirmarContratar').addEventListener('click', async function () {
+            const data = document.getElementById('contratarData').value;
+            const hora = document.getElementById('contratarHora').value;
+            const erro = document.getElementById('contratarErro');
+
+            IS.msg(erro, '');
+
+            if (!data || !hora) {
+                IS.msg(erro, 'Preencha a data e o horário do serviço.', 'error');
+                return;
+            }
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/agendamentos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ servico_id: servicoParaContratar, data, hora })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.msg(erro, dados.mensagem || 'Erro ao agendar', 'error');
+                    return;
+                }
+
+                IS.fecharModal('modalContratar');
+                IS.toast('Serviço agendado com sucesso!');
+                setTimeout(() => { window.location.href = 'dashboard-cliente.html'; }, 900);
+
+            } catch (falha) {
+                IS.msg(erro, 'Erro ao conectar com o servidor', 'error');
+            }
+        });
+
+        async function abrirChat(prestadorId) {
+            if (!prestadorId) {
+                IS.toast('Prestador não identificado.', 'error');
+                return;
+            }
+
+            try {
+                const resposta = await fetch('http://localhost:3000/api/chat/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prestador_id: prestadorId })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    IS.toast(dados.mensagem || 'Erro ao iniciar chat.', 'error');
+                    return;
+                }
+
+                window.location.href = `chat.html?chatId=${dados.chat._id}`;
+
+            } catch (erro) {
+                IS.toast('Erro ao conectar com o servidor.', 'error');
+            }
+        }
+
+        carregarServicos();
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Central de Ajuda</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+</head>
+<body class="app">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-house"></i>Início</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high"></i>Dashboard</a></li>
+                    <li data-auth="in"><a href="profissionais.html"><i class="fas fa-briefcase"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="index.html#servicos">Serviços</a></li>
+                    <li data-auth="out"><a href="faq.html">Ajuda</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" id="btnSair" data-auth="in" data-logout title="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-head page-head-center">
+            <div class="container">
+                <span class="kicker">Central de ajuda</span>
+                <h1 class="page-title">Como podemos <span class="accent">ajudar?</span></h1>
+                <p class="page-sub">Tire suas dúvidas sobre o IService: contas, pedidos, propostas, avaliações e favoritos.</p>
+            </div>
+        </section>
+
+        <div class="page">
+            <div class="container">
+                <div class="faq-wrap">
+                    <div id="faqContainer">
+                        <div class="empty"><i class="fas fa-spinner fa-spin"></i><strong>Carregando perguntas…</strong></div>
+                    </div>
+
+                    <div class="help-band">
+                        <div>
+                            <h2>Ainda precisa de ajuda?</h2>
+                            <p>Fale com a equipe do IService pelo WhatsApp.</p>
+                        </div>
+                        <a class="btn btn-primary btn-md" href="https://wa.me/5551999999999" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Falar com a equipe</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="index.html#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const esc = IS.esc;
+
+        const nomesCategorias = {
+            geral: 'Geral',
+            conta: 'Conta',
+            pedidos: 'Pedidos e propostas',
+            avaliacoes: 'Avaliações',
+            favoritos: 'Favoritos'
+        };
+
+        function alternarPergunta(botao) {
+            const item = botao.closest('.faq-item');
+            const aberto = item.classList.toggle('aberto');
+            botao.setAttribute('aria-expanded', String(aberto));
+        }
+
+        async function carregarFaqs() {
+            const container = document.getElementById('faqContainer');
+
+            try {
+                const resposta = await fetch(`${API_URL}/faq`);
+                const faqs = await resposta.json();
+
+                if (!resposta.ok || faqs.length === 0) {
+                    container.innerHTML = IS.vazio('fa-circle-question', 'Nenhuma pergunta cadastrada ainda', '');
+                    return;
+                }
+
+                const porCategoria = {};
+                faqs.forEach(f => {
+                    const cat = f.categoria || 'geral';
+                    if (!porCategoria[cat]) porCategoria[cat] = [];
+                    porCategoria[cat].push(f);
+                });
+
+                let indice = 0;
+                container.innerHTML = Object.keys(porCategoria).map(cat => `
+                    <section class="faq-categoria">
+                        <h2 class="kicker">${esc(nomesCategorias[cat] || cat)}</h2>
+                        <div class="faq-list">
+                            ${porCategoria[cat].map(f => {
+                                indice++;
+                                return `
+                                <div class="faq-item">
+                                    <button type="button" class="faq-pergunta" aria-expanded="false" aria-controls="faq-resp-${indice}" onclick="alternarPergunta(this)">
+                                        <span>${esc(f.pergunta)}</span>
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <div class="faq-resposta" id="faq-resp-${indice}">${esc(f.resposta)}</div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </section>
+                `).join('');
+
+            } catch (erro) {
+                container.innerHTML = IS.vazio('fa-triangle-exclamation', 'Erro ao carregar as perguntas', 'Não foi possível conectar ao servidor.', 'is-error');
+            }
+        }
+
+        carregarFaqs();
+    </script>
+    <script src="notificacoes.js"></script>
+</body>
+</html>

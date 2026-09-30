@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F1B15">
+    <title>IService - Serviços Domésticos em Taquara/RS</title>
+    <link rel="icon" type="image/png" href="logo-mark.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="IService - página inicial">
+                <img class="brand-logo" src="logo.png" alt="IService">
+            </a>
+            <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="menu" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#profissionais">Profissionais</a></li>
+                    <li><a href="#agendamento">Agendamento</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero">
+            <div class="container hero-grid">
+                <div class="hero-copy">
+                    <span class="eyebrow"><i class="fas fa-map-marker-alt"></i> Taquara · Rio Grande do Sul</span>
+                    <h1>Conectamos você ao <span class="accent">profissional certo</span></h1>
+                    <p class="lead">Encontre os melhores prestadores de serviços em Taquara/RS. Faxina, jardinagem, reparos, elétrica, pintura e encanamento com agendamento rápido e avaliações reais.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-lg" type="button" onclick="window.location.href='contratar.html'">
+                            <i class="fas fa-search"></i> Encontrar profissional
+                        </button>
+                        <a class="btn btn-ghost btn-lg" href="#como-contratar">Como funciona</a>
+                    </div>
+                </div>
+
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="visual-panel">
+                        <img class="visual-mark" src="logo-mark.png" alt="">
+                        <div class="chip chip-1">
+                            <span class="chip-icon"><i class="fas fa-check"></i></span>
+                            <div><strong>Faxina concluída</strong><small>Hoje, 09:30</small></div>
+                        </div>
+                        <div class="chip chip-2">
+                            <span class="chip-icon"><i class="fas fa-star"></i></span>
+                            <div><strong>4.9 de avaliação</strong><small>32 avaliações</small></div>
+                        </div>
+                        <div class="chip chip-3">
+                            <span class="chip-icon"><i class="fas fa-calendar-check"></i></span>
+                            <div><strong>Serviço agendado</strong><small>Amanhã, 14:00</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="trust">
+            <div class="container">
+                <div class="trust-card">
+                    <div class="trust-item">
+                        <span class="trust-icon"><i class="fas fa-check-circle"></i></span>
+                        <div><strong>+300 serviços</strong><span>realizados em Taquara/RS</span></div>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-icon"><i class="fas fa-shield-alt"></i></span>
+                        <div><strong>Profissionais avaliados</strong><span>pela comunidade</span></div>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-icon"><i class="fas fa-bolt"></i></span>
+                        <div><strong>Agendamento rápido</strong><span>ainda hoje</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="como-contratar" class="section section-alt">
+            <div class="container">
+                <div class="section-head">
+                    <span class="kicker">Passo a passo</span>
+                    <h2>Como contratar?</h2>
+                    <p>Em três passos simples você resolve o serviço da sua casa.</p>
+                </div>
+
+                <div class="steps">
+                    <article class="step">
+                        <div class="step-top">
+                            <span class="step-num">1</span>
+                            <i class="fas fa-list-check step-icon"></i>
+                        </div>
+                        <h3>Escolha o serviço</h3>
+                        <p>Selecione a categoria que você precisa: faxina, jardinagem, reparos, elétrica, pintura ou encanamento.</p>
+                    </article>
+                    <article class="step">
+                        <div class="step-top">
+                            <span class="step-num">2</span>
+                            <i class="fas fa-user-check step-icon"></i>
+                        </div>
+                        <h3>Encontre um profissional</h3>
+                        <p>Compare preços, veja as avaliações de outros clientes e converse pelo chat antes de decidir.</p>
+                    </article>
+                    <article class="step">
+                        <div class="step-top">
+                            <span class="step-num">3</span>
+                            <i class="fas fa-calendar-check step-icon"></i>
+                        </div>
+                        <h3>Agende o serviço</h3>
+                        <p>Escolha a data e o horário, confirme o agendamento e avalie o prestador ao final do serviço.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="servicos" class="section">
+            <div class="container">
+                <div class="section-head">
+                    <span class="kicker">Categorias</span>
+                    <h2>Nossos Serviços</h2>
+                    <p>Escolha a categoria e veja os profissionais disponíveis em Taquara/RS.</p>
+                </div>
+
+                <div class="grid-3">
+                    <article class="service-card">
+                        <span class="service-icon"><i class="fas fa-broom"></i></span>
+                        <h3>Faxina</h3>
+                        <p>Limpeza completa da sua casa.</p>
+                        <a class="btn btn-ghost btn-sm" href="faxina.html">Ver profissionais <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="service-card">
+                        <span class="service-icon"><i class="fas fa-seedling"></i></span>
+                        <h3>Jardinagem</h3>
+                        <p>Cuidamos do seu jardim.</p>
+                        <a class="btn btn-ghost btn-sm" href="jardinagem.html">Ver profissionais <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="service-card">
+                        <span class="service-icon"><i class="fas fa-tools"></i></span>
+                        <h3>Reparos</h3>
+                        <p>Pequenos reparos e manutenções.</p>
+                        <a class="btn btn-ghost btn-sm" href="Reparos.html">Ver profissionais <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="service-card">
+                        <span class="service-icon"><i class="fas fa-bolt"></i></span>
+                        <h3>Elétrica</h3>
+                        <p>Instalações e reparos elétricos.</p>
+                        <a class="btn btn-ghost btn-sm" href="eletrica.html">Ver profissionais <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="service-card">
+                        <span class="service-icon"><i class="fas fa-paint-roller"></i></span>
+                        <h3>Pintura</h3>
+                        <p>Pintura interna e externa.</p>
+                        <a class="btn btn-ghost btn-sm" href="pintura.html">Ver profissionais <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="service-card">
+                        <span class="service-icon"><i class="fas fa-water"></i></span>
+                        <h3>Encanamento</h3>
+                        <p>Reparos hidráulicos em geral.</p>
+                        <a class="btn btn-ghost btn-sm" href="encanamento.html">Ver profissionais <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="profissionais" class="section section-alt">
+            <div class="container">
+                <div class="section-head">
+                    <span class="kicker">Destaques</span>
+                    <h2>Profissionais</h2>
+                    <p>Prestadores bem avaliados pela comunidade de Taquara/RS.</p>
+                </div>
+
+                <div class="grid-3">
+                    <article class="pro-card">
+                        <span class="pro-avatar">M</span>
+                        <h3>Maria Silva</h3>
+                        <span class="pro-role">Faxina</span>
+                        <p class="pro-rating"><i class="fas fa-star"></i>4.5</p>
+                        <a class="btn btn-primary btn-md" href="contratar.html">Contratar</a>
+                    </article>
+                    <article class="pro-card">
+                        <span class="pro-avatar">J</span>
+                        <h3>João Mendes</h3>
+                        <span class="pro-role">Jardinagem</span>
+                        <p class="pro-rating"><i class="fas fa-star"></i>5.0</p>
+                        <a class="btn btn-primary btn-md" href="contratar.html">Contratar</a>
+                    </article>
+                    <article class="pro-card">
+                        <span class="pro-avatar">C</span>
+                        <h3>Carlos Souza</h3>
+                        <span class="pro-role">Reparos</span>
+                        <p class="pro-rating"><i class="fas fa-star"></i>3.5</p>
+                        <a class="btn btn-primary btn-md" href="contratar.html">Contratar</a>
+                    </article>
+                    <article class="pro-card">
+                        <span class="pro-avatar">A</span>
+                        <h3>Ana Oliveira</h3>
+                        <span class="pro-role">Elétrica</span>
+                        <p class="pro-rating"><i class="fas fa-star"></i>4.8</p>
+                        <a class="btn btn-primary btn-md" href="contratar.html">Contratar</a>
+                    </article>
+                    <article class="pro-card">
+                        <span class="pro-avatar">R</span>
+                        <h3>Roberto Silva</h3>
+                        <span class="pro-role">Pintura</span>
+                        <p class="pro-rating"><i class="fas fa-star"></i>4.2</p>
+                        <a class="btn btn-primary btn-md" href="contratar.html">Contratar</a>
+                    </article>
+                    <article class="pro-card">
+                        <span class="pro-avatar">P</span>
+                        <h3>Patrícia Lima</h3>
+                        <span class="pro-role">Encanamento</span>
+                        <p class="pro-rating"><i class="fas fa-star"></i>4.9</p>
+                        <a class="btn btn-primary btn-md" href="contratar.html">Contratar</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="agendamento" class="section">
+            <div class="container booking">
+                <div class="booking-copy">
+                    <span class="kicker">Agendamento</span>
+                    <h2>Agendar</h2>
+                    <p>Escolha o serviço, a data e o horário que combinam com a sua rotina.</p>
+                    <ul class="check-list">
+                        <li><i class="fas fa-check"></i> Profissionais avaliados pela comunidade</li>
+                        <li><i class="fas fa-check"></i> Horários flexíveis, de manhã ou à tarde</li>
+                        <li><i class="fas fa-check"></i> Converse com o prestador pelo chat</li>
+                    </ul>
+                </div>
+
+                <div class="booking-form">
+                    <div class="field">
+                        <label for="servico">Serviço</label>
+                        <select id="servico">
+                            <option value="">Selecione...</option>
+                            <option value="faxina">Faxina</option>
+                            <option value="jardinagem">Jardinagem</option>
+                            <option value="reparos">Reparos</option>
+                            <option value="eletrica">Elétrica</option>
+                            <option value="pintura">Pintura</option>
+                            <option value="encanamento">Encanamento</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="data">Data</label>
+                        <input type="date" id="data">
+                    </div>
+
+                    <div class="field">
+                        <label for="horario">Horário</label>
+                        <select id="horario">
+                            <option value="">Selecione...</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                        </select>
+                    </div>
+
+                    <button id="btnAgendar" class="btn btn-primary btn-lg btn-block" type="button">Agendar</button>
+                    <p id="msgAgendamento" class="form-msg" role="status"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-alt">
+            <div class="container">
+                <div class="cta-band">
+                    <div>
+                        <h2>Você é prestador de serviços?</h2>
+                        <p>Crie sua conta e divulgue seu trabalho para clientes de Taquara/RS.</p>
+                    </div>
+                    <a class="btn btn-primary btn-lg" href="cadastro.html">Criar conta de prestador</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img class="footer-logo" src="logo.png" alt="IService">
+                <p>Conectando clientes e prestadores de serviços domésticos em Taquara/RS.</p>
+                <div class="socials">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/5551999999999" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <nav class="footer-col" aria-label="Navegação do rodapé">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#profissionais">Profissionais</a></li>
+                    <li><a href="#agendamento">Agendamento</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Conta">
+                <h4>Conta</h4>
+                <ul>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="cadastro.html">Criar Conta</a></li>
+                    <li><a href="faq.html">Central de Ajuda</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-label="Informações">
+                <h4>Informações</h4>
+                <ul>
+                    <li><a href="#">Diretrizes de privacidade de dados</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Opção de privacidade</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2026 IService - Taquara/RS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const nav = document.getElementById('mainNav');
+        const toggle = document.querySelector('.nav-toggle');
+
+        function setMenu(open) {
+            nav.classList.toggle('open', open);
+            toggle.setAttribute('aria-expanded', String(open));
+            toggle.innerHTML = open ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        }
+
+        toggle.addEventListener('click', function () {
+            setMenu(!nav.classList.contains('open'));
+        });
+
+        nav.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                setMenu(false);
+            });
+        });
+
+        const campoData = document.getElementById('data');
+        campoData.min = new Date().toISOString().split('T')[0];
+
+        startAgendamento();
+    </script>
+</body>
+</html>
