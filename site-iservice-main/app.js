@@ -20,7 +20,7 @@
 
     var IS = window.IS = {};
 
-    IS.API_URL = 'http://localhost:3000/api';
+    IS.API_URL = '/api';
     IS.logado = logado;
     IS.usuario = usuario;
 

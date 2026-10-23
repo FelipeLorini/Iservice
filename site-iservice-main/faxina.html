@@ -170,7 +170,7 @@
             const resumo = document.getElementById('resumoResultados');
 
             try {
-                const resposta = await fetch('http://localhost:3000/api/servicos/categoria/faxina', {
+                const resposta = await fetch(IS.API_URL + '/servicos/categoria/faxina', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -252,7 +252,7 @@
             }
 
             try {
-                const resposta = await fetch('http://localhost:3000/api/agendamentos', {
+                const resposta = await fetch(IS.API_URL + '/agendamentos', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -284,7 +284,7 @@
             }
 
             try {
-                const resposta = await fetch('http://localhost:3000/api/chat/start', {
+                const resposta = await fetch(IS.API_URL + '/chat/start', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

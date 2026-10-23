@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     startMenu();
     startButtons();
-    startLogin();
-    startRegister();
     startScrollSpy();
 });
 
@@ -34,119 +32,6 @@ function startButtons() {
     if (contractButton) {
         contractButton.addEventListener("click", goToLogin);
     }
-}
-
-function startLogin() {
-    const form = document.getElementById("loginForm");
-
-    if (!form) return;
-
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
-
-        validateLogin(email, senha);
-    });
-}
-
-function validateLogin(email, senha) {
-    const emailPadrao = "admin@email.com";
-    const senhaPadrao = "123";
-
-    let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const usuarioEncontrado = usuarios.find(u => u.email === email && u.senha === senha);
-
-    if (usuarioEncontrado) {
-        alert(`Bem-vindo, ${usuarioEncontrado.nome}!`);
-        window.location.href = "index.html";
-        return;
-    }
-
-    if (email === emailPadrao && senha === senhaPadrao) {
-        alert("Login realizado com sucesso!");
-        window.location.href = "index.html";
-        return;
-    }
-
-    alert("Email ou senha inválidos.");
-}
-
-function clearLoginForm() {
-    document.getElementById("email").value = "";
-    document.getElementById("senha").value = "";
-}
-
-function startRegister() {
-    const form = document.getElementById("registerForm");
-    const tipoBtns = document.querySelectorAll(".tipo-btn");
-    const prestadorFields = document.getElementById("prestadorFields");
-    let tipoCadastro = "cliente";
-
-    if (tipoBtns.length > 0) {
-        tipoBtns.forEach((btn) => {
-            btn.addEventListener("click", () => {
-                tipoBtns.forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-                
-                tipoCadastro = btn.getAttribute("data-tipo");
-
-                if (tipoCadastro === "prestador") {
-                    prestadorFields.classList.add("show");
-                } else {
-                    prestadorFields.classList.remove("show");
-                }
-            });
-        });
-    }
-
-    if (!form) return;
-
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const nome = document.getElementById("nome").value;
-        const email = document.getElementById("registerEmail").value;
-        const senha = document.getElementById("registerSenha").value;
-
-        if (!nome || !email || !senha) {
-            alert("Preencha todos os campos obrigatórios!");
-            return;
-        }
-
-        if (senha.length < 6) {
-            alert("A senha deve ter no mínimo 6 caracteres!");
-            return;
-        }
-
-        const usuario = {
-            nome: nome,
-            email: email,
-            senha: senha,
-            tipo: tipoCadastro
-        };
-
-        if (tipoCadastro === "prestador") {
-            const especialidade = document.getElementById("especialidade").value;
-            const descricao = document.getElementById("descricao").value;
-
-            if (!especialidade) {
-                alert("Selecione sua especialidade!");
-                return;
-            }
-
-            usuario.especialidade = especialidade;
-            usuario.descricao = descricao;
-        }
-
-        let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-        usuarios.push(usuario);
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
-
-        alert("Conta criada com sucesso!");
-        window.location.href = "login.html";
-    });
 }
 
 function startScrollSpy() {

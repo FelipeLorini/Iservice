@@ -225,7 +225,7 @@
             botao.disabled = true;
 
             try {
-                const resposta = await fetch('http://localhost:3000/api/cadastro', {
+                const resposta = await fetch(IS.API_URL + '/cadastro', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

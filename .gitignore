@@ -1,0 +1,30 @@
+# Dependencias instaladas localmente
+node_modules/
+
+# Configuracoes locais e segredos; exemplos sem segredos podem ser versionados
+.env
+.env.*
+!.env.example
+
+# Logs de execucao
+logs/
+*.log
+
+# Arquivos temporarios e caches
+tmp/
+temp/
+.cache/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Relatorios gerados por testes
+coverage/
+.nyc_output/
+
+# Metadados do sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
