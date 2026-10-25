@@ -149,7 +149,7 @@
             if (!chatId) return;
 
             try {
-                const resposta = await fetch(`http://localhost:3000/api/chat/${chatId}`, {
+                const resposta = await fetch(`${IS.API_URL}/chat/${chatId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -209,7 +209,7 @@
             btnEnviar.disabled = true;
 
             try {
-                const resposta = await fetch('http://localhost:3000/api/chat/message', {
+                const resposta = await fetch(IS.API_URL + '/chat/message', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

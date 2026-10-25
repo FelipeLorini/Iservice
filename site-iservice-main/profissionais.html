@@ -190,7 +190,7 @@
 
         async function carregarProfissionais() {
             try {
-                const resposta = await fetch('http://localhost:3000/api/servicos', {
+                const resposta = await fetch(IS.API_URL + '/servicos', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -327,7 +327,7 @@
         async function carregarFavoritos() {
             if (usuario.tipo !== 'cliente') return;
             try {
-                const resposta = await fetch('http://localhost:3000/api/favoritos', {
+                const resposta = await fetch(IS.API_URL + '/favoritos', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const dados = await resposta.json();
@@ -343,13 +343,13 @@
             try {
                 const marcar = !favoritosIds.has(prestadorId);
                 if (!marcar) {
-                    await fetch(`http://localhost:3000/api/favoritos/${prestadorId}`, {
+                    await fetch(`${IS.API_URL}/favoritos/${prestadorId}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     favoritosIds.delete(prestadorId);
                 } else {
-                    await fetch('http://localhost:3000/api/favoritos', {
+                    await fetch(IS.API_URL + '/favoritos', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -382,8 +382,8 @@
                 try {
                     if (!cacheExtras[prestadorId]) {
                         const [respMedia, respPerfil] = await Promise.all([
-                            fetch(`http://localhost:3000/api/avaliacoes/prestador/${prestadorId}/media`),
-                            fetch(`http://localhost:3000/api/usuario/${prestadorId}/perfil`)
+                            fetch(`${IS.API_URL}/avaliacoes/prestador/${prestadorId}/media`),
+                            fetch(`${IS.API_URL}/usuario/${prestadorId}/perfil`)
                         ]);
                         cacheExtras[prestadorId] = {
                             media: respMedia.ok ? await respMedia.json() : { total: 0 },
@@ -437,7 +437,7 @@
             }
 
             try {
-                const resposta = await fetch('http://localhost:3000/api/agendamentos', {
+                const resposta = await fetch(IS.API_URL + '/agendamentos', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -471,7 +471,7 @@
             }
 
             try {
-                const resposta = await fetch('http://localhost:3000/api/chat/start', {
+                const resposta = await fetch(IS.API_URL + '/chat/start', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

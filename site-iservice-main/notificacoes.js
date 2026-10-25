@@ -4,7 +4,7 @@
      GET  /api/notificacoes/nao-lidas  contador
      PUT  /api/notificacoes/:id/lida   marca uma como lida */
 (function () {
-    var API_URL = 'http://localhost:3000/api';
+    var API_URL = IS.API_URL;
     var token = localStorage.getItem('token');
 
     if (!token) return;

@@ -27,6 +27,7 @@ exports.cadastrar = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao cadastrar usuario', erro: error.message });
+    console.error('Falha interna na operacao de cadastro');
+    res.status(500).json({ mensagem: 'Erro ao cadastrar usuario' });
   }
 };

@@ -21,46 +21,35 @@ exports.startChat = async (req, res) => {
       chat
     });
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao iniciar chat', erro: error.message });
+    console.error('Falha interna na operacao de chat');
+    res.status(500).json({ mensagem: 'Erro ao iniciar chat' });
   }
 };
 
 exports.sendMessage = async (req, res) => {
   try {
-    console.log('1 - sendMessage chamado');
-    console.log('2 - Body:', req.body);
-    console.log('3 - Usuario ID:', req.usuarioId);
 
     const { chat_id, content } = req.body;
     const sender = req.usuarioId;
 
     if (!chat_id || !content) {
-      console.log('4 - chat_id ou content faltando');
       return res.status(400).json({ mensagem: 'chat_id e content sao obrigatorios' });
     }
 
-    console.log('5 - Buscando chat...');
     const chat = await Chat.findById(chat_id);
-    console.log('6 - Chat encontrado:', chat ? 'Sim' : 'Nao');
 
     if (!chat) {
-      console.log('7 - Chat nao encontrado');
       return res.status(404).json({ mensagem: 'Chat nao encontrado' });
     }
 
-    console.log('8 - Participants:', chat.participants);
-    console.log('9 - Sender:', sender);
 
     if (!chat.participants.includes(sender)) {
-      console.log('10 - Usuario nao participa do chat');
       return res.status(403).json({ mensagem: 'Voce nao participa deste chat' });
     }
 
     const receiver = chat.participants.find(p => p.toString() !== sender);
-    console.log('11 - Receiver:', receiver);
 
     if (!receiver) {
-      console.log('12 - Receiver nao encontrado');
       return res.status(400).json({ mensagem: 'Destinatario nao encontrado' });
     }
 
@@ -71,21 +60,18 @@ exports.sendMessage = async (req, res) => {
       read: false
     };
 
-    console.log('13 - Adicionando mensagem...');
     chat.messages.push(message);
     chat.lastMessage = Date.now();
     await chat.save();
 
-    console.log('14 - Mensagem enviada com sucesso');
     res.status(201).json({
       mensagem: 'Mensagem enviada com sucesso',
       message: chat.messages[chat.messages.length - 1]
     });
 
   } catch (error) {
-    console.log('15 - ERRO CAPTURADO:', error.message);
-    console.log('16 - Stack:', error.stack);
-    res.status(500).json({ mensagem: 'Erro ao enviar mensagem', erro: error.message });
+    console.error('Falha interna na operacao de chat');
+    res.status(500).json({ mensagem: 'Erro ao enviar mensagem' });
   }
 };
 
@@ -121,7 +107,8 @@ exports.getChatMessages = async (req, res) => {
       messages
     });
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao buscar mensagens', erro: error.message });
+    console.error('Falha interna na operacao de chat');
+    res.status(500).json({ mensagem: 'Erro ao buscar mensagens' });
   }
 };
 
@@ -161,7 +148,8 @@ exports.getUserChats = async (req, res) => {
 
     res.json(chatsComInfo);
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao buscar chats', erro: error.message });
+    console.error('Falha interna na operacao de chat');
+    res.status(500).json({ mensagem: 'Erro ao buscar chats' });
   }
 };
 
@@ -191,7 +179,8 @@ exports.markAsRead = async (req, res) => {
       marcadas
     });
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao marcar mensagens', erro: error.message });
+    console.error('Falha interna na operacao de chat');
+    res.status(500).json({ mensagem: 'Erro ao marcar mensagens' });
   }
 };
 
@@ -215,6 +204,7 @@ exports.getUnreadCount = async (req, res) => {
 
     res.json({ total_nao_lidas: totalNaoLidas });
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao buscar nao lidas', erro: error.message });
+    console.error('Falha interna na operacao de chat');
+    res.status(500).json({ mensagem: 'Erro ao buscar nao lidas' });
   }
 };
