@@ -18,7 +18,9 @@ const AvaliacaoSchema = new mongoose.Schema({
   },
   agendamento_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Agendamento'
+    ref: 'Agendamento',
+    // Exige vinculo nas novas avaliacoes sem invalidar documentos antigos.
+    required: function () { return this.isNew; }
   },
   nota: {
     type: Number,

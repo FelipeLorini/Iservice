@@ -29,6 +29,7 @@ router.put('/agendamentos/:id/status', auth, verificarPrestador, AgendamentoCont
 router.put('/agendamentos/:id/cancelar', auth, verificarCliente, AgendamentoController.cancelarAgendamento);
 
 router.post('/avaliacoes', auth, verificarCliente, AvaliacaoController.criarAvaliacao);
+router.get('/avaliacoes/cliente', auth, verificarCliente, AvaliacaoController.listarAvaliacoesCliente);
 router.get('/avaliacoes/prestador/:id', AvaliacaoController.listarAvaliacoesPorPrestador);
 router.get('/avaliacoes/prestador/:id/media', AvaliacaoController.calcularMedia);
 
