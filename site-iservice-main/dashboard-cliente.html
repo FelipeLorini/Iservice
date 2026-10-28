@@ -72,7 +72,7 @@
                     </div>
                     <div class="stat">
                         <span class="stat-icon"><i class="fas fa-star"></i></span>
-                        <div><span class="stat-value" id="totalAvaliacoes">0</span><span class="stat-label">Avaliações feitas</span></div>
+                        <div><span class="stat-value" id="totalAvaliacoes">—</span><span class="stat-label">Avaliações feitas</span><span class="muted" id="avisoAvaliacoes" role="status"></span></div>
                     </div>
                     <div class="stat">
                         <span class="stat-icon"><i class="fas fa-heart"></i></span>
@@ -302,17 +302,81 @@
             return n + ' ' + (n === 1 ? um : varios);
         }
 
-        async function carregarAgendamentos() {
+        let agendamentosAvaliados = null;
+        let agendamentosCliente = null;
+        let mensagemEstadoAvaliacoes = 'Consultando avaliações…';
+        let carregamentoAgendamentos = 0;
+
+        function carregarAgendamentos() {
+            const carregamentoAtual = ++carregamentoAgendamentos;
+            agendamentosAvaliados = null;
+            mensagemEstadoAvaliacoes = 'Consultando avaliações…';
+            const contador = document.getElementById('totalAvaliacoes');
+            contador.textContent = '—';
+            contador.title = 'Consultando avaliações';
+            document.getElementById('avisoAvaliacoes').textContent = mensagemEstadoAvaliacoes;
+            if (agendamentosCliente !== null) renderizarAgendamentos(agendamentosCliente);
+            agendamentosCliente = null;
+
+            // Cada consulta atualiza a interface assim que termina, sem esperar a outra.
+            return Promise.all([
+                carregarListaAgendamentos(carregamentoAtual),
+                carregarAvaliacoesCliente(carregamentoAtual)
+            ]);
+        }
+
+        async function carregarListaAgendamentos(carregamentoAtual) {
             try {
                 const resposta = await fetch(`${API_URL}/agendamentos/cliente`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!resposta.ok) throw new Error('Erro ao consultar agendamentos');
                 const dados = await resposta.json();
+                if (!Array.isArray(dados)) throw new Error('Resposta de agendamentos inválida');
+                if (carregamentoAtual !== carregamentoAgendamentos) return;
+                agendamentosCliente = dados;
+                renderizarAgendamentos(dados);
+            } catch (erro) {
+                if (carregamentoAtual !== carregamentoAgendamentos) return;
+                console.error('Erro ao carregar agendamentos:', erro);
+            }
+        }
 
+        async function carregarAvaliacoesCliente(carregamentoAtual) {
+            const contador = document.getElementById('totalAvaliacoes');
+            const aviso = document.getElementById('avisoAvaliacoes');
+            try {
+                const resposta = await fetch(`${API_URL}/avaliacoes/cliente`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!resposta.ok) throw new Error('Erro ao consultar avaliações');
+                const dados = await resposta.json();
+                if (!Number.isInteger(dados.total) || dados.total < 0 ||
+                    !Array.isArray(dados.agendamentos_avaliados) ||
+                    !dados.agendamentos_avaliados.every(id => typeof id === 'string')) {
+                    throw new Error('Resposta de avaliações inválida');
+                }
+                if (carregamentoAtual !== carregamentoAgendamentos) return;
+                agendamentosAvaliados = new Set(dados.agendamentos_avaliados);
+                contador.textContent = dados.total;
+                contador.title = '';
+                aviso.textContent = '';
+            } catch (erro) {
+                if (carregamentoAtual !== carregamentoAgendamentos) return;
+                agendamentosAvaliados = null;
+                mensagemEstadoAvaliacoes = 'Avaliações indisponíveis';
+                contador.textContent = '—';
+                contador.title = 'Não foi possível consultar suas avaliações. Atualize a página para tentar novamente.';
+                aviso.textContent = contador.title;
+            }
+            if (agendamentosCliente !== null) renderizarAgendamentos(agendamentosCliente);
+        }
+
+        function renderizarAgendamentos(dados) {
                 const container = document.getElementById('listaAgendamentos');
                 const historico = document.getElementById('listaServicos');
 
-                if (!resposta.ok || dados.length === 0) {
+                if (dados.length === 0) {
                     container.innerHTML = IS.vazio('fa-calendar-plus', 'Nenhum agendamento pendente', 'Encontre um profissional e agende seu primeiro serviço.');
                     historico.innerHTML = IS.vazio('fa-box-open', '', 'Nenhum serviço concluído ainda.', 'empty-sm');
                     document.getElementById('pendentes').textContent = '0';
@@ -372,14 +436,15 @@
                                 <span><i class="fas fa-user"></i>${esc(a.prestador_id?.nome || 'Prestador')}</span>
                                 <span><i class="fas fa-calendar"></i>${IS.data(a.data)}</span>
                             </div>
-                            ${a.status === 'finalizado' ? `<button type="button" class="btn btn-soft btn-xs btn-avaliar" onclick="abrirModalAvaliacao('${esc(a.prestador_id?._id || a.prestador_id)}', '${esc(a.servico_id?._id || a.servico_id)}', '${esc(a._id)}')"><i class="fas fa-star"></i> Avaliar</button>` : ''}
+                            ${a.status === 'finalizado' ? (
+                                agendamentosAvaliados === null ? `<span class="muted">${esc(mensagemEstadoAvaliacoes)}</span>` :
+                                agendamentosAvaliados.has(a._id) ? '<span class="muted">Avaliado</span>' :
+                                `<button type="button" class="btn btn-soft btn-xs btn-avaliar" onclick="abrirModalAvaliacao('${esc(a._id)}')"><i class="fas fa-star"></i> Avaliar</button>`
+                            ) : ''}
                         </div>
                     `).join('');
                 }
 
-            } catch (erro) {
-                console.error('Erro ao carregar agendamentos:', erro);
-            }
         }
 
         async function cancelarAgendamento(agendamentoId) {
@@ -406,9 +471,16 @@
 
         let notaSelecionada = 0;
         let avaliacaoContexto = {};
+        let enviandoAvaliacao = false;
 
-        function abrirModalAvaliacao(prestadorId, servicoId, agendamentoId) {
-            avaliacaoContexto = { prestadorId, servicoId, agendamentoId };
+        function podeAvaliar(agendamentoId) {
+            return agendamentosAvaliados !== null && !agendamentosAvaliados.has(agendamentoId) &&
+                agendamentosCliente !== null && agendamentosCliente.some(a => a._id === agendamentoId && a.status === 'finalizado');
+        }
+
+        function abrirModalAvaliacao(agendamentoId) {
+            if (enviandoAvaliacao || !podeAvaliar(agendamentoId)) return;
+            avaliacaoContexto = { agendamentoId };
             notaSelecionada = 0;
             document.getElementById('modalComentario').value = '';
             IS.msg(document.getElementById('msgAvaliacao'), '');
@@ -445,6 +517,12 @@
 
         document.getElementById('btnConfirmarAvaliacao').addEventListener('click', async function () {
             const msg = document.getElementById('msgAvaliacao');
+            if (enviandoAvaliacao) return;
+
+            if (!podeAvaliar(avaliacaoContexto.agendamentoId)) {
+                IS.msg(msg, 'Não foi possível confirmar se este agendamento pode ser avaliado. Atualize a página.', 'error');
+                return;
+            }
 
             if (notaSelecionada === 0) {
                 IS.msg(msg, 'Selecione uma nota de 1 a 5 estrelas.', 'error');
@@ -452,6 +530,8 @@
             }
 
             const comentario = document.getElementById('modalComentario').value.trim();
+            enviandoAvaliacao = true;
+            this.disabled = true;
 
             try {
                 const resposta = await fetch(`${API_URL}/avaliacoes`, {
@@ -461,8 +541,6 @@
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        prestador_id: avaliacaoContexto.prestadorId,
-                        servico_id: avaliacaoContexto.servicoId,
                         agendamento_id: avaliacaoContexto.agendamentoId,
                         nota: notaSelecionada,
                         comentario
@@ -473,6 +551,7 @@
 
                 if (!resposta.ok) {
                     IS.msg(msg, dados.mensagem || 'Erro ao enviar avaliação.', 'error');
+                    if (dados.codigo === 'AVALIACAO_DUPLICADA') carregarAgendamentos();
                     return;
                 }
 
@@ -482,6 +561,9 @@
 
             } catch (erro) {
                 IS.msg(msg, 'Erro ao conectar com o servidor.', 'error');
+            } finally {
+                enviandoAvaliacao = false;
+                this.disabled = false;
             }
         });
 
