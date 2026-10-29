@@ -1,21 +1,34 @@
 const Servico = require('../Models/servicoModel');
 
+const servicoPublico = (servico) => ({
+  _id: servico._id,
+  nome: servico.nome,
+  descricao: servico.descricao,
+  preco: servico.preco,
+  categoria: servico.categoria,
+  data_criacao: servico.data_criacao,
+  prestador_id: servico.prestador_id ? {
+    _id: servico.prestador_id._id,
+    nome: servico.prestador_id.nome
+  } : null
+});
+
 exports.listarServicos = async (req, res) => {
   try {
-    const servicos = await Servico.find().populate('prestador_id', 'nome telefone');
-    res.json(servicos);
+    const servicos = await Servico.find().populate('prestador_id', 'nome');
+    res.json(servicos.map(servicoPublico));
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao listar servicos', erro: error.message });
+    res.status(500).json({ mensagem: 'Erro ao listar servicos' });
   }
 };
 
 exports.listarServicosPorCategoria = async (req, res) => {
   try {
     const { categoria } = req.params;
-    const servicos = await Servico.find({ categoria }).populate('prestador_id', 'nome telefone');
-    res.json(servicos);
+    const servicos = await Servico.find({ categoria }).populate('prestador_id', 'nome');
+    res.json(servicos.map(servicoPublico));
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao listar servicos', erro: error.message });
+    res.status(500).json({ mensagem: 'Erro ao listar servicos' });
   }
 };
 
