@@ -5,9 +5,9 @@
      PUT  /api/notificacoes/:id/lida   marca uma como lida */
 (function () {
     var API_URL = IS.API_URL;
-    var token = localStorage.getItem('token');
+    var token = IS.token;
 
-    if (!token) return;
+    if (!IS.logado) return;
 
     var TIPOS = {
         nova_proposta: { titulo: 'Nova proposta recebida', icone: 'fa-file-invoice-dollar', classe: '' },
@@ -131,6 +131,7 @@
     }
 
     async function atualizarContador() {
+        if (!IS.logado) return;
         try {
             var resposta = await fetch(API_URL + '/notificacoes/nao-lidas', {
                 headers: { 'Authorization': 'Bearer ' + token }

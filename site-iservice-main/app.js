@@ -1,28 +1,125 @@
-/* iService — utilidades compartilhadas das páginas internas.
+/* iService — navegação e utilidades compartilhadas.
    Carregado no <head> (sem defer) para marcar o estado de login antes da
    primeira pintura e disponibilizar as funções auxiliares (window.IS)
    para os scripts de cada página. */
 (function () {
     var root = document.documentElement;
+    var IS = window.IS = {};
+    IS.API_URL = '/api';
     var token = null;
     var usuario = null;
+    var expiraEm = 0;
+    var timerSessao;
+    var paginaProtegida = false;
 
-    try {
-        token = localStorage.getItem('token');
-        usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
-    } catch (e) {
-        usuario = null;
+    function limparArmazenamento() {
+        try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+        } catch (e) { /* Storage indisponível: ainda encerramos o estado em memória. */ }
     }
 
-    var logado = !!(token && usuario);
-    root.classList.add(logado ? 'is-auth' : 'is-guest');
-    if (logado && usuario.tipo) root.classList.add('is-' + usuario.tipo);
+    function lerSessao() {
+        try {
+            var salvo = localStorage.getItem('token');
+            var pessoa = JSON.parse(localStorage.getItem('usuario') || 'null');
+            var partes = (salvo || '').split('.');
+            if (partes.length !== 3 || !partes.every(function (p) { return /^[A-Za-z0-9_-]+$/.test(p); })) return null;
+            function decodificar(parte) {
+                var base64 = parte.replace(/-/g, '+').replace(/_/g, '/');
+                base64 += '='.repeat((4 - base64.length % 4) % 4);
+                return JSON.parse(decodeURIComponent(Array.from(atob(base64), function (c) {
+                    return '%' + c.charCodeAt(0).toString(16).padStart(2, '0');
+                }).join('')));
+            }
+            var cabecalho = decodificar(partes[0]);
+            var dados = decodificar(partes[1]);
+            var agora = Date.now() / 1000;
+            if (!cabecalho || cabecalho.alg !== 'HS256' || !dados || !pessoa ||
+                typeof pessoa.id !== 'string' || !pessoa.id ||
+                !['cliente', 'prestador'].includes(pessoa.tipo) ||
+                dados.id !== pessoa.id || dados.tipo !== pessoa.tipo ||
+                typeof dados.exp !== 'number' || !Number.isFinite(dados.exp) || dados.exp <= agora ||
+                (dados.nbf !== undefined && (typeof dados.nbf !== 'number' || dados.nbf > agora))) return null;
+            // Decodificar não valida a assinatura. Este estado é apenas visual;
+            // a API autoriza cada operação e um 401 invalida esta sessão.
+            return { token: salvo, usuario: pessoa, expiraEm: dados.exp * 1000 };
+        } catch (e) {
+            return null;
+        }
+    }
 
-    var IS = window.IS = {};
+    function aplicarSessao(sessao) {
+        token = sessao ? sessao.token : null;
+        usuario = sessao ? sessao.usuario : null;
+        expiraEm = sessao ? sessao.expiraEm : 0;
+        IS.token = token;
+        IS.usuario = usuario;
+        IS.logado = !!sessao;
+        root.classList.remove('is-auth', 'is-guest', 'is-cliente', 'is-prestador');
+        root.classList.add(sessao ? 'is-auth' : 'is-guest');
+        if (usuario) root.classList.add('is-' + usuario.tipo);
+        clearTimeout(timerSessao);
+        if (sessao) timerSessao = setTimeout(sincronizarSessao, Math.min(expiraEm - Date.now(), 2147483647));
+    }
 
-    IS.API_URL = '/api';
-    IS.logado = logado;
-    IS.usuario = usuario;
+    function atualizarDestinos() {
+        document.querySelectorAll('[data-link="dashboard"]').forEach(function (a) { a.href = IS.dashboardUrl(); });
+        document.querySelectorAll('[data-link="perfil"]').forEach(function (a) { a.href = IS.perfilUrl(); });
+    }
+
+    function sincronizarSessao() {
+        var anterior = token;
+        var sessao = lerSessao();
+        if (!sessao) limparArmazenamento();
+        aplicarSessao(sessao);
+        atualizarDestinos();
+        if (paginaProtegida && !sessao) window.location.replace('login.html');
+        else if (sessao && anterior !== token) window.location.reload();
+    }
+
+    var inicial = lerSessao();
+    if (!inicial) limparArmazenamento();
+    aplicarSessao(inicial);
+
+    IS.exigirSessao = function (tipo) {
+        paginaProtegida = true;
+        if (!IS.logado) {
+            window.location.replace('login.html');
+            return false;
+        }
+        if (tipo && usuario.tipo !== tipo) {
+            window.location.replace(IS.dashboardUrl());
+            return false;
+        }
+        return true;
+    };
+
+    window.addEventListener('storage', function (event) {
+        if (event.key === null || event.key === 'token' || event.key === 'usuario') sincronizarSessao();
+    });
+    window.addEventListener('pageshow', sincronizarSessao);
+
+    // Observa somente respostas da nossa API que usaram a sessão atual.
+    // Mantém Request/Response, corpo, headers e rejeições de rede intactos.
+    var fetchOriginal = window.fetch;
+    window.fetch = async function (input, options) {
+        var usado = null;
+        try {
+            var url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, location.href);
+            var headers = new Headers(options && options.headers !== undefined ? options.headers : input.headers);
+            if (url.origin === location.origin && url.pathname.startsWith('/api/') &&
+                !['/api/login', '/api/cadastro'].includes(url.pathname)) {
+                usado = headers.get('Authorization');
+            }
+        } catch (e) { /* Deixa a validação da requisição com o fetch nativo. */ }
+        var resposta = await fetchOriginal.apply(window, arguments);
+        var tokenAtual = null;
+        try { tokenAtual = localStorage.getItem('token'); } catch (e) { /* Sem storage. */ }
+        if (resposta.status === 401 && token && usado === 'Bearer ' + token &&
+            tokenAtual === token) IS.sair();
+        return resposta;
+    };
 
     IS.dashboardUrl = function () {
         return usuario && usuario.tipo === 'prestador' ? 'dashboard-prestador.html' : 'dashboard-cliente.html';
@@ -154,9 +251,10 @@
     };
 
     IS.sair = function () {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
-        window.location.href = 'login.html';
+        limparArmazenamento();
+        aplicarSessao(null);
+        atualizarDestinos();
+        window.location.replace('login.html');
     };
 
     IS.abrirModal = function (id) {
@@ -173,13 +271,12 @@
     };
 
     function iniciarCabecalho() {
-        document.querySelectorAll('[data-link="dashboard"]').forEach(function (a) { a.href = IS.dashboardUrl(); });
-        document.querySelectorAll('[data-link="perfil"]').forEach(function (a) { a.href = IS.perfilUrl(); });
+        atualizarDestinos();
 
         var atual = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
         document.querySelectorAll('.menu a').forEach(function (a) {
             var alvo = (a.getAttribute('href') || '').split('#')[0].toLowerCase();
-            if (alvo && alvo === atual) {
+            if (alvo && alvo === atual && !a.getAttribute('href').includes('#')) {
                 a.classList.add('active');
                 a.setAttribute('aria-current', 'page');
             }

@@ -8,27 +8,36 @@
     <link rel="icon" type="image/png" href="logo-mark.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="home.css">
+    <script src="app.js"></script>
 </head>
-<body>
+<body class="landing">
 
     <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="index.html" aria-label="IService - página inicial">
                 <img class="brand-logo" src="logo.png" alt="IService">
             </a>
-            <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
-                <i class="fas fa-bars"></i>
-            </button>
             <nav class="menu" id="mainNav" aria-label="Navegação principal">
                 <ul>
-                    <li><a href="#inicio">Início</a></li>
-                    <li><a href="#servicos">Serviços</a></li>
-                    <li><a href="#profissionais">Profissionais</a></li>
-                    <li><a href="#agendamento">Agendamento</a></li>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
+                    <li><a href="#inicio"><i class="fas fa-house" aria-hidden="true"></i>Início</a></li>
+                    <li data-auth="out"><a href="#servicos">Serviços</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard"><i class="fas fa-gauge-high" aria-hidden="true"></i>Dashboard</a></li>
+                    <li><a href="profissionais.html"><i class="fas fa-briefcase" aria-hidden="true"></i>Profissionais</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil"><i class="fas fa-user" aria-hidden="true"></i>Perfil</a></li>
+                    <li data-auth="out"><a href="#agendamento">Agendamento</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html" class="nav-cta">Criar Conta</a></li>
                 </ul>
             </nav>
+            <div class="header-tools">
+                <div id="notifSlot" data-auth="in"></div>
+                <a href="login.html" class="btn-sair" data-auth="in" data-logout title="Sair da conta" aria-label="Sair da conta">
+                    <i class="fas fa-arrow-right-from-bracket"></i><span>Sair</span>
+                </a>
+                <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -312,7 +321,7 @@
                 <ul>
                     <li><a href="#inicio">Início</a></li>
                     <li><a href="#servicos">Serviços</a></li>
-                    <li><a href="#profissionais">Profissionais</a></li>
+                    <li><a href="profissionais.html">Profissionais</a></li>
                     <li><a href="#agendamento">Agendamento</a></li>
                 </ul>
             </nav>
@@ -320,8 +329,10 @@
             <nav class="footer-col" aria-label="Conta">
                 <h4>Conta</h4>
                 <ul>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="cadastro.html">Criar Conta</a></li>
+                    <li data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Meu painel</a></li>
+                    <li data-auth="in"><a href="perfil_cliente.html" data-link="perfil">Meu perfil</a></li>
+                    <li data-auth="out"><a href="login.html">Login</a></li>
+                    <li data-auth="out"><a href="cadastro.html">Criar Conta</a></li>
                     <li><a href="faq.html">Central de Ajuda</a></li>
                 </ul>
             </nav>
@@ -345,29 +356,11 @@
 
     <script src="script.js"></script>
     <script>
-        const nav = document.getElementById('mainNav');
-        const toggle = document.querySelector('.nav-toggle');
-
-        function setMenu(open) {
-            nav.classList.toggle('open', open);
-            toggle.setAttribute('aria-expanded', String(open));
-            toggle.innerHTML = open ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        }
-
-        toggle.addEventListener('click', function () {
-            setMenu(!nav.classList.contains('open'));
-        });
-
-        nav.querySelectorAll('a').forEach(function (link) {
-            link.addEventListener('click', function () {
-                setMenu(false);
-            });
-        });
-
         const campoData = document.getElementById('data');
         campoData.min = new Date().toISOString().split('T')[0];
 
         startAgendamento();
     </script>
+    <script src="notificacoes.js"></script>
 </body>
 </html>
