@@ -9,23 +9,26 @@ const estaOnline = (ultimo_login) => {
 exports.obterPerfilPublico = async (req, res) => {
   try {
     const { id } = req.params;
-    const usuario = await Usuario.findById(id).select('nome telefone tipo descricao_detalhada portifolio ultimo_login');
+    if (typeof id !== 'string' || !/^[a-f\d]{24}$/i.test(id)) {
+      return res.status(400).json({ mensagem: 'Informe um usuario valido' });
+    }
 
-    if (!usuario) {
+    const usuario = await Usuario.findById(id).select('nome tipo descricao_detalhada portifolio ultimo_login');
+
+    if (!usuario || usuario.tipo !== 'prestador') {
       return res.status(404).json({ mensagem: 'Usuario nao encontrado' });
     }
 
     res.json({
       id: usuario._id,
       nome: usuario.nome,
-      telefone: usuario.telefone,
       tipo: usuario.tipo,
-      descricao_detalhada: usuario.descricao_detalhada,
-      portifolio: usuario.portifolio,
+      descricao_detalhada: usuario.descricao_detalhada || '',
+      portifolio: usuario.portifolio || [],
       online: estaOnline(usuario.ultimo_login)
     });
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao obter perfil', erro: error.message });
+    res.status(500).json({ mensagem: 'Erro ao obter perfil' });
   }
 };
 

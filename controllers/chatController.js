@@ -158,9 +158,17 @@ exports.markAsRead = async (req, res) => {
     const { chatId } = req.params;
     const usuarioId = req.usuarioId;
 
+    if (typeof chatId !== 'string' || !/^[a-f\d]{24}$/i.test(chatId)) {
+      return res.status(400).json({ mensagem: 'Informe um chat valido' });
+    }
+
     const chat = await Chat.findById(chatId);
     if (!chat) {
       return res.status(404).json({ mensagem: 'Chat nao encontrado' });
+    }
+
+    if (!chat.participants.some(participante => participante && participante.toString() === usuarioId)) {
+      return res.status(403).json({ mensagem: 'Voce nao participa deste chat' });
     }
 
     let marcadas = 0;

@@ -83,12 +83,20 @@ exports.listarAvaliacoesCliente = async (req, res) => {
 exports.listarAvaliacoesPorPrestador = async (req, res) => {
   try {
     const { id } = req.params;
+    if (typeof id !== 'string' || !/^[a-f\d]{24}$/i.test(id)) {
+      return res.status(400).json({ mensagem: 'Informe um prestador valido' });
+    }
+
     const avaliacoes = await Avaliacao.find({ prestador_id: id })
       .populate('cliente_id', 'nome')
       .sort({ data_criacao: -1 });
-    res.json(avaliacoes);
+    res.json(avaliacoes.map(avaliacao => ({
+      nota: avaliacao.nota,
+      comentario: avaliacao.comentario || '',
+      cliente_id: { nome: avaliacao.cliente_id?.nome || 'Cliente' }
+    })));
   } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao listar avaliacoes', erro: error.message });
+    res.status(500).json({ mensagem: 'Erro ao listar avaliacoes' });
   }
 };
 
