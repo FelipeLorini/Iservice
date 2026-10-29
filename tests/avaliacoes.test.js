@@ -337,6 +337,8 @@ async function dashboard(options = {}) {
       querySelectorAll(selector) { return selector === '#modalEstrelas i' ? stars : selector === '.btn-avaliar' ? buttons : []; }
     },
     IS: {
+      exigirSessao: () => true, token: 'sessao-simulada',
+      usuario: { id: CLIENTE, nome: 'Cliente', tipo: 'cliente' },
       API_URL: '/api', esc: value => String(value), inicial: value => value[0],
       vazio: () => '<div>Vazio</div>', dataTile: () => ({ dia: '01', mes: 'out' }), data: value => value, badge: value => value,
       msg(node, text) { messages.push(text); }, toast() {},

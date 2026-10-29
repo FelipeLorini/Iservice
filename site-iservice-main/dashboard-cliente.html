@@ -239,7 +239,7 @@
                 <ul>
                     <li><a href="index.html">Início</a></li>
                     <li><a href="index.html#servicos">Serviços</a></li>
-                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="profissionais.html">Profissionais</a></li>
                     <li><a href="index.html#agendamento">Agendamento</a></li>
                 </ul>
             </nav>
@@ -273,14 +273,9 @@
     </footer>
 
     <script>
-        const token = localStorage.getItem('token');
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-
-        if (!token || !usuario) {
-            window.location.href = 'login.html';
-        } else if (usuario.tipo === 'prestador') {
-            window.location.href = 'dashboard-prestador.html';
-        }
+    if (IS.exigirSessao('cliente')) {
+        const token = IS.token;
+        const usuario = IS.usuario;
 
         const API_URL = IS.API_URL;
         const esc = IS.esc;
@@ -802,6 +797,8 @@
         carregarAgendamentos();
         carregarFavoritos();
         carregarPedidos();
+        Object.assign(window, { cancelarAgendamento, abrirModalAvaliacao, abrirChat, cancelarPedido, aceitarProposta });
+    }
     </script>
     <script src="notificacoes.js"></script>
 </body>

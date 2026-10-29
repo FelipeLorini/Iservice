@@ -213,7 +213,7 @@
                 <ul>
                     <li><a href="index.html">Início</a></li>
                     <li><a href="index.html#servicos">Serviços</a></li>
-                    <li><a href="index.html#profissionais">Profissionais</a></li>
+                    <li><a href="profissionais.html">Profissionais</a></li>
                     <li><a href="index.html#agendamento">Agendamento</a></li>
                 </ul>
             </nav>
@@ -247,12 +247,9 @@
     </footer>
 
     <script>
-        const token = localStorage.getItem('token');
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-
-        if (!token || !usuario) {
-            window.location.href = 'login.html';
-        }
+    if (IS.exigirSessao('prestador')) {
+        const token = IS.token;
+        const usuario = IS.usuario;
 
         const esc = IS.esc;
 
@@ -481,6 +478,8 @@
 
         carregarPortifolio();
         carregarAvaliacoes();
+        Object.assign(window, { removerFoto });
+    }
     </script>
     <script src="notificacoes.js"></script>
 </body>

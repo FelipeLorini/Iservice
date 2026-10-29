@@ -10,11 +10,11 @@ function startMenu() {
     links.forEach((link) => {
         const href = link.getAttribute("href");
 
-        if (href.startsWith("#")) {
+        if (href && href.length > 1 && href.startsWith("#") && document.getElementById(href.slice(1))) {
             link.addEventListener("click", (event) => {
                 event.preventDefault();
 
-                const section = document.querySelector(href);
+                const section = document.getElementById(href.slice(1));
 
                 if (section) {
                     section.scrollIntoView({
@@ -35,10 +35,11 @@ function startButtons() {
 }
 
 function startScrollSpy() {
-    const sections = document.querySelectorAll("section");
-    const links = document.querySelectorAll(".menu a");
+    const links = Array.from(document.querySelectorAll('.menu a[href^="#"]'))
+        .filter(link => document.getElementById(link.getAttribute('href').slice(1)));
+    const sections = links.map(link => document.getElementById(link.getAttribute('href').slice(1)));
 
-    window.addEventListener("scroll", () => {
+    function atualizarSecao() {
         let currentSection = "";
 
         sections.forEach((section) => {
@@ -52,12 +53,16 @@ function startScrollSpy() {
 
         links.forEach((link) => {
             link.classList.remove("active");
+            link.removeAttribute('aria-current');
 
             if (link.getAttribute("href") === `#${currentSection}`) {
                 link.classList.add("active");
+                link.setAttribute('aria-current', 'location');
             }
         });
-    });
+    }
+    window.addEventListener("scroll", atualizarSecao);
+    atualizarSecao();
 }
 
 function goToLogin() {
@@ -87,7 +92,7 @@ loadStars();
 
 function startAgendamento() {
     const btnAgendar = document.getElementById("btnAgendar");
-    
+
     if (!btnAgendar) return;
 
     btnAgendar.addEventListener("click", () => {
