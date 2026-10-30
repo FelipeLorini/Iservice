@@ -750,6 +750,37 @@ select.input {
 .person > div { min-width: 0; flex: 1; }
 .person .row-actions { flex: 0 0 auto; }
 
+/* Gerenciamento dos favoritos: reaproveita painel, lista e botoes existentes. */
+#meusFavoritos { scroll-margin-top: calc(var(--header-h) + 24px); }
+.favorito-item { flex-wrap: wrap; }
+.favorito-item .favorito-info { flex: 1 1 150px; overflow-wrap: anywhere; }
+.favorito-item .row-actions {
+    flex: 1 0 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+.favorito-item .row-actions .btn {
+    min-width: 0;
+    min-height: 44px;
+    height: auto;
+    padding: 8px 4px;
+    font-size: 0.82rem;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.favorito-remover { color: var(--text-soft); }
+.favoritos-feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.favoritos-feedback .inline-msg { flex: 1 0 100%; }
+.favoritos-feedback [hidden] { display: none; }
+.modal.favorito-dialog { margin: auto; width: calc(100% - 32px); color: var(--text); }
+.favorito-dialog::backdrop { background: rgba(4, 10, 7, 0.72); backdrop-filter: blur(4px); }
+.favorito-descricao { margin: 18px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.favorito-portfolio { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.favorito-portfolio img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+.btn-favorito:disabled { cursor: wait; opacity: 0.55; }
+
 .avatar {
     display: grid;
     place-items: center;

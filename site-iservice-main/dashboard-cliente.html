@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="app.css">
     <script src="app.js"></script>
+    <script src="favoritos.js" defer></script>
 </head>
 <body class="app">
 
@@ -53,6 +54,7 @@
                     <p class="page-sub">Acompanhe seus agendamentos, pedidos e profissionais favoritos.</p>
                 </div>
                 <div class="page-actions">
+                    <a href="#meusFavoritos" class="btn btn-ghost btn-md"><i class="fas fa-heart"></i> Meus Favoritos</a>
                     <a href="#novoPedido" class="btn btn-ghost btn-md" id="atalhoNovoPedido"><i class="fas fa-plus"></i> Novo pedido</a>
                     <a href="profissionais.html" class="btn btn-primary btn-md"><i class="fas fa-search"></i> Buscar profissionais</a>
                 </div>
@@ -76,7 +78,7 @@
                     </div>
                     <div class="stat">
                         <span class="stat-icon"><i class="fas fa-heart"></i></span>
-                        <div><span class="stat-value" id="totalFavoritos">0</span><span class="stat-label">Favoritos</span></div>
+                        <div><span class="stat-value" id="totalFavoritos">—</span><a class="stat-label" href="#meusFavoritos">Meus Favoritos</a></div>
                     </div>
                 </section>
 
@@ -163,15 +165,21 @@
                             </div>
                         </section>
 
-                        <section class="panel" aria-labelledby="tituloFavoritos">
+                        <section class="panel" id="meusFavoritos" aria-labelledby="tituloFavoritos">
                             <header class="panel-head">
-                                <h2 class="panel-title" id="tituloFavoritos"><span class="panel-icon"><i class="fas fa-heart"></i></span>Favoritos</h2>
+                                <h2 class="panel-title" id="tituloFavoritos" tabindex="-1"><span class="panel-icon"><i class="fas fa-heart"></i></span>Meus Favoritos</h2>
                             </header>
                             <div class="panel-body flush">
-                                <div class="list" id="listaFavoritos">
-                                    <div class="empty empty-sm"><i class="fas fa-heart"></i>Nenhum favorito ainda.</div>
+                                <div class="list" id="listaFavoritos" aria-busy="true">
+                                    <div class="empty empty-sm"><i class="fas fa-spinner fa-spin"></i>Carregando favoritos…</div>
                                 </div>
                             </div>
+                            <footer class="panel-foot favoritos-feedback">
+                                <button type="button" class="btn btn-ghost btn-sm" id="alternarListaFavoritos" data-favorito-acao="expandir" aria-controls="listaFavoritos" aria-expanded="false" hidden>Ver todos os favoritos</button>
+                                <p id="estadoFavoritos" class="inline-msg" role="status" aria-live="polite"></p>
+                                <button type="button" class="btn btn-ghost btn-sm" data-favorito-acao="recarregar" hidden>Tentar novamente</button>
+                                <a href="profissionais.html" class="btn btn-ghost btn-sm">Explorar profissionais</a>
+                            </footer>
                         </section>
 
                         <section class="panel span-2" aria-labelledby="tituloHistorico">
@@ -220,6 +228,17 @@
             </div>
         </div>
     </div>
+
+    <dialog id="perfilFavorito" class="modal favorito-dialog" aria-labelledby="tituloPerfilFavorito">
+        <div class="modal-head">
+            <span class="panel-icon"><i class="fas fa-user"></i></span>
+            <h3 class="modal-title" id="tituloPerfilFavorito">Perfil do profissional</h3>
+        </div>
+        <div id="conteudoPerfilFavorito" aria-live="polite"></div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-ghost btn-md" id="fecharPerfilFavorito" autofocus>Fechar</button>
+        </div>
+    </dialog>
 
     <footer class="site-footer">
         <div class="container footer-grid">
@@ -562,42 +581,6 @@
             }
         });
 
-        async function carregarFavoritos() {
-            try {
-                const resposta = await fetch(`${API_URL}/favoritos`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const dados = await resposta.json();
-
-                document.getElementById('totalFavoritos').textContent = resposta.ok ? dados.length : '0';
-
-                const container = document.getElementById('listaFavoritos');
-                if (!resposta.ok || dados.length === 0) {
-                    container.innerHTML = IS.vazio('fa-heart', '', 'Nenhum favorito ainda. Toque no coração de um profissional para salvá-lo aqui.', 'empty-sm');
-                    return;
-                }
-
-                container.innerHTML = dados.map(f => {
-                    const prestador = f.prestador_id || {};
-                    const prestadorId = prestador._id || f.prestador_id;
-                    return `
-                        <div class="person list-row">
-                            <span class="avatar avatar-sm">${esc(IS.inicial(prestador.nome || 'P'))}</span>
-                            <div>
-                                <span class="row-title">${esc(prestador.nome || 'Prestador')}</span>
-                                <span class="row-sub">Profissional favorito</span>
-                            </div>
-                            <div class="row-actions">
-                                <button type="button" class="btn-icon" title="Conversar" aria-label="Conversar com ${esc(prestador.nome || 'prestador')}" onclick="abrirChat('${esc(prestadorId)}')"><i class="fas fa-comment-dots"></i></button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } catch (erro) {
-                console.error('Erro ao carregar favoritos:', erro);
-            }
-        }
-
         async function abrirChat(prestadorId) {
             if (!prestadorId) {
                 IS.toast('Prestador não identificado.', 'error');
@@ -795,7 +778,6 @@
         });
 
         carregarAgendamentos();
-        carregarFavoritos();
         carregarPedidos();
         Object.assign(window, { cancelarAgendamento, abrirModalAvaliacao, abrirChat, cancelarPedido, aceitarProposta });
     }
