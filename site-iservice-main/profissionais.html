@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="app.css">
     <script src="app.js"></script>
+    <script src="favoritos.js" defer></script>
 </head>
 <body class="app">
 
@@ -85,6 +86,11 @@
 
                 <div class="results-bar">
                     <span>Mostrando <strong id="totalResultados">0</strong> profissionais</span>
+                </div>
+
+                <div class="favoritos-feedback">
+                    <p id="estadoFavoritos" class="inline-msg" role="status" aria-live="polite"></p>
+                    <button type="button" class="btn btn-ghost btn-sm" data-favorito-acao="recarregar" hidden>Tentar carregar favoritos novamente</button>
                 </div>
 
                 <div class="grid-3" id="listaProfissionais">
@@ -258,13 +264,12 @@
             container.innerHTML = paginaItens.map(s => {
                 const prestador = s.prestador_id || {};
                 const prestadorId = prestador._id || s.prestador_id;
-                const favoritado = favoritosIds.has(prestadorId);
                 const cat = IS.categoria(s.categoria);
                 return `
                     <article class="listing card-profissional">
                         ${usuario.tipo === 'cliente' ? `
-                        <button type="button" class="btn-favorito ${favoritado ? 'favoritado' : ''}" data-prestador="${esc(prestadorId)}" onclick="alternarFavorito('${esc(prestadorId)}', this)" title="Favoritar" aria-pressed="${favoritado}" aria-label="Favoritar ${esc(prestador.nome || 'profissional')}">
-                            <i class="fa-heart ${favoritado ? 'fas' : 'far'}"></i>
+                        <button type="button" class="btn-favorito" data-prestador="${esc(prestadorId)}" data-nome="${esc(prestador.nome || 'Profissional')}" data-favorito-acao="alternar" disabled title="Carregando favoritos" aria-pressed="false" aria-label="Favoritar ${esc(prestador.nome || 'profissional')}">
+                            <i class="fa-heart far"></i>
                         </button>` : ''}
                         <div class="listing-top">
                             <span class="avatar-wrap">
@@ -292,6 +297,7 @@
 
             carregarDadosExtrasCards(paginaItens);
             renderizarPaginacao(totalPaginas);
+            IS.favoritos?.atualizarBotoes();
         }
 
         function renderizarPaginacao(totalPaginas) {
@@ -317,57 +323,6 @@
             paginaAtual = numero;
             aplicarFiltros(false);
             window.scrollTo({ top: document.getElementById('formBusca').getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
-        }
-
-        let favoritosIds = new Set();
-
-        async function carregarFavoritos() {
-            if (usuario.tipo !== 'cliente') return;
-            try {
-                const resposta = await fetch(IS.API_URL + '/favoritos', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const dados = await resposta.json();
-                if (resposta.ok) {
-                    favoritosIds = new Set(dados.map(f => f.prestador_id?._id || f.prestador_id));
-                }
-            } catch (erro) {
-                console.error('Erro ao carregar favoritos:', erro);
-            }
-        }
-
-        async function alternarFavorito(prestadorId, botao) {
-            try {
-                const marcar = !favoritosIds.has(prestadorId);
-                if (!marcar) {
-                    await fetch(`${IS.API_URL}/favoritos/${prestadorId}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    favoritosIds.delete(prestadorId);
-                } else {
-                    await fetch(IS.API_URL + '/favoritos', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ prestador_id: prestadorId })
-                    });
-                    favoritosIds.add(prestadorId);
-                }
-
-                document.querySelectorAll(`.btn-favorito[data-prestador="${prestadorId}"]`).forEach(b => {
-                    b.classList.toggle('favoritado', marcar);
-                    b.setAttribute('aria-pressed', String(marcar));
-                    b.querySelector('i').classList.toggle('fas', marcar);
-                    b.querySelector('i').classList.toggle('far', !marcar);
-                });
-
-                IS.toast(marcar ? 'Profissional adicionado aos favoritos.' : 'Profissional removido dos favoritos.');
-            } catch (erro) {
-                IS.toast('Erro ao atualizar favoritos.', 'error');
-            }
         }
 
         const cacheExtras = {};
@@ -499,11 +454,8 @@
         document.getElementById('filtroCategoria').addEventListener('change', () => aplicarFiltros());
         document.getElementById('filtroOrdenacao').addEventListener('change', () => aplicarFiltros());
 
-        (async function iniciar() {
-            await carregarFavoritos();
-            await carregarProfissionais();
-        })();
-        Object.assign(window, { alternarFavorito, abrirChat, contratar, irParaPagina });
+        carregarProfissionais();
+        Object.assign(window, { abrirChat, contratar, irParaPagina });
     }
     </script>
     <script src="notificacoes.js"></script>
