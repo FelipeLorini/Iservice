@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="app.css">
     <script src="app.js"></script>
+    <script src="chat.js"></script>
 </head>
 <body class="app">
 
@@ -122,126 +123,7 @@
     </footer>
 
     <script>
-    if (IS.exigirSessao()) {
-        const token = IS.token;
-        const usuario = IS.usuario;
-
-        const esc = IS.esc;
-        const urlParams = new URLSearchParams(window.location.search);
-        const chatId = urlParams.get('chatId');
-
-        const messagesContainer = document.getElementById('chatMessages');
-        const inputMensagem = document.getElementById('mensagemInput');
-        const btnEnviar = document.getElementById('btnEnviar');
-        const chatNome = document.getElementById('chatNome');
-        const chatAvatar = document.getElementById('chatAvatar');
-
-        if (!chatId) {
-            messagesContainer.innerHTML = IS.vazio('fa-triangle-exclamation', 'Chat não identificado', 'Abra a conversa a partir do perfil de um profissional.', 'is-error');
-        }
-
-        let ultimaAssinatura = '';
-
-        async function carregarChat() {
-            if (!chatId) return;
-
-            try {
-                const resposta = await fetch(`${IS.API_URL}/chat/${chatId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const dados = await resposta.json();
-
-                if (!resposta.ok) {
-                    messagesContainer.innerHTML = IS.vazio('fa-triangle-exclamation', 'Erro ao carregar mensagens', dados.mensagem || '', 'is-error');
-                    return;
-                }
-
-                if (dados.chat && dados.chat.participants) {
-                    const outro = dados.chat.participants.find(p => p._id !== usuario.id);
-                    if (outro) {
-                        chatNome.textContent = outro.nome || 'Prestador';
-                        chatAvatar.textContent = IS.inicial(outro.nome || 'P');
-                    }
-                }
-
-                const messages = dados.messages || [];
-                const assinatura = messages.length + '|' + (messages.length ? (messages[messages.length - 1].createdAt || messages[messages.length - 1].content) : '');
-                if (assinatura === ultimaAssinatura) return;
-                ultimaAssinatura = assinatura;
-
-                if (messages.length === 0) {
-                    messagesContainer.innerHTML = IS.vazio('fa-comment-dots', 'Nenhuma mensagem ainda', 'Envie uma mensagem para iniciar a conversa.', 'sem-mensagens');
-                    return;
-                }
-
-                messagesContainer.innerHTML = messages.map(msg => {
-                    const isEnviada = msg.sender === usuario.id;
-                    const hora = new Date(msg.createdAt || msg.data_envio || Date.now());
-                    const horaStr = hora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                    return `
-                        <div class="mensagem ${isEnviada ? 'enviada' : 'recebida'}">
-                            ${esc(msg.content)}
-                            <span class="hora">${horaStr}</span>
-                        </div>
-                    `;
-                }).join('');
-
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            } catch (erro) {
-                messagesContainer.innerHTML = IS.vazio('fa-triangle-exclamation', 'Erro ao conectar com o servidor', 'Verifique sua conexão e tente novamente.', 'is-error');
-                ultimaAssinatura = '';
-            }
-        }
-
-        async function enviarMensagem() {
-            const content = inputMensagem.value.trim();
-            if (!content || !chatId) return;
-
-            const btnOriginal = btnEnviar.innerHTML;
-            btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Enviando...</span>';
-            btnEnviar.disabled = true;
-
-            try {
-                const resposta = await fetch(IS.API_URL + '/chat/message', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ chat_id: chatId, content })
-                });
-
-                const dados = await resposta.json();
-
-                if (!resposta.ok) {
-                    IS.toast(dados.mensagem || 'Erro ao enviar mensagem.', 'error');
-                    return;
-                }
-
-                inputMensagem.value = '';
-                carregarChat();
-
-            } catch (erro) {
-                IS.toast('Erro ao conectar com o servidor.', 'error');
-            } finally {
-                btnEnviar.innerHTML = btnOriginal;
-                btnEnviar.disabled = false;
-                inputMensagem.focus();
-            }
-        }
-
-        document.getElementById('formMensagem').addEventListener('submit', function (e) {
-            e.preventDefault();
-            enviarMensagem();
-        });
-
-        carregarChat();
-        setInterval(carregarChat, 5000);
-    }
+    if (IS.exigirSessao()) IS.chat.montar();
     </script>
     <script src="notificacoes.js"></script>
 </body>

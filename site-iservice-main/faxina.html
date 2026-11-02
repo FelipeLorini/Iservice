@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="app.css">
     <script src="app.js"></script>
+    <script src="chat.js"></script>
 </head>
 <body class="app">
 
@@ -274,34 +275,8 @@
             }
         });
 
-        async function abrirChat(prestadorId) {
-            if (!prestadorId) {
-                IS.toast('Prestador não identificado.', 'error');
-                return;
-            }
-
-            try {
-                const resposta = await fetch(IS.API_URL + '/chat/start', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ prestador_id: prestadorId })
-                });
-
-                const dados = await resposta.json();
-
-                if (!resposta.ok) {
-                    IS.toast(dados.mensagem || 'Erro ao iniciar chat.', 'error');
-                    return;
-                }
-
-                window.location.href = `chat.html?chatId=${dados.chat._id}`;
-
-            } catch (erro) {
-                IS.toast('Erro ao conectar com o servidor.', 'error');
-            }
+        function abrirChat(prestadorId) {
+            return IS.chat.abrir(prestadorId);
         }
 
         carregarServicos();

@@ -10,6 +10,7 @@ const plain = value => JSON.parse(JSON.stringify(value));
 
 // Executa os controllers reais com banco e JWT simulados, sem rede ou .env.
 function controller(file, dependencies) {
+  if (file === 'chatController.js') dependencies = { '../utils/chatIntegrity': require('../utils/chatIntegrity'), '../Models/usuarioModel': { find(filter) { return { async select() { return filter._id.$in.map(_id => ({ _id })); } }; } }, ...dependencies };
   const logs = [];
   const context = {
     exports: {},
@@ -107,8 +108,8 @@ for (const [file, handler, model, operation] of [
     const fail = async () => { throw new Error('DADO-SENSIVEL-FICTICIO'); };
     const { handlers, logs } = controller(file, { [model]: { findOne: fail, findById: fail }, jsonwebtoken: {} });
     const result = await invoke(handlers[handler], {
-      email: 'teste@example.invalid', senha: 'senha-ficticia', chat_id: 'chat-teste', content: 'mensagem-privada-ficticia'
-    }, { usuarioId: 'remetente-teste' });
+      email: 'teste@example.invalid', senha: 'senha-ficticia', chat_id: '3'.repeat(24), content: 'mensagem-privada-ficticia'
+    }, { usuarioId: '1'.repeat(24) });
     assert.equal(result.code, 500);
     assert.deepEqual(Object.keys(result.body), ['mensagem']);
     assert.deepEqual(logs, [[`Falha interna na operacao de ${operation}`]]);
@@ -118,15 +119,15 @@ for (const [file, handler, model, operation] of [
 
 test('chat preserva envio autorizado e impede envio de nao participante', async () => {
   let saved = false;
-  const chat = { participants: ['cliente-teste', 'prestador-teste'], messages: [], async save() { saved = true; } };
+  const chat = { participants: ['1'.repeat(24), '2'.repeat(24)], messages: [], async save() { saved = true; } };
   const { handlers, logs } = controller('chatController.js', { '../Models/chatModel': { async findById() { return chat; } } });
-  const input = { chat_id: 'chat-teste', content: 'mensagem-ficticia' };
-  const denied = await invoke(handlers.sendMessage, input, { usuarioId: 'outro-teste' });
+  const input = { chat_id: '3'.repeat(24), content: 'mensagem-ficticia' };
+  const denied = await invoke(handlers.sendMessage, input, { usuarioId: '4'.repeat(24) });
   assert.equal(denied.code, 403);
   assert.equal(saved, false);
-  const sent = await invoke(handlers.sendMessage, input, { usuarioId: 'cliente-teste' });
+  const sent = await invoke(handlers.sendMessage, input, { usuarioId: '1'.repeat(24) });
   assert.equal(sent.code, 201);
-  assert.deepEqual(sent.body.message, { sender: 'cliente-teste', receiver: 'prestador-teste', content: input.content, read: false });
+  assert.deepEqual(sent.body.message, { sender: '1'.repeat(24), receiver: '2'.repeat(24), content: input.content, read: false });
   assert.equal(saved, true);
   assert.deepEqual(logs, []);
 });

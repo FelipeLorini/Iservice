@@ -24,6 +24,7 @@ const invalidos = [undefined, null, '', 'invalido', 'abcdefghijkl', 'g'.repeat(2
 
 // Codigo real, dependencias explicitamente simuladas; sem servidor, rede ou .env.
 function load(file, dependencies) {
+  if (file === 'controllers/chatController.js') dependencies = { '../utils/chatIntegrity': require('../utils/chatIntegrity'), '../Models/usuarioModel': { find(filter) { return { async select() { return filter._id.$in.map(_id => ({ _id })); } }; } }, ...dependencies };
   const module = { exports: {} };
   const logs = [];
   const context = {

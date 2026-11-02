@@ -11,6 +11,12 @@
     var expiraEm = 0;
     var timerSessao;
     var paginaProtegida = false;
+    var observadoresSessao = [];
+    // Consumidores de dados privados encerram seu estado antes da navegacao.
+    IS.aoMudarSessao = function (callback) {
+        observadoresSessao.push(callback);
+        return function () { observadoresSessao = observadoresSessao.filter(function (fn) { return fn !== callback; }); };
+    };
 
     function limparArmazenamento() {
         try {
@@ -50,12 +56,14 @@
     }
 
     function aplicarSessao(sessao) {
+        var tokenAnterior = token;
         token = sessao ? sessao.token : null;
         usuario = sessao ? sessao.usuario : null;
         expiraEm = sessao ? sessao.expiraEm : 0;
         IS.token = token;
         IS.usuario = usuario;
         IS.logado = !!sessao;
+        if (tokenAnterior !== token) observadoresSessao.slice().forEach(function (callback) { callback(); });
         root.classList.remove('is-auth', 'is-guest', 'is-cliente', 'is-prestador');
         root.classList.add(sessao ? 'is-auth' : 'is-guest');
         if (usuario) root.classList.add('is-' + usuario.tipo);
