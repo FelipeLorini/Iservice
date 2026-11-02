@@ -50,6 +50,7 @@ class Element {
   getAttribute(name) { return this.attrs[name] ?? null; }
   setAttribute(name, value) { this.attrs[name] = String(value); }
   removeAttribute(name) { delete this.attrs[name]; }
+  removeEventListener(name, fn) { this.listeners[name] = (this.listeners[name] || []).filter(item => item !== fn); }
   addEventListener(name, fn) { (this.listeners[name] ||= []).push(fn); }
   emit(name, event = {}) {
     const e = { target: this, preventDefault() { this.prevented = true; }, stopPropagation() {}, ...event };
@@ -107,7 +108,7 @@ function page(file = 'index.html', options = {}) {
   const location = { href: url.href, pathname: url.pathname, origin: url.origin,
     replace(value) { redirects.push(value); }, reload() { reloads++; } };
   const context = vm.createContext({
-    document, location, URL, URLSearchParams, Headers, Request, Response,
+    document, location, URL, URLSearchParams, Headers, Request, Response, AbortController,
     setInterval(fn, ms) { intervals.push({ fn, ms }); }, console: { error() {} },
     Date: class extends Date { static now() { return clock; } },
     atob: value => Buffer.from(value, 'base64').toString('binary'),
@@ -118,6 +119,7 @@ function page(file = 'index.html', options = {}) {
     },
     setTimeout(fn, ms) { timers.set(++timerId, { fn, ms }); return timerId; },
     clearTimeout(id) { timers.delete(id); },
+    clearInterval() {},
     addEventListener(name, fn) { (events[name] ||= []).push(fn); },
     scrollY: 0,
     async fetch(...args) { requests.push(args); return options.fetch ? options.fetch(...args) : new Response('{}'); }
@@ -125,6 +127,7 @@ function page(file = 'index.html', options = {}) {
   context.window = context;
   const run = source => vm.runInContext(source, context);
   run(read('app.js'));
+  if (html.includes('<script src="chat.js"></script>')) run(read('chat.js'));
   if (file === 'index.html') {
     run(read('script.js'));
     for (const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) if (m[1].trim()) run(m[1]);
