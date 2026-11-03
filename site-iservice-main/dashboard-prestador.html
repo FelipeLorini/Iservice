@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="app.css">
     <script src="app.js"></script>
+    <script src="chat.js"></script>
+    <script src="conversas.js" defer></script>
 </head>
 <body class="app">
 
@@ -52,8 +54,9 @@
                     <h1 class="page-title">Olá, <span class="accent" id="nomePrestador">prestador</span></h1>
                     <p class="page-sub">Acompanhe seus agendamentos, serviços e propostas em um só lugar.</p>
                 </div>
-                <div class="page-actions">
+                <div class="page-actions dashboard-actions">
                     <span class="status-pill">Online</span>
+                    <a href="#minhasConversas" class="btn btn-ghost btn-md"><i class="fas fa-comments"></i> Minhas Conversas</a>
                     <a href="#novoServico" class="btn btn-primary btn-md" id="atalhoNovoServico"><i class="fas fa-plus"></i> Novo serviço</a>
                 </div>
             </div>
@@ -86,6 +89,22 @@
 
                 <div class="layout">
                     <div class="stack">
+                        <section class="panel" id="minhasConversas" data-conversas-tipo="prestador" aria-labelledby="tituloConversas">
+                            <header class="panel-head">
+                                <h2 class="panel-title" id="tituloConversas"><span class="panel-icon"><i class="fas fa-comments"></i></span>Minhas Conversas</h2>
+                                <span class="panel-meta" id="totalConversas"></span>
+                                <button type="button" class="btn btn-ghost btn-sm" id="atualizarConversas" aria-controls="listaConversas">Atualizar</button>
+                            </header>
+                            <div class="panel-body flush">
+                                <div class="list" id="listaConversas" aria-busy="true"></div>
+                            </div>
+                            <footer class="panel-foot conversas-feedback">
+                                <button type="button" class="btn btn-ghost btn-sm" id="alternarConversas" aria-controls="listaConversas" aria-expanded="false" hidden>Ver todas as conversas</button>
+                                <p id="estadoConversas" class="inline-msg" role="status" aria-live="polite">Carregando conversas…</p>
+                                <button type="button" class="btn btn-ghost btn-sm" id="tentarConversas" hidden>Tentar novamente</button>
+                            </footer>
+                        </section>
+
                         <section class="panel" aria-labelledby="tituloAgendamentos">
                             <header class="panel-head">
                                 <h2 class="panel-title" id="tituloAgendamentos"><span class="panel-icon"><i class="fas fa-calendar-alt"></i></span>Agendamentos</h2>

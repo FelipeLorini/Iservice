@@ -85,6 +85,15 @@ body.app > main {
     gap: 12px;
 }
 
+/* Mantem as acoes dos dashboards a direita mesmo quando ocupam outra linha. */
+.dashboard-actions {
+    margin-inline-start: auto;
+    max-width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+}
+.dashboard-actions .status-pill { flex-shrink: 0; white-space: nowrap; }
+
 .page-head-center {
     text-align: center;
 }
@@ -1974,4 +1983,47 @@ select.input {
 
 @media (max-width: 600px) {
     .results-bar .text-link { display: none; }
+}
+
+/* Minhas Conversas: mesmas linhas e paineis dos dashboards. */
+.conversa-item {
+    width: 100%;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.conversa-item:hover { background: var(--neutral-bg); }
+.conversa-info { min-width: 0; }
+.conversa-meta { display: grid; justify-items: end; gap: 6px; font-size: 0.75rem; }
+.conversas-feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.conversas-feedback .inline-msg { margin: 0; flex: 1 1 180px; }
+.conversas-feedback [hidden] { display: none; }
+@media (max-width: 600px) {
+    .dashboard-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+    }
+    .dashboard-actions .btn {
+        min-width: 0;
+        height: auto;
+        min-height: 46px;
+        padding: 12px;
+        white-space: normal;
+        line-height: 1.3;
+    }
+    .dashboard-actions .status-pill {
+        order: -1;
+        grid-column: 1 / -1;
+        justify-self: end;
+    }
+    .conversa-item { column-gap: 10px; }
+    .conversa-meta { max-width: 78px; }
+    .conversa-meta time { overflow-wrap: anywhere; }
+}
+@media (max-width: 380px) {
+    .dashboard-actions { grid-template-columns: minmax(0, 1fr); }
 }

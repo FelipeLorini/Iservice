@@ -44,6 +44,25 @@
         if (event.persisted && temTela && IS.logado) montar();
     });
 
+    function navegar(chatId, destinatarioId, usuarioId) {
+        window.location.href = 'chat.html?chatId=' + chatId + '&destinatarioId=' + destinatarioId + '&usuarioId=' + usuarioId;
+    }
+
+    // A lista autenticada ja fornece o chat: nao chamar /start nem criar outro.
+    // chat.html ainda confirma a participacao e o par com o backend antes de exibir mensagens.
+    function abrirExistente(chat, destinatario) {
+        var usuarioId = id(IS.usuario && IS.usuario.id);
+        if (!usuarioId || !IS.logado || !sessaoAtual(IS.token, usuarioId)) return false;
+        var chatId = id(chat), destinatarioId = id(destinatario);
+        if (!chatId || !destinatarioId || destinatarioId === usuarioId) {
+            IS.toast('Conversa indisponível. Atualize sua lista e tente novamente.', 'error');
+            return false;
+        }
+        invalidar();
+        navegar(chatId, destinatarioId, usuarioId);
+        return true;
+    }
+
     function abrir(destinatario) {
         var token = IS.token;
         var usuarioId = id(IS.usuario && IS.usuario.id);
@@ -73,7 +92,7 @@
                 if (!resposta.ok) throw new Error(dados.mensagem || 'Erro ao iniciar conversa.');
                 var chatId = id(dados.chat && dados.chat._id);
                 if (!chatId || !participantes(dados.chat, usuarioId, destinatarioId)) throw new Error('A conversa retornada não corresponde ao profissional selecionado.');
-                window.location.href = 'chat.html?chatId=' + chatId + '&destinatarioId=' + destinatarioId + '&usuarioId=' + usuarioId;
+                navegar(chatId, destinatarioId, usuarioId);
             } catch (erro) {
                 if (numero === sequencia && sessaoAtual(token, usuarioId) && erro.name !== 'AbortError') IS.toast(erro.message || 'Erro ao conectar com o servidor.', 'error');
             } finally {
@@ -191,5 +210,5 @@
         carregar();
         timer = setInterval(carregar, 5000);
     }
-    IS.chat = { abrir: abrir, montar: montar };
+    IS.chat = { abrir: abrir, abrirExistente: abrirExistente, montar: montar };
 })();
