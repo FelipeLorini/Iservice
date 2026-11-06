@@ -3,6 +3,7 @@ const router = express.Router();
 const CadastroController = require('../controllers/CadastroController');
 const LoginController = require('../controllers/LoginController');
 const ServicoController = require('../controllers/ServicoController');
+const catalogoPublicoRoutes = require('./catalogoPublicoRoutes');
 const AgendamentoController = require('../controllers/agendamentoController');
 const AvaliacaoController = require('../controllers/avaliacaoController');
 const PedidoController = require('../controllers/pedidoController');
@@ -17,8 +18,7 @@ const { auth, verificarPrestador, verificarCliente } = require('../middleware/au
 router.post('/cadastro', CadastroController.cadastrar);
 router.post('/login', LoginController.login);
 
-router.get('/servicos', ServicoController.listarServicos);
-router.get('/servicos/categoria/:categoria', ServicoController.listarServicosPorCategoria);
+router.use('/servicos', catalogoPublicoRoutes);
 router.post('/servicos', auth, verificarPrestador, ServicoController.cadastrarServico);
 router.get('/servicos/prestador', auth, verificarPrestador, ServicoController.listarServicosPorPrestador);
 router.delete('/servicos/:id', auth, verificarPrestador, ServicoController.deletarServico);

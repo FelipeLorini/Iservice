@@ -91,6 +91,9 @@ async function fixture(t, { usuario = documento, failure } = {}) {
     'notificacaoController', 'favoritoController']) {
     dependencies['../controllers/' + name] = sentinel(name);
   }
+  dependencies['./catalogoPublicoRoutes'] = load('routes/catalogoPublicoRoutes.js', {
+    express, '../controllers/ServicoController': dependencies['../controllers/ServicoController']
+  });
   const userRoutes = load('routes/userRoutes.js', dependencies);
   const chatRoutes = load('routes/chatRoutes.js', {
     express, '../controllers/chatController': sentinel('chatController'),

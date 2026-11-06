@@ -68,6 +68,9 @@ async function fixture(t, { rows = documentos, failure } = {}) {
     'notificacaoController', 'favoritoController', 'usuarioController']) {
     dependencies['../controllers/' + name] = sentinel(name);
   }
+  dependencies['./catalogoPublicoRoutes'] = load('routes/catalogoPublicoRoutes.js', {
+    express, '../controllers/ServicoController': dependencies['../controllers/ServicoController']
+  });
   dependencies['./perfilPublicoRoutes'] = load('routes/perfilPublicoRoutes.js', {
     express, '../controllers/usuarioController': dependencies['../controllers/usuarioController']
   });
