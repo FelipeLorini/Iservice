@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const CadastroController = require('../controllers/CadastroController');
 const LoginController = require('../controllers/LoginController');
-const ServicoController = require('../controllers/ServicoController');
-const catalogoPublicoRoutes = require('./catalogoPublicoRoutes');
+const servicoRoutes = require('./servicoRoutes');
 const AgendamentoController = require('../controllers/agendamentoController');
 const AvaliacaoController = require('../controllers/avaliacaoController');
 const PedidoController = require('../controllers/pedidoController');
@@ -11,17 +10,13 @@ const PropostaController = require('../controllers/propostaController');
 const notificacaoRoutes = require('./notificacaoRoutes');
 const favoritoRoutes = require('./favoritoRoutes');
 const faqRoutes = require('./faqRoutes');
-const perfilPublicoRoutes = require('./perfilPublicoRoutes');
-const UsuarioController = require('../controllers/usuarioController');
+const usuarioRoutes = require('./usuarioRoutes');
 const { auth, verificarPrestador, verificarCliente } = require('../middleware/auth');
 
 router.post('/cadastro', CadastroController.cadastrar);
 router.post('/login', LoginController.login);
 
-router.use('/servicos', catalogoPublicoRoutes);
-router.post('/servicos', auth, verificarPrestador, ServicoController.cadastrarServico);
-router.get('/servicos/prestador', auth, verificarPrestador, ServicoController.listarServicosPorPrestador);
-router.delete('/servicos/:id', auth, verificarPrestador, ServicoController.deletarServico);
+router.use('/servicos', servicoRoutes);
 
 router.post('/agendamentos', auth, verificarCliente, AgendamentoController.agendarServico);
 router.get('/agendamentos/cliente', auth, verificarCliente, AgendamentoController.listarAgendamentosCliente);
@@ -50,7 +45,6 @@ router.use('/favoritos', favoritoRoutes);
 
 router.use('/faq', faqRoutes);
 
-router.use('/usuario', perfilPublicoRoutes);
-router.put('/usuario/portifolio', auth, verificarPrestador, UsuarioController.atualizarPortifolio);
+router.use('/usuario', usuarioRoutes);
 
 module.exports = router;

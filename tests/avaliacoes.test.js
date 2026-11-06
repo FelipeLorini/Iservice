@@ -267,7 +267,7 @@ function registeredRoutes() {
     // Registra as rotas filhas no ponto da montagem, preservando prefixo e ordem.
     router.use = (prefix, child) => {
       for (const route of child.routes) {
-        router.routes.push({ ...route, url: prefix + (route.url === '/' ? '' : route.url) });
+        router.routes.push({ ...route, url: (prefix === '/' ? '' : prefix) + (route.url === '/' ? '' : route.url) });
       }
     };
     return router;
