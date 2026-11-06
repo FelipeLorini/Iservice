@@ -10,6 +10,7 @@ const PropostaController = require('../controllers/propostaController');
 const NotificacaoController = require('../controllers/notificacaoController');
 const FavoritoController = require('../controllers/favoritoController');
 const faqRoutes = require('./faqRoutes');
+const perfilPublicoRoutes = require('./perfilPublicoRoutes');
 const UsuarioController = require('../controllers/usuarioController');
 const { auth, verificarPrestador, verificarCliente } = require('../middleware/auth');
 
@@ -54,7 +55,7 @@ router.get('/favoritos/verificar/:prestador_id', auth, verificarCliente, Favorit
 
 router.use('/faq', faqRoutes);
 
-router.get('/usuario/:id/perfil', UsuarioController.obterPerfilPublico);
+router.use('/usuario', perfilPublicoRoutes);
 router.put('/usuario/portifolio', auth, verificarPrestador, UsuarioController.atualizarPortifolio);
 
 module.exports = router;

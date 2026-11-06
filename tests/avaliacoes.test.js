@@ -279,6 +279,9 @@ function registeredRoutes() {
   dependencies['./faqRoutes'] = load('routes/faqRoutes.js', {
     express: dependencies.express, '../controllers/faqController': controller
   });
+  dependencies['./perfilPublicoRoutes'] = load('routes/perfilPublicoRoutes.js', {
+    express: dependencies.express, '../controllers/usuarioController': controller
+  });
   return load('routes/userRoutes.js', dependencies).routes;
 }
 
