@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const CadastroController = require('../controllers/CadastroController');
-const LoginController = require('../controllers/LoginController');
+const authRoutes = require('./authRoutes');
 const servicoRoutes = require('./servicoRoutes');
 const AgendamentoController = require('../controllers/agendamentoController');
-const AvaliacaoController = require('../controllers/avaliacaoController');
+const avaliacaoRoutes = require('./avaliacaoRoutes');
 const PedidoController = require('../controllers/pedidoController');
 const PropostaController = require('../controllers/propostaController');
 const notificacaoRoutes = require('./notificacaoRoutes');
@@ -13,8 +12,7 @@ const faqRoutes = require('./faqRoutes');
 const usuarioRoutes = require('./usuarioRoutes');
 const { auth, verificarPrestador, verificarCliente } = require('../middleware/auth');
 
-router.post('/cadastro', CadastroController.cadastrar);
-router.post('/login', LoginController.login);
+router.use('/', authRoutes);
 
 router.use('/servicos', servicoRoutes);
 
@@ -24,10 +22,7 @@ router.get('/agendamentos/prestador', auth, verificarPrestador, AgendamentoContr
 router.put('/agendamentos/:id/status', auth, verificarPrestador, AgendamentoController.atualizarStatusAgendamento);
 router.put('/agendamentos/:id/cancelar', auth, verificarCliente, AgendamentoController.cancelarAgendamento);
 
-router.post('/avaliacoes', auth, verificarCliente, AvaliacaoController.criarAvaliacao);
-router.get('/avaliacoes/cliente', auth, verificarCliente, AvaliacaoController.listarAvaliacoesCliente);
-router.get('/avaliacoes/prestador/:id', AvaliacaoController.listarAvaliacoesPorPrestador);
-router.get('/avaliacoes/prestador/:id/media', AvaliacaoController.calcularMedia);
+router.use('/avaliacoes', avaliacaoRoutes);
 
 router.post('/pedidos', auth, verificarCliente, PedidoController.criarPedido);
 router.get('/pedidos/cliente', auth, verificarCliente, PedidoController.listarPedidosCliente);
