@@ -61,7 +61,8 @@ async function fixture(t, { rows = documentos, failure } = {}) {
       res.json(result);
     } });
   }
-  const dependencies = { express, '../middleware/auth': auth, '../controllers/faqController': faq };
+  const faqRoutes = load('routes/faqRoutes.js', { express, '../controllers/faqController': faq });
+  const dependencies = { express, '../middleware/auth': auth, './faqRoutes': faqRoutes };
   for (const name of ['CadastroController', 'LoginController', 'ServicoController',
     'agendamentoController', 'avaliacaoController', 'pedidoController', 'propostaController',
     'notificacaoController', 'favoritoController', 'usuarioController']) {

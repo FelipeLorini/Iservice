@@ -9,7 +9,7 @@ const PedidoController = require('../controllers/pedidoController');
 const PropostaController = require('../controllers/propostaController');
 const NotificacaoController = require('../controllers/notificacaoController');
 const FavoritoController = require('../controllers/favoritoController');
-const FaqController = require('../controllers/faqController');
+const faqRoutes = require('./faqRoutes');
 const UsuarioController = require('../controllers/usuarioController');
 const { auth, verificarPrestador, verificarCliente } = require('../middleware/auth');
 
@@ -52,7 +52,7 @@ router.delete('/favoritos/:id', auth, verificarCliente, FavoritoController.remov
 router.get('/favoritos', auth, verificarCliente, FavoritoController.listarFavoritos);
 router.get('/favoritos/verificar/:prestador_id', auth, verificarCliente, FavoritoController.verificarFavorito);
 
-router.get('/faq', FaqController.listarFaqs);
+router.use('/faq', faqRoutes);
 
 router.get('/usuario/:id/perfil', UsuarioController.obterPerfilPublico);
 router.put('/usuario/portifolio', auth, verificarPrestador, UsuarioController.atualizarPortifolio);

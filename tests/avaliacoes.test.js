@@ -254,21 +254,32 @@ test('schema exige vinculo novo e preserva validacao de documento legado e indic
 });
 
 function registeredRoutes() {
-  const routes = [];
   const middleware = load('middleware/auth.js', { jsonwebtoken: { verify(value) {
     if (value === 'invalido-simulado') throw new Error('invalido');
     return { id: CLIENTE, tipo: value === 'prestador-simulado' ? 'prestador' : 'cliente' };
   } } });
-  const router = {};
-  for (const method of ['get', 'post', 'put', 'delete']) {
-    router[method] = (url, ...handlers) => { routes.push({ method, url, handlers }); };
+  function createRouter() {
+    const router = { routes: [] };
+    for (const method of ['get', 'post', 'put', 'delete']) {
+      router[method] = (url, ...handlers) => { router.routes.push({ method, url, handlers }); };
+    }
+    // Registra as rotas filhas no ponto da montagem, preservando prefixo e ordem.
+    router.use = (prefix, child) => {
+      for (const route of child.routes) {
+        router.routes.push({ ...route, url: prefix + (route.url === '/' ? '' : route.url) });
+      }
+    };
+    return router;
   }
-  const dependencies = { express: { Router: () => router }, '../middleware/auth': middleware };
+  const dependencies = { express: { Router: createRouter }, '../middleware/auth': middleware };
+  const controller = new Proxy({}, { get: (_, name) => async (req, res) => res.json({ handler: name, cliente: req.usuarioId }) });
   for (const match of read('routes/userRoutes.js').matchAll(/require\('(\.\.\/controllers\/[^']+)'\)/g)) {
-    dependencies[match[1]] = new Proxy({}, { get: (_, name) => async (req, res) => res.json({ handler: name, cliente: req.usuarioId }) });
+    dependencies[match[1]] = controller;
   }
-  load('routes/userRoutes.js', dependencies);
-  return routes;
+  dependencies['./faqRoutes'] = load('routes/faqRoutes.js', {
+    express: dependencies.express, '../controllers/faqController': controller
+  });
+  return load('routes/userRoutes.js', dependencies).routes;
 }
 
 for (const method of ['get', 'post']) {
