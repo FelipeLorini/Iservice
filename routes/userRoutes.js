@@ -8,8 +8,8 @@ const AgendamentoController = require('../controllers/agendamentoController');
 const AvaliacaoController = require('../controllers/avaliacaoController');
 const PedidoController = require('../controllers/pedidoController');
 const PropostaController = require('../controllers/propostaController');
-const NotificacaoController = require('../controllers/notificacaoController');
-const FavoritoController = require('../controllers/favoritoController');
+const notificacaoRoutes = require('./notificacaoRoutes');
+const favoritoRoutes = require('./favoritoRoutes');
 const faqRoutes = require('./faqRoutes');
 const perfilPublicoRoutes = require('./perfilPublicoRoutes');
 const UsuarioController = require('../controllers/usuarioController');
@@ -44,14 +44,9 @@ router.get('/propostas/pedido/:id', auth, verificarCliente, PropostaController.l
 router.get('/propostas/prestador', auth, verificarPrestador, PropostaController.listarPropostasPrestador);
 router.put('/propostas/:id/aceitar', auth, verificarCliente, PropostaController.aceitarProposta);
 
-router.get('/notificacoes', auth, NotificacaoController.listarNotificacoes);
-router.put('/notificacoes/:id/lida', auth, NotificacaoController.marcarComoLida);
-router.get('/notificacoes/nao-lidas', auth, NotificacaoController.contarNaoLidas);
+router.use('/notificacoes', notificacaoRoutes);
 
-router.post('/favoritos', auth, verificarCliente, FavoritoController.adicionarFavorito);
-router.delete('/favoritos/:id', auth, verificarCliente, FavoritoController.removerFavorito);
-router.get('/favoritos', auth, verificarCliente, FavoritoController.listarFavoritos);
-router.get('/favoritos/verificar/:prestador_id', auth, verificarCliente, FavoritoController.verificarFavorito);
+router.use('/favoritos', favoritoRoutes);
 
 router.use('/faq', faqRoutes);
 
