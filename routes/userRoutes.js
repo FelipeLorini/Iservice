@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authRoutes = require('./authRoutes');
 const servicoRoutes = require('./servicoRoutes');
-const AgendamentoController = require('../controllers/agendamentoController');
+const agendamentoRoutes = require('./agendamentoRoutes');
 const avaliacaoRoutes = require('./avaliacaoRoutes');
 const PedidoController = require('../controllers/pedidoController');
 const PropostaController = require('../controllers/propostaController');
@@ -16,11 +16,7 @@ router.use('/', authRoutes);
 
 router.use('/servicos', servicoRoutes);
 
-router.post('/agendamentos', auth, verificarCliente, AgendamentoController.agendarServico);
-router.get('/agendamentos/cliente', auth, verificarCliente, AgendamentoController.listarAgendamentosCliente);
-router.get('/agendamentos/prestador', auth, verificarPrestador, AgendamentoController.listarAgendamentosPrestador);
-router.put('/agendamentos/:id/status', auth, verificarPrestador, AgendamentoController.atualizarStatusAgendamento);
-router.put('/agendamentos/:id/cancelar', auth, verificarCliente, AgendamentoController.cancelarAgendamento);
+router.use('/agendamentos', agendamentoRoutes);
 
 router.use('/avaliacoes', avaliacaoRoutes);
 
