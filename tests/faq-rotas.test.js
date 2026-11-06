@@ -2,11 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
-const http = require('node:http');
-const express = require('express');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
+const { loadController, controllerStubs, startHttp } = require('./helpers/httpApp');
 
 const root = path.join(__dirname, '..');
 const secret = 'chave-sintetica-exclusiva-faq';
@@ -17,22 +13,6 @@ const documentos = [
   { _id: '4'.repeat(24), pergunta: 'Como funciona?', resposta: 'Informacao ficticia.', categoria: 'geral', ordem: 1 }
 ];
 const plain = value => JSON.parse(JSON.stringify(value));
-
-// Carrega codigo real com imports permitidos explicitamente. Nunca carrega
-// server.js, dotenv, mongoose ou modelos reais, nem altera require.cache/process.env.
-function load(file, dependencies) {
-  const filename = path.join(root, file);
-  const module = { exports: {} };
-  vm.runInNewContext(fs.readFileSync(filename, 'utf8'), {
-    module, exports: module.exports, __dirname: path.dirname(filename),
-    process: { env: { JWT_SECRET: secret } },
-    require(name) {
-      assert.ok(Object.hasOwn(dependencies, name), `Dependencia inesperada em ${file}: ${name}`);
-      return dependencies[name];
-    }
-  }, { filename });
-  return module.exports;
-}
 
 async function fixture(t, { rows = documentos, failure } = {}) {
   const queries = [], dispatches = [];
@@ -50,62 +30,11 @@ async function fixture(t, { rows = documentos, failure } = {}) {
       } };
     }
   };
-  const faq = load('controllers/faqController.js', { '../Models/faqModel': Faq });
-  const auth = load('middleware/auth.js', { jsonwebtoken: jwt });
-  const chatAuth = load('middleware/authMiddleware.js', { jsonwebtoken: jwt });
-  function sentinel(controller) {
-    return new Proxy({}, { get: (_, handler) => (req, res) => {
-      const result = { handler: `${controller}.${handler}`, params: req.params };
-      if (req.usuarioId) result.usuarioId = req.usuarioId;
-      dispatches.push(plain(result));
-      res.json(result);
-    } });
-  }
-  const faqRoutes = load('routes/faqRoutes.js', { express, '../controllers/faqController': faq });
-  const dependencies = { express, '../middleware/auth': auth, './faqRoutes': faqRoutes };
-  for (const name of ['CadastroController', 'LoginController', 'ServicoController',
-    'agendamentoController', 'avaliacaoController', 'pedidoController', 'propostaController',
-    'notificacaoController', 'favoritoController', 'usuarioController']) {
-    dependencies['../controllers/' + name] = sentinel(name);
-  }
-  dependencies['./catalogoPublicoRoutes'] = load('routes/catalogoPublicoRoutes.js', {
-    express, '../controllers/ServicoController': dependencies['../controllers/ServicoController']
-  });
-  dependencies['./perfilPublicoRoutes'] = load('routes/perfilPublicoRoutes.js', {
-    express, '../controllers/usuarioController': dependencies['../controllers/usuarioController']
-  });
-  const userRoutes = load('routes/userRoutes.js', dependencies);
-  const chatRoutes = load('routes/chatRoutes.js', {
-    express, '../middleware/authMiddleware': chatAuth,
-    '../controllers/chatController': sentinel('chatController')
-  });
-  const { createApp, configureApp } = load('src/app.js', {
-    express, cors, path, '../routes/userRoutes': userRoutes, '../routes/chatRoutes': chatRoutes
-  });
-  const app = createApp();
-  configureApp(app);
-  const server = http.createServer(app);
-  await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, '127.0.0.1', resolve);
-  });
-  t.after(() => new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve())));
-  function request(method, url, headers = {}) {
-    return new Promise((resolve, reject) => {
-      const req = http.request({ hostname: '127.0.0.1', port: server.address().port,
-        method, path: url, headers, agent: false }, res => {
-        const chunks = [];
-        res.on('error', reject);
-        res.on('data', chunk => chunks.push(chunk));
-        res.on('end', () => resolve({ status: res.statusCode, headers: res.headers,
-          text: Buffer.concat(chunks).toString('utf8') }));
-      });
-      req.setTimeout(5000, () => req.destroy(new Error('Timeout HTTP local do teste')));
-      req.on('error', reject);
-      req.end();
-    });
-  }
-  const headers = tipo => ({ Authorization: 'Bearer ' + jwt.sign({ id: usuarioId, tipo }, secret, { expiresIn: 60 }) });
+  const controllers = controllerStubs(dispatches);
+  controllers.faqController = loadController('controllers/faqController.js', {
+    '../Models/faqModel': Faq
+  }, { secret });
+  const { request, headers } = await startHttp(t, { controllers, secret, usuarioId });
   return { request, queries, dispatches, headers };
 }
 

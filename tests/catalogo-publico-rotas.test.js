@@ -2,11 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
-const http = require('node:http');
-const express = require('express');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
+const { loadController, controllerStubs, startHttp } = require('./helpers/httpApp');
 
 const root = path.join(__dirname, '..');
 const secret = 'chave-sintetica-exclusiva-catalogo';
@@ -25,20 +21,6 @@ const documento = {
 };
 const registros = [{ ...documento, _id: '2'.repeat(24), nome: 'Segundo' }, documento];
 const respostaPublica = [{ ...publico, _id: '2'.repeat(24), nome: 'Segundo' }, publico];
-
-// Imports explicitos: nenhum modelo real, server.js, dotenv ou conexao de banco.
-function load(file, dependencies) {
-  const filename = path.join(root, file), module = { exports: {} };
-  vm.runInNewContext(fs.readFileSync(filename, 'utf8'), {
-    module, exports: module.exports, __dirname: path.dirname(filename),
-    process: { env: { JWT_SECRET: secret } },
-    require(name) {
-      assert.ok(Object.hasOwn(dependencies, name), `Dependencia inesperada em ${file}: ${name}`);
-      return dependencies[name];
-    }
-  }, { filename });
-  return module.exports;
-}
 
 async function fixture(t, { rows = registros, failure, owner = CONTA, missing = false } = {}) {
   const queries = [], writes = [], dispatches = [];
@@ -61,66 +43,11 @@ async function fixture(t, { rows = registros, failure, owner = CONTA, missing = 
         async deleteOne() { writes.push({ deleteOne: id }); } };
     }
   };
-  const servicoController = load('controllers/ServicoController.js', { '../Models/servicoModel': Servico });
-  function sentinel(controller) {
-    return new Proxy({}, { get: (_, handler) => (req, res) => {
-      const result = { handler: `${controller}.${handler}`, params: req.params };
-      if (req.usuarioId) result.usuarioId = req.usuarioId;
-      dispatches.push(plain(result));
-      res.json(result);
-    } });
-  }
-  const dependencies = { express,
-    './catalogoPublicoRoutes': load('routes/catalogoPublicoRoutes.js', {
-      express, '../controllers/ServicoController': servicoController
-    }),
-    '../middleware/auth': load('middleware/auth.js', { jsonwebtoken: jwt }),
-    '../controllers/ServicoController': servicoController
-  };
-  for (const name of ['CadastroController', 'LoginController', 'agendamentoController',
-    'avaliacaoController', 'pedidoController', 'propostaController', 'notificacaoController',
-    'favoritoController', 'usuarioController']) dependencies['../controllers/' + name] = sentinel(name);
-  dependencies['./faqRoutes'] = load('routes/faqRoutes.js', {
-    express, '../controllers/faqController': sentinel('faqController')
-  });
-  dependencies['./perfilPublicoRoutes'] = load('routes/perfilPublicoRoutes.js', {
-    express, '../controllers/usuarioController': dependencies['../controllers/usuarioController']
-  });
-  const userRoutes = load('routes/userRoutes.js', dependencies);
-  const chatRoutes = load('routes/chatRoutes.js', {
-    express, '../controllers/chatController': sentinel('chatController'),
-    '../middleware/authMiddleware': load('middleware/authMiddleware.js', { jsonwebtoken: jwt })
-  });
-  const { createApp, configureApp } = load('src/app.js', {
-    express, cors, path, '../routes/userRoutes': userRoutes, '../routes/chatRoutes': chatRoutes
-  });
-  const app = createApp();
-  configureApp(app);
-  const server = http.createServer(app);
-  await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, '127.0.0.1', resolve);
-  });
-  t.after(() => new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve())));
-  function request(method, url, headers = {}, body) {
-    return new Promise((resolve, reject) => {
-      const data = body === undefined ? undefined : JSON.stringify(body);
-      const req = http.request({ hostname: '127.0.0.1', port: server.address().port,
-        method, path: url, agent: false,
-        headers: data === undefined ? headers : { ...headers, 'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(data) } }, res => {
-        const chunks = [];
-        res.on('data', chunk => chunks.push(chunk));
-        res.on('error', reject);
-        res.on('end', () => resolve({ status: res.statusCode, headers: res.headers,
-          text: Buffer.concat(chunks).toString('utf8') }));
-      });
-      req.setTimeout(5000, () => req.destroy(Error('Timeout HTTP local do teste')));
-      req.on('error', reject);
-      req.end(data);
-    });
-  }
-  const headers = tipo => ({ Authorization: 'Bearer ' + jwt.sign({ id: CONTA, tipo }, secret, { expiresIn: 60 }) });
+  const controllers = controllerStubs(dispatches);
+  controllers.ServicoController = loadController('controllers/ServicoController.js', {
+    '../Models/servicoModel': Servico
+  }, { secret });
+  const { request, headers } = await startHttp(t, { controllers, secret, usuarioId: CONTA });
   return { request, queries, writes, dispatches, headers };
 }
 

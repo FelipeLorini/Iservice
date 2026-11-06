@@ -2,11 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
-const http = require('node:http');
-const express = require('express');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
+const { loadController, controllerStubs, startHttp } = require('./helpers/httpApp');
 
 const root = path.join(__dirname, '..');
 const secret = 'chave-sintetica-exclusiva-perfil';
@@ -27,22 +23,6 @@ const documento = {
   hash: PRIVADO, token: PRIVADO, resetPasswordToken: PRIVADO, campo_futuro: PRIVADO, __v: 9
 };
 
-// Imports fechados: nao carrega server.js, dotenv ou modelos reais.
-// Cada fixture tem seu contexto; nao altera o relogio global, env ou require.cache.
-function load(file, dependencies, globals = {}) {
-  const filename = path.join(root, file);
-  const module = { exports: {} };
-  vm.runInNewContext(fs.readFileSync(filename, 'utf8'), {
-    module, exports: module.exports, __dirname: path.dirname(filename),
-    process: { env: { JWT_SECRET: secret } }, ...globals,
-    require(name) {
-      assert.ok(Object.hasOwn(dependencies, name), `Dependencia inesperada em ${file}: ${name}`);
-      return dependencies[name];
-    }
-  }, { filename });
-  return module.exports;
-}
-
 async function fixture(t, { usuario = documento, failure } = {}) {
   const queries = [], dispatches = [], faqQueries = [];
   const Usuario = {
@@ -59,73 +39,18 @@ async function fixture(t, { usuario = documento, failure } = {}) {
     }
   };
   class PerfilDate extends Date { static now() { return NOW; } }
-  const usuarioController = load('controllers/usuarioController.js', {
-    '../Models/usuarioModel': Usuario
-  }, { Date: PerfilDate });
-  function sentinel(controller) {
-    return new Proxy({}, { get: (_, handler) => (req, res) => {
-      const result = { handler: `${controller}.${handler}`, params: req.params };
-      if (req.usuarioId) result.usuarioId = req.usuarioId;
-      dispatches.push(plain(result));
-      res.json(result);
-    } });
-  }
-  const faq = load('controllers/faqController.js', { '../Models/faqModel': {
-    find() { return { async sort(order) { faqQueries.push(plain(order)); return []; } }; }
-  } });
-  const dependencies = {
-    express,
-    '../middleware/auth': load('middleware/auth.js', { jsonwebtoken: jwt }),
-    './faqRoutes': load('routes/faqRoutes.js', { express, '../controllers/faqController': faq }),
-    './perfilPublicoRoutes': load('routes/perfilPublicoRoutes.js', {
-      express, '../controllers/usuarioController': usuarioController
-    }),
-    '../controllers/usuarioController': {
-      ...usuarioController,
-      // O PUT e verificado apenas quanto ao encaminhamento e suas protecoes.
-      atualizarPortifolio: sentinel('usuarioController').atualizarPortifolio
-    }
+  const controllers = controllerStubs(dispatches);
+  controllers.usuarioController = {
+    ...loadController('controllers/usuarioController.js', {
+      '../Models/usuarioModel': Usuario
+    }, { secret, clock: PerfilDate }),
+    // O PUT continua verificando somente encaminhamento e protecoes.
+    atualizarPortifolio: controllers.usuarioController.atualizarPortifolio
   };
-  for (const name of ['CadastroController', 'LoginController', 'ServicoController',
-    'agendamentoController', 'avaliacaoController', 'pedidoController', 'propostaController',
-    'notificacaoController', 'favoritoController']) {
-    dependencies['../controllers/' + name] = sentinel(name);
-  }
-  dependencies['./catalogoPublicoRoutes'] = load('routes/catalogoPublicoRoutes.js', {
-    express, '../controllers/ServicoController': dependencies['../controllers/ServicoController']
-  });
-  const userRoutes = load('routes/userRoutes.js', dependencies);
-  const chatRoutes = load('routes/chatRoutes.js', {
-    express, '../controllers/chatController': sentinel('chatController'),
-    '../middleware/authMiddleware': load('middleware/authMiddleware.js', { jsonwebtoken: jwt })
-  });
-  const { createApp, configureApp } = load('src/app.js', {
-    express, cors, path, '../routes/userRoutes': userRoutes, '../routes/chatRoutes': chatRoutes
-  });
-  const app = createApp();
-  configureApp(app);
-  const server = http.createServer(app);
-  await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, '127.0.0.1', resolve);
-  });
-  t.after(() => new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve())));
-  function request(method, url, headers = {}) {
-    return new Promise((resolve, reject) => {
-      const req = http.request({ hostname: '127.0.0.1', port: server.address().port,
-        method, path: url, headers, agent: false }, res => {
-        const chunks = [];
-        res.on('data', chunk => chunks.push(chunk));
-        res.on('error', reject);
-        res.on('end', () => resolve({ status: res.statusCode, headers: res.headers,
-          text: Buffer.concat(chunks).toString('utf8') }));
-      });
-      req.setTimeout(5000, () => req.destroy(new Error('Timeout HTTP local do teste')));
-      req.on('error', reject);
-      req.end();
-    });
-  }
-  const headers = tipo => ({ Authorization: 'Bearer ' + jwt.sign({ id: CONTA, tipo }, secret, { expiresIn: 60 }) });
+  controllers.faqController = loadController('controllers/faqController.js', { '../Models/faqModel': {
+    find() { return { async sort(order) { faqQueries.push(plain(order)); return []; } }; }
+  } }, { secret });
+  const { request, headers } = await startHttp(t, { controllers, secret, usuarioId: CONTA });
   return { request, queries, dispatches, faqQueries, headers };
 }
 

@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { createRouteLoader, controllerNames } = require('./helpers/httpApp');
 
 const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -254,10 +255,10 @@ test('schema exige vinculo novo e preserva validacao de documento legado e indic
 });
 
 function registeredRoutes() {
-  const middleware = load('middleware/auth.js', { jsonwebtoken: { verify(value) {
+  const jwtModule = { verify(value) {
     if (value === 'invalido-simulado') throw new Error('invalido');
     return { id: CLIENTE, tipo: value === 'prestador-simulado' ? 'prestador' : 'cliente' };
-  } } });
+  } };
   function createRouter() {
     const router = { routes: [] };
     for (const method of ['get', 'post', 'put', 'delete']) {
@@ -271,21 +272,10 @@ function registeredRoutes() {
     };
     return router;
   }
-  const dependencies = { express: { Router: createRouter }, '../middleware/auth': middleware };
   const controller = new Proxy({}, { get: (_, name) => async (req, res) => res.json({ handler: name, cliente: req.usuarioId }) });
-  for (const match of read('routes/userRoutes.js').matchAll(/require\('(\.\.\/controllers\/[^']+)'\)/g)) {
-    dependencies[match[1]] = controller;
-  }
-  dependencies['./faqRoutes'] = load('routes/faqRoutes.js', {
-    express: dependencies.express, '../controllers/faqController': controller
-  });
-  dependencies['./catalogoPublicoRoutes'] = load('routes/catalogoPublicoRoutes.js', {
-    express: dependencies.express, '../controllers/ServicoController': controller
-  });
-  dependencies['./perfilPublicoRoutes'] = load('routes/perfilPublicoRoutes.js', {
-    express: dependencies.express, '../controllers/usuarioController': controller
-  });
-  return load('routes/userRoutes.js', dependencies).routes;
+  const controllers = Object.fromEntries(controllerNames.map(name => [name, controller]));
+  const loadRoutes = createRouteLoader({ controllers, expressModule: { Router: createRouter }, jwtModule });
+  return loadRoutes('routes/userRoutes.js').routes;
 }
 
 for (const method of ['get', 'post']) {
