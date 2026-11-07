@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { loadController, controllerStubs, startHttp } = require('./helpers/httpApp');
+const { loadController, loadService, controllerStubs, startHttp } = require('./helpers/httpApp');
 
 const CLIENTE = 'a'.repeat(24), PRESTADOR = 'b'.repeat(24), OUTRO = 'c'.repeat(24);
 const PEDIDO = 'abcdef0123456789abcdef01', PROPOSTA = 'abcdef0123456789abcdef02';
@@ -36,7 +36,7 @@ async function fixture(t, { usuarioId = CLIENTE, pedidos = [pedido], propostas =
     return doc;
   }
   const controllers = controllerStubs(dispatches);
-  controllers.propostaController = loadController('controllers/propostaController.js', {
+  const dependencies = {
     '../Models/pedidoModel': { async findById(id) {
       record('pedido.findById', id);
       return pedidoDoc(state.pedidos.find(row => row._id === id?.toLowerCase()));
@@ -100,7 +100,12 @@ async function fixture(t, { usuarioId = CLIENTE, pedidos = [pedido], propostas =
     '../utils/notificacaoHelper': { async criarNotificacao(...args) {
       record('notify', args); state.notificacoes.push(plain(args)); effects.push('notify');
     } }
-  }, { secret, clock: Clock });
+  };
+  const options = { secret, clock: Clock };
+  const serviceReal = loadService('services/propostaService.js', dependencies, options);
+  controllers.propostaController = loadController('controllers/propostaController.js', {
+    ...dependencies, '../services/propostaService': serviceReal
+  }, options);
   return { ...await startHttp(t, { controllers, secret, usuarioId }), state, calls, effects, dispatches };
 }
 

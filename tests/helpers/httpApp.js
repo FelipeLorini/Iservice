@@ -37,6 +37,16 @@ function loadController(file, dependencies, { secret, clock = Date } = {}) {
   }, secret, clock);
 }
 
+// Apenas o service autorizado nesta etapa, sempre com imports explicitamente simulados.
+// Nao amplia o carregador de Routers nem permite require real de Models/utilitarios.
+function loadService(file, dependencies, { secret, clock = Date } = {}) {
+  assert.equal(file, 'services/propostaService.js', 'Service nao permitido');
+  return evaluate(file, name => {
+    assert.ok(Object.hasOwn(dependencies, name), `Dependencia inesperada em ${file}: ${name}`);
+    return dependencies[name];
+  }, secret, clock);
+}
+
 function controllerStubs(dispatches) {
   return Object.fromEntries(controllerNames.map(controller => [controller,
     new Proxy({}, { get: (_, handler) => (req, res) => {
@@ -106,4 +116,4 @@ async function startHttp(t, { controllers, secret, usuarioId }) {
   return { request, headers };
 }
 
-module.exports = { loadController, controllerStubs, controllerNames, createRouteLoader, startHttp };
+module.exports = { loadController, loadService, controllerStubs, controllerNames, createRouteLoader, startHttp };

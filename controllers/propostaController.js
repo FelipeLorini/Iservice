@@ -1,7 +1,6 @@
 const Proposta = require('../Models/propostaModel');
 const Pedido = require('../Models/pedidoModel');
-const Agendamento = require('../Models/agendamentoModel');
-const Servico = require('../Models/servicoModel');
+const propostaService = require('../services/propostaService');
 const { criarNotificacao } = require('../utils/notificacaoHelper');
 
 exports.criarProposta = async (req, res) => {
@@ -78,48 +77,17 @@ exports.listarPropostasPrestador = async (req, res) => {
 exports.aceitarProposta = async (req, res) => {
   try {
     const { id } = req.params;
-    const proposta = await Proposta.findById(id).populate('pedido_id');
+    const resultado = await propostaService.aceitarProposta({ propostaId: id, clienteId: req.usuarioId });
 
-    if (!proposta) {
+    if (resultado.motivo === 'PROPOSTA_NAO_ENCONTRADA') {
       return res.status(404).json({ mensagem: 'Proposta nao encontrada' });
     }
 
-    const pedido = proposta.pedido_id;
-    if (pedido.cliente_id.toString() !== req.usuarioId) {
+    if (resultado.motivo === 'SEM_PERMISSAO') {
       return res.status(403).json({ mensagem: 'Voce nao tem permissao para aceitar esta proposta' });
     }
 
-    proposta.status = 'aceita';
-    await proposta.save();
-
-    pedido.status = 'em andamento';
-    await pedido.save();
-
-    await Proposta.updateMany(
-      { pedido_id: pedido._id, _id: { $ne: proposta._id } },
-      { status: 'recusada' }
-    );
-
-    let servico = await Servico.findOne({ prestador_id: proposta.prestador_id, categoria: pedido.categoria });
-    let agendamento = null;
-    if (servico) {
-      agendamento = await Agendamento.create({
-        cliente_id: pedido.cliente_id,
-        prestador_id: proposta.prestador_id,
-        servico_id: servico._id,
-        data: pedido.data_desejada || new Date(),
-        hora: '09:00',
-        status: 'pendente'
-      });
-    }
-
-    await criarNotificacao(
-      proposta.prestador_id,
-      'Sua proposta foi aceita pelo cliente',
-      'proposta_aceita',
-      '/dashboard-prestador.html'
-    );
-
+    const { proposta, agendamento } = resultado;
     res.json({ mensagem: 'Proposta aceita com sucesso', proposta, agendamento });
   } catch (error) {
     res.status(500).json({ mensagem: 'Erro ao aceitar proposta', erro: error.message });

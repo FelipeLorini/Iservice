@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createRouteLoader, loadController, controllerStubs, startHttp } = require('./helpers/httpApp');
+const { createRouteLoader, loadController, loadService, controllerStubs, startHttp } = require('./helpers/httpApp');
 
 test('loader HTTP recusa fontes fora da montagem permitida antes de ler seus arquivos', () => {
   const load = createRouteLoader({ controllers: {} });
@@ -21,6 +21,30 @@ test('Router real exige controller explicitamente substituido, inclusive em impo
 test('controller real recusa modelo nao simulado, sem fallback para require real', () => {
   const before = new Set(Object.keys(require.cache));
   assert.throws(() => loadController('controllers/faqController.js', {}), /Dependencia inesperada.*faqModel/);
+  assert.deepEqual(Object.keys(require.cache).filter(file => !before.has(file)), []);
+});
+
+test('loader de service permite somente propostaService e nao amplia os loaders anteriores', () => {
+  for (const file of ['server.js', '.env', 'Models/propostaModel.js', 'utils/notificacaoHelper.js',
+    'services/outroService.js', 'services/../services/propostaService.js', '../services/propostaService.js']) {
+    assert.throws(() => loadService(file, {}), /Service nao permitido/, file);
+  }
+  const load = createRouteLoader({ controllers: {} });
+  assert.throws(() => load('services/propostaService.js'), /Modulo nao permitido/);
+  assert.throws(() => loadController('services/propostaService.js', {}), /Controller nao permitido/);
+});
+
+test('service real recusa cada dependencia nao simulada sem carregar modelos ou helper reais', () => {
+  const before = new Set(Object.keys(require.cache));
+  const dependencies = {};
+  for (const name of ['../Models/propostaModel', '../Models/agendamentoModel',
+    '../Models/servicoModel', '../utils/notificacaoHelper']) {
+    assert.throws(() => loadService('services/propostaService.js', dependencies),
+      error => error.message.includes('Dependencia inesperada') && error.message.includes(name));
+    dependencies[name] = {};
+  }
+  const service = loadService('services/propostaService.js', dependencies);
+  assert.equal(typeof service.aceitarProposta, 'function');
   assert.deepEqual(Object.keys(require.cache).filter(file => !before.has(file)), []);
 });
 
