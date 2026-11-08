@@ -203,7 +203,7 @@ test('listagens de propostas vazias preservam arrays', async t => {
   json(await f.request('GET', '/api/propostas/prestador', f.headers('prestador')), 200, []);
 });
 
-test('aceitacao preserva ordem completa, parametros, vinculos, recusas e notificacao', async t => {
+test('aceitacao valida consulta servico antes das escritas e preserva parametros, vinculos e notificacao', async t => {
   const unrelated = { ...other, _id: NOVA, pedido_id: OUTRO_PEDIDO };
   const f = await fixture(t, { propostas: [proposta, { ...other, status: 'aceita' }, unrelated] });
   const accepted = { ...proposta, status: 'aceita' }, underway = { ...pedido, status: 'em andamento' };
@@ -215,9 +215,9 @@ test('aceitacao preserva ordem completa, parametros, vinculos, recusas e notific
   200, { mensagem: 'Proposta aceita com sucesso', proposta: { ...accepted, pedido_id: underway }, agendamento });
   assert.deepEqual(f.calls, [
     { op: 'proposta.findById', value: PROPOSTA.toUpperCase() }, { op: 'proposta.populate', value: ['pedido_id'] },
+    { op: 'servico.findOne', value: { prestador_id: PRESTADOR, categoria: pedido.categoria } },
     { op: 'proposta.save', value: accepted }, { op: 'pedido.save', value: underway },
     { op: 'proposta.updateMany', value: { filter: { pedido_id: PEDIDO, _id: { $ne: PROPOSTA } }, update: { status: 'recusada' } } },
-    { op: 'servico.findOne', value: { prestador_id: PRESTADOR, categoria: pedido.categoria } },
     { op: 'agendamento.create', value: data }, { op: 'notify', value: notifyAccepted }
   ]);
   assert.deepEqual(f.effects, acceptedEffects);
@@ -226,13 +226,14 @@ test('aceitacao preserva ordem completa, parametros, vinculos, recusas e notific
   assert.deepEqual(f.dispatches, []);
 });
 
-test('aceitacao sem servico correspondente retorna agendamento null e ainda altera e notifica', async t => {
+// Historico 288fa65: estes cenarios aceitavam estados encerrados e servico ausente.
+test('FUNC-006: sem servico correspondente retorna 409 antes de gravar ou notificar', async t => {
   const f = await fixture(t, { service: false });
+  const before = plain(f.state);
   json(await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar', f.headers('cliente'), {}),
-    200, { mensagem: 'Proposta aceita com sucesso', proposta: { ...proposta, status: 'aceita',
-      pedido_id: { ...pedido, status: 'em andamento' } }, agendamento: null });
-  assert.deepEqual(f.effects, ['proposta.save', 'pedido.save', 'proposta.updateMany', 'notify']);
-  assert.deepEqual(f.state.agendamentos, []); assert.deepEqual(f.state.notificacoes, [notifyAccepted]);
+    409, { mensagem: 'Nao existe servico correspondente para aceitar esta proposta' });
+  assert.deepEqual(f.calls.map(call => call.op), ['proposta.findById', 'proposta.populate', 'servico.findOne']);
+  assert.deepEqual(f.effects, []); assert.deepEqual(f.state, before);
 });
 
 test('aceitacao sem data desejada usa data atual controlada e hora fixa', async t => {
@@ -243,13 +244,44 @@ test('aceitacao sem data desejada usa data atual controlada e hora fixa', async 
     servico_id: SERVICO, data: new Date(now).toISOString(), hora: '09:00', status: 'pendente' }]);
 });
 
-test('aceitacao nao valida status anterior e repeticao pode criar dois agendamentos', async t => {
+test('FUNC-001: proposta recusada de pedido cancelado retorna 409 sem efeitos', async t => {
   const f = await fixture(t, { pedidos: [{ ...pedido, status: 'cancelado' }], propostas: [{ ...proposta, status: 'recusada' }, other] });
-  for (let n = 0; n < 2; n++) assert.equal((await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar',
-    f.headers('cliente'), {})).status, 200);
-  assert.deepEqual(f.effects, [...acceptedEffects, ...acceptedEffects]);
-  assert.equal(f.state.agendamentos.length, 2); assert.equal(f.state.notificacoes.length, 2);
-  assert.equal(f.state.pedidos[0].status, 'em andamento'); assert.equal(f.state.propostas[0].status, 'aceita');
+  const before = plain(f.state);
+  for (let n = 0; n < 2; n++) json(await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar',
+    f.headers('cliente'), {}), 409, { mensagem: 'Este pedido nao esta aberto para aceitar propostas' });
+  assert.deepEqual(f.effects, []); assert.deepEqual(f.state, before);
+});
+
+for (const [entity, status] of [['pedido', 'cancelado'], ['pedido', 'finalizado'], ['pedido', 'em andamento'],
+  ['proposta', 'recusada'], ['proposta', 'aceita']]) test(`FUNC-001: ${entity} ${status} retorna 409 sem alteracoes`, async t => {
+  const f = await fixture(t, { pedidos: [{ ...pedido, ...(entity === 'pedido' ? { status } : {}) }],
+    propostas: [{ ...proposta, ...(entity === 'proposta' ? { status } : {}) }, other] });
+  const before = plain(f.state);
+  json(await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar', f.headers('cliente'), {}), 409,
+    { mensagem: entity === 'pedido' ? 'Este pedido nao esta aberto para aceitar propostas' : 'Esta proposta nao esta disponivel para aceitacao' });
+  assert.deepEqual(f.calls.map(call => call.op), ['proposta.findById', 'proposta.populate']);
+  assert.deepEqual(f.effects, []); assert.deepEqual(f.state, before);
+});
+
+test('autorizacao precede conflitos de estado e consulta de servico', async t => {
+  const f = await fixture(t, { pedidos: [{ ...pedido, cliente_id: OUTRO, status: 'cancelado' }],
+    propostas: [{ ...proposta, status: 'recusada' }], service: false });
+  const before = plain(f.state);
+  json(await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar', f.headers('cliente'), {}),
+    403, { mensagem: 'Voce nao tem permissao para aceitar esta proposta' });
+  assert.deepEqual(f.calls.map(call => call.op), ['proposta.findById', 'proposta.populate']);
+  assert.deepEqual(f.effects, []); assert.deepEqual(f.state, before);
+});
+
+test('repeticao sequencial recebe 409 e preserva a unica contratacao anterior', async t => {
+  const f = await fixture(t);
+  assert.equal((await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar', f.headers('cliente'), {})).status, 200);
+  const before = plain(f.state), effects = plain(f.effects), previousCalls = f.calls.length;
+  json(await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar', f.headers('cliente'), {}),
+    409, { mensagem: 'Este pedido nao esta aberto para aceitar propostas' });
+  assert.deepEqual(f.calls.slice(previousCalls).map(call => call.op), ['proposta.findById', 'proposta.populate']);
+  assert.deepEqual(f.state, before); assert.deepEqual(f.effects, effects);
+  assert.equal(f.state.agendamentos.length, 1); assert.equal(f.state.notificacoes.length, 1);
 });
 
 for (const missing of [false, true]) test(`aceitacao nega outra conta ou inexistente: ausente=${missing}`, async t => {
@@ -269,9 +301,11 @@ test('aceitacao com pedido removido retorna 500 antes de qualquer escrita', asyn
   assert.deepEqual(f.effects, []);
 });
 
+// Fase 6C.1 antecipou servico.findOne: sua falha agora ocorre antes de qualquer escrita.
+// As demais falhas continuam verificando os efeitos parciais historicamente caracterizados.
 for (const [failure, completed] of [
   ['proposta.findById', 0], ['proposta.populate', 0], ['proposta.save', 0], ['pedido.save', 1],
-  ['proposta.updateMany', 2], ['servico.findOne', 3], ['agendamento.create', 3]
+  ['proposta.updateMany', 2], ['servico.findOne', 0], ['agendamento.create', 3]
 ]) test(`aceitacao falha em ${failure}: preserva efeitos parciais anteriores sem rollback`, async t => {
   const f = await fixture(t, { failure });
   json(await f.request('PUT', '/api/propostas/' + PROPOSTA + '/aceitar', f.headers('cliente'), {}),

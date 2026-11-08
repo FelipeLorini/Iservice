@@ -15,6 +15,19 @@ exports.aceitarProposta = async ({ propostaId, clienteId }) => {
     return { motivo: 'SEM_PERMISSAO' };
   }
 
+  // Guardas de leitura da primeira aceitacao; nao garantem exclusao concorrente.
+  if (pedido.status !== 'aberto') {
+    return { motivo: 'PEDIDO_NAO_ABERTO' };
+  }
+  if (proposta.status !== 'enviada') {
+    return { motivo: 'PROPOSTA_NAO_ENVIADA' };
+  }
+
+  const servico = await Servico.findOne({ prestador_id: proposta.prestador_id, categoria: pedido.categoria });
+  if (!servico) {
+    return { motivo: 'SERVICO_NAO_ENCONTRADO' };
+  }
+
   proposta.status = 'aceita';
   await proposta.save();
 
@@ -26,18 +39,14 @@ exports.aceitarProposta = async ({ propostaId, clienteId }) => {
     { status: 'recusada' }
   );
 
-  let servico = await Servico.findOne({ prestador_id: proposta.prestador_id, categoria: pedido.categoria });
-  let agendamento = null;
-  if (servico) {
-    agendamento = await Agendamento.create({
-      cliente_id: pedido.cliente_id,
-      prestador_id: proposta.prestador_id,
-      servico_id: servico._id,
-      data: pedido.data_desejada || new Date(),
-      hora: '09:00',
-      status: 'pendente'
-    });
-  }
+  const agendamento = await Agendamento.create({
+    cliente_id: pedido.cliente_id,
+    prestador_id: proposta.prestador_id,
+    servico_id: servico._id,
+    data: pedido.data_desejada || new Date(),
+    hora: '09:00',
+    status: 'pendente'
+  });
 
   await criarNotificacao(
     proposta.prestador_id,

@@ -87,6 +87,16 @@ exports.aceitarProposta = async (req, res) => {
       return res.status(403).json({ mensagem: 'Voce nao tem permissao para aceitar esta proposta' });
     }
 
+    if (resultado.motivo === 'PEDIDO_NAO_ABERTO') {
+      return res.status(409).json({ mensagem: 'Este pedido nao esta aberto para aceitar propostas' });
+    }
+    if (resultado.motivo === 'PROPOSTA_NAO_ENVIADA') {
+      return res.status(409).json({ mensagem: 'Esta proposta nao esta disponivel para aceitacao' });
+    }
+    if (resultado.motivo === 'SERVICO_NAO_ENCONTRADO') {
+      return res.status(409).json({ mensagem: 'Nao existe servico correspondente para aceitar esta proposta' });
+    }
+
     const { proposta, agendamento } = resultado;
     res.json({ mensagem: 'Proposta aceita com sucesso', proposta, agendamento });
   } catch (error) {

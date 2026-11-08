@@ -162,39 +162,52 @@ test('MongoDB descartavel: propostas e agendamentos com persistencia real', { ti
         assert.equal((await Proposta.findById(otherProposal.id)).status, 'enviada');
       });
 
-      await t.test('outro cliente nao aceita proposta nem altera documentos persistidos', async () => {
-        const f = await fixture(), before = await persisted(f);
-        json(await aceitar(f, outroCliente), 403, 'Voce nao tem permissao para aceitar esta proposta');
-        assert.deepEqual(await persisted(f), before);
+      await t.test('autorizacao precede estados e servico ausente sem alterar documentos reais', async () => {
+        for (const options of [{}, { pedidoStatus: 'cancelado', propostaStatus: 'recusada', service: false }]) {
+          const f = await fixture(options), before = await persisted(f), previousWrites = writes.length;
+          json(await aceitar(f, outroCliente), 403, 'Voce nao tem permissao para aceitar esta proposta');
+          assert.deepEqual(await persisted(f), before); assert.equal(writes.length, previousWrites);
+        }
       });
 
-      await t.test('FUNC-006: sem servico aceita e notifica, persistindo nenhum agendamento', async () => {
+      // Historico 288fa65: ausencia de servico retornava 200/null; estados encerrados eram aceitos.
+      await t.test('FUNC-006: sem servico retorna 409 sem nenhuma escrita ou notificacao real', async () => {
         const f = await fixture({ service: false });
-        const body = json(await aceitar(f), 200, 'Proposta aceita com sucesso');
-        assert.equal(body.agendamento, null);
-        const state = await persisted(f);
-        assert.equal(state.proposta.status, 'aceita'); assert.equal(state.pedido.status, 'em andamento');
-        assert.equal(state.outra.status, 'recusada'); assert.equal(state.agendamentos.length, 0);
-        assert.equal(state.notificacoes.length, 1);
+        assert.equal(await Servico.countDocuments({ prestador_id: f.prestador._id, categoria: f.pedido.categoria }), 0);
+        const before = await persisted(f), previousWrites = writes.length;
+        const body = json(await aceitar(f), 409, 'Nao existe servico correspondente para aceitar esta proposta');
+        assert.deepEqual(Object.keys(body), ['mensagem']);
+        assert.deepEqual(await persisted(f), before); assert.equal(writes.length, previousWrites);
       });
 
-      await t.test('FUNC-001: proposta recusada de pedido cancelado e realmente aceita', async () => {
+      await t.test('FUNC-001: proposta recusada de pedido cancelado permanece intacta com 409', async () => {
         const f = await fixture({ pedidoStatus: 'cancelado', propostaStatus: 'recusada' });
-        json(await aceitar(f), 200, 'Proposta aceita com sucesso');
-        const state = await persisted(f);
-        assert.equal(state.proposta.status, 'aceita'); assert.equal(state.pedido.status, 'em andamento');
-        assert.equal(state.agendamentos.length, 1); assert.equal(state.notificacoes.length, 1);
+        const before = await persisted(f), previousWrites = writes.length;
+        json(await aceitar(f), 409, 'Este pedido nao esta aberto para aceitar propostas');
+        assert.deepEqual(await persisted(f), before); assert.equal(writes.length, previousWrites);
       });
 
-      await t.test('FUNC-002: repetir aceitacao persiste dois agendamentos e duas notificacoes', async () => {
+      for (const [entity, status] of [['pedido', 'cancelado'], ['pedido', 'finalizado'], ['pedido', 'em andamento'],
+        ['proposta', 'recusada'], ['proposta', 'aceita']]) {
+        await t.test(`FUNC-001: ${entity} ${status} recebe 409 sem alterar registros no MongoDB`, async () => {
+          const f = await fixture(entity === 'pedido' ? { pedidoStatus: status } : { propostaStatus: status });
+          const before = await persisted(f), previousWrites = writes.length;
+          json(await aceitar(f), 409, entity === 'pedido' ? 'Este pedido nao esta aberto para aceitar propostas' :
+            'Esta proposta nao esta disponivel para aceitacao');
+          assert.deepEqual(await persisted(f), before); assert.equal(writes.length, previousWrites);
+        });
+      }
+
+      // Historico FUNC-002: duas aceitacoes geravam dois agendamentos e notificacoes.
+      // Fase 6C.1 bloqueia apenas a repeticao sequencial; nao implementa replay/idempotencia duravel.
+      await t.test('repeticao sequencial retorna 409 e preserva um agendamento e uma notificacao', async () => {
         const f = await fixture();
         json(await aceitar(f), 200, 'Proposta aceita com sucesso');
-        json(await aceitar(f), 200, 'Proposta aceita com sucesso');
+        const before = await persisted(f), previousWrites = writes.length;
+        json(await aceitar(f), 409, 'Este pedido nao esta aberto para aceitar propostas');
         const state = await persisted(f);
-        assert.equal(state.agendamentos.length, 2); assert.equal(state.notificacoes.length, 2);
-        assert.notEqual(state.agendamentos[0]._id, state.agendamentos[1]._id);
-        assert.notEqual(state.notificacoes[0]._id, state.notificacoes[1]._id);
-        assert.ok(state.agendamentos.every(row => row.data === f.data && row.hora === '09:00'));
+        assert.deepEqual(state, before); assert.equal(writes.length, previousWrites);
+        assert.equal(state.agendamentos.length, 1); assert.equal(state.notificacoes.length, 1);
       });
 
       for (const point of ['pedido.save', 'agendamento.create']) {
