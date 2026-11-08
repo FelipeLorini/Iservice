@@ -1,0 +1,107 @@
+# Plano de integração local da contratação — Fase 6C.5C
+
+**Proposta para aprovação; nenhuma ativação executada.** Base conferida: `refactor/arquitetura-mvc`, HEAD `ea16fe0`, Git inicialmente limpo. Referência relatada: 920 testes aprovados, incluindo os 34 testes HTTP da 6C.5B também executados pelo desenvolvedor. Nesta auditoria não foram executados testes, iniciados processos MongoDB ou consultados bancos existentes.
+
+**Conclusão:** o formato da resposta de aceitação não quebra os consumidores encontrados, mas a mensagem fixa do cliente está incorreta para replay. Os bloqueios principais são certificação coordenada, prontidão operacional e escritores que ainda alteram estados isoladamente. Recomenda-se demonstrar primeiro em servidor local exclusivo e replica set descartável, com operações incompatíveis bloqueadas no backend. Isso não equivale à liberação geral da contratação.
+
+Referências: [desenho e índices I1–I5](desenho-vinculos-contratacao.md), [política proposta](politica-contratacao-propostas.md), [histórico de pendências](pendencias-funcionais.md). As descrições históricas não substituem o código atual; nenhum defeito é encerrado por este plano. Linhas abaixo referem-se ao HEAD auditado.
+
+## 1. Compatibilidade HTTP e consumidores reais
+
+| Resposta do PUT de aceitação | Antigo, ativo | Novo, ainda isolado |
+|---|---|---|
+| Primeira aceitação | `200`, `mensagem`, `proposta`, `agendamento` | Mesmo envelope e mensagem `Proposta aceita com sucesso` |
+| `proposta.pedido_id` | Pedido populado inteiro pelo service | ID simples; demais referências também normalizadas para IDs |
+| `proposta.prestador_id` / `agendamento.servico_id` | IDs nesta resposta, não populados | IDs; não há mudança de objeto para ID nestes dois campos no PUT atual |
+| Metadados | Documentos serializados diretamente | Lista explícita de campos; exclui serviço novo da proposta e origem/pedido/proposta novos da agenda |
+| Repetição sequencial | `409` pela guarda de estado | `200` com mesmos IDs e `Contratacao existente recuperada com sucesso`; sem chave pública `reutilizada` |
+| Erros | `404`/`403`, alguns `409`; ID inválido pode produzir `500`; exceção inclui `erro` | `400` para ID inválido, conflitos adicionais `409`, resultado indeterminado `503`; `500` genérico sem `erro` |
+
+Fontes: `services/propostaService.js:6`, `controllers/propostaController.js:77`, `controllers/aceitacaoVinculadaController.js:6` e `:38`. JWT/papel permanecem nos middlewares; o adaptador usa `req.usuarioId`, nunca identidade do body.
+
+| Arquivo e função/linha | Dependência real e origem dos dados | Impacto e correção mínima |
+|---|---|---|
+| `site-iservice-main/dashboard-cliente.html:679`, `aceitarProposta` | PUT; lê JSON, testa `resposta.ok`, usa `dados.mensagem` só no erro; **não usa** `dados.proposta` nem `dados.agendamento` | IDs simples não quebram esta função. Trocar confirmação de criação garantida por confirmação neutra e o toast fixo de `:694` por `dados.mensagem`; manter recarga de pedidos/agenda |
+| Mesmo arquivo, `:689` | Não há tratamento específico de `200`/`409`/`503`; todos os erros encerram a função sem recarregar | Em `409`, mostrar mensagem e atualizar leituras; em `503`/falha de rede, informar resultado não confirmado e consultar estado, sem repetir PUT automaticamente. Desabilitar botão enquanto aguarda; isso é UX, não garantia de concorrência |
+| Mesmo arquivo, `carregarPropostasDoPedido`, `:649`/`:663`/`:665` | GET `/api/propostas/pedido/:id`; usa `p.prestador_id.nome` | **Preservar populate deste GET** (`propostaController.js:57`). Não aplicar a projeção de IDs do PUT às listagens |
+| `dashboard-prestador.html:601`/`:620`, `carregarMinhasPropostas` | GET `/api/propostas/prestador`; usa `p.pedido_id.titulo` | Não consome a resposta do PUT. Manter objeto com `_id`/`titulo` e demais campos públicos necessários neste GET (`propostaController.js:69`); projetar fora `contratacao`/`fluxo_contratacao`, sem reduzir tudo a ID |
+| `dashboard-cliente.html:343`/`:441`/`:443`/`:465`, agenda | GET `/api/agendamentos/cliente`; usa `a.servico_id.nome`, `a.prestador_id.nome`, data/hora/status/ID | Preservar objetos populados e seus campos atuais; a resposta enxuta do PUT não é fonte da renderização |
+| `dashboard-prestador.html:336`/`:381`, agenda | GET `/api/agendamentos/prestador`; usa `a.servico_id.nome` e `a.cliente_id.nome` | Mesma preservação. Os dois GETs são montados em `agendamentoController.js:42` e `:54`; manter projeções `nome preco` e `nome telefone` |
+| `dashboard-cliente.html:609`/`:642`, pedidos | GET `/api/pedidos/cliente`; propostas só são carregadas para pedidos abertos | Após aceitar, o botão desaparece na recarga. Demonstrar replay por repetição HTTP autenticada no teste; se for necessário botão de recuperação após reabrir a página, será ajuste adicional explícito |
+| `site-iservice-main/notificacoes.js:23`/`:180`/`:210` | GET notificações, mensagem/tipo/link/ID/lida; traduz aceitação para “Um agendamento foi criado” | Texto continua válido como evento histórico único da primeira aceitação. Replay não cria novo evento. Manter link `/dashboard-prestador.html`; não depender de `evento_chave` na UI |
+| `dashboard-prestador.html:640` | Atualiza propostas e agenda a cada 30 segundos | Demonstrar atualização por recarga ou pelo intervalo; não prometer atualização instantânea ao clicar em notificação da mesma página |
+| `profissionais.html:393`, `faxina.html:253` | POST direto de agenda, com serviço/data/hora explícitos | Fora da primeira demonstração vinculada; mostrar indisponibilidade temporária se acessado no servidor local restrito |
+
+Recomendação: conservar URLs, envelope e campos populados dos **GETs**; manter a projeção enxuta do novo **PUT**, pois nenhum consumidor local encontrado depende do pedido inteiro nela. Isso é uma diferença pública a aprovar, não prova de compatibilidade com clientes externos desconhecidos. Não há necessidade demonstrada de repopular todo Pedido no PUT. `site-iservice-main/app.js:8` usa `/api` na mesma origem: servir páginas e API no launcher local dispensa alterar URLs para outro ambiente.
+
+A projeção também precisa ser revisada nas listagens atuais: Pedido é devolvido inteiro; Proposta do prestador popula Pedido inteiro; agendas/notificações são serializadas sem excluir os campos novos. Preservar dados já usados e excluir somente metadados de coordenação novos. Confirmar com testes de resposta e do DOM, sem alterar o service para acomodar a interface.
+
+## 2. Onde e quando certificar pedidos
+
+Único criador de Pedido na aplicação encontrado: `POST /api/pedidos` → `routes/pedidoRoutes.js:6` → `controllers/pedidoController.js:3`, chamada `Pedido.create` em `:8`. O formulário real está em `dashboard-cliente.html:726`, POST em `:745`, body em `:751`. Não foi encontrado outro escritor de Pedido em controllers/services/scripts; fixtures de testes não são criação operacional. Os arquivos legados de Views não constituem outro caminho de criação de Pedido.
+
+Mudança mínima futura: acrescentar **literal do servidor** `fluxo_contratacao: 1` ao objeto selecionado para criação, apenas no handler usado pela composição local preparada. Para não certificar a aplicação antiga, extrair uma pequena fábrica desse handler com dependência explícita de Model e configuração de certificação fornecida pela composição; exportação atual continua não certificando. O valor do navegador não determina essa configuração. Não usar default no Model, spread do body, edição de `.env` ou flag de Render.
+
+**Ordem obrigatória:** iniciar e identificar o banco descartável → verificar índices/topologia → montar somente aceitação vinculada e barreiras dos escritores → só então disponibilizar o handler de criação certificado. Não iniciar certificação enquanto a aceitação antiga puder escrever no mesmo banco. A criação de pedido e a troca do handler de aceitação pertencem à mesma entrega de integração local, sem janela de execução mista.
+
+Pedidos abertos anteriores à ativação: continuam legíveis, sem backfill; aceitação retorna `409` de revisão. Não fazer fallback para o service antigo e não deduzir vínculos por data/categoria. Preservar contas e documentos; criar pedidos novos voluntariamente com contas fictícias para a demonstração. Certificação/reconciliação histórica exige aprovação e evidência específicas.
+
+## 3. Escritores a coordenar
+
+Classificação para a **demonstração local restrita**; bloqueios são no servidor, após autenticação/papel/propriedade quando houver recurso, não apenas botões ocultos. Os endpoints da aplicação hospedada não serão alterados por uma composição de ensaio.
+
+| Escritor real | Pode continuar? / risco concreto | Ação mínima e teste de compatibilidade |
+|---|---|---|
+| `pedidoController.criarPedido:3` | Precisa certificação controlada | Handler local da seção 2; testar ausência/valor forjado do marcador no body e leitura após criação |
+| `propostaService.aceitarProposta:6`, via `propostaController:77` | **Não** no banco do protocolo novo: grava sem vínculos e recusa concorrentes indiscriminadamente | Não registrar esse handler na composição local; teste deve provar chamada do service novo e ausência do antigo, inclusive quando recebe legado |
+| `contratacaoVinculadaService:95–113` | Sim, após prontidão e com escritores incompatíveis impedidos | Manter transação/CAS, vinculação e notificação já testadas; testar fluxo HTTP integrado, replay e disputa entre duas aceitações |
+| `pedidoController.cancelarPedido:47` | **Não**: `save` altera status isoladamente; pode cancelar após a aceitação deixando agenda ativa | Bloquear temporariamente esse endpoint na demonstração. Futuro: transição condicional disputando o mesmo Pedido e coordenação com agenda. Testar bloqueio e ausência de escrita, inclusive durante aceitação |
+| `propostaController.criarProposta:6` | Sequencialmente funciona; consulta pedido aberto antes de `create`, podendo inserir `enviada` depois de uma aceitação concorrente | Na demonstração, receber propostas antes de abrir a etapa de aceitação; encerrar recebimento e aguardar requisições em andamento no servidor local. Futuro: protocolo comum de disputa com Pedido. Testar POST em andamento versus início da aceitação, sem proposta tardia |
+| `agendamentoController.agendarServico:4` | **Não** na demonstração: pode disputar horário com aceitação e cria sem origem/vínculos | Bloquear POST direto temporariamente; futuro precisa de reserva comum. Testar POST autenticado bloqueado sem inserção |
+| `agendamentoController.atualizarStatusAgendamento:66` e `cancelarAgendamento:92` | **Não** para contratação vinculada sem coordenação: finaliza/cancela só agenda e permite reabertura | Bloquear ambos temporariamente no servidor local. Futuro: transições aprovadas + Pedido na mesma unidade consistente. Testar bloqueio e isolamento de outra conta; não afirmar que o `save` apaga vínculos, pois o problema comprovado é divergência de estados |
+| `ServicoController.deletarServico:67` | **Não**: remoção física sem checar contratação; uma consulta anterior não elimina corrida | Bloquear DELETE no servidor local desde o início, não apenas após aceitar. Futuro: proteção coordenada de exclusão/arquivamento; testar tentativa concorrente sem remoção |
+| `ServicoController.cadastrarServico:35` | Criação pode introduzir ambiguidade; novo service rejeita quando a observa, mas não coordena inserção concorrente no catálogo | Preparar catálogo antes das aceitações e congelar POST serviços na etapa de aceitação. Testar serviço único, ausência e ambiguidade; seleção explícita fica posterior |
+| `utils/notificacaoHelper.js:3`, chamado pela aceitação antiga | **Não** para evento de aceitação vinculado: sem sessão e suprime falha | Novo service deve continuar gravando via Model/sessão; teste de rollback na notificação. Helper pode continuar nos eventos independentes, como envio de proposta, sem alegar atomicidade deles |
+| `notificacaoController.marcarComoLida:15` | Sim: propriedade conferida, altera `lida`, não identidade do evento | Testar outra conta `403`, marcar lida e repetir aceitação sem nova notificação nem reset de `lida` |
+
+Não existe rota atual dedicada à finalização de Pedido. GETs não precisam participar de transação de escrita, mas devem preservar filtros por conta e projeções. Avaliações leem agenda e gravam Avaliacao; não modificam estes estados. `script.js:125` grava “agendamentos” somente no localStorage: é pendência funcional separada, não escritor MongoDB nem evidência de contratação real.
+
+Para economizar escopo, a composição local terá duas etapas explícitas de ensaio: **preparação** (cadastros fictícios, serviços, pedidos e propostas) e **aceitação** (novos PUTs/replays e leituras). Uma barreira local impede novas criações de propostas/serviços e drena as que já entraram antes de liberar aceitações. Não é lock distribuído, flag de ambiente ou solução para produção; só é aceitável em processo único que possui o banco descartável. Não permitir retorno à preparação no mesmo banco após contratar; novo ensaio usa outro banco temporário. Cancelamentos, mudanças de status, exclusões e reservas diretas permanecem bloqueados nas duas etapas.
+
+## 4. Prontidão e rollback
+
+- [ ] Somente launcher local explícito, ligado a `127.0.0.1`, cria o replica set pelo helper já validado; sem URI externa/fallback, sem importar `server.js`, sem carregar `.env`, sem modificar configuração do MongoDB instalado. JWT sintético gerado para o processo; login real das contas fictícias.
+- [ ] Conferir PID, porta diferente de 27017, diretório temporário, nome do replica set, primary e banco exclusivo; conferir que todos os Models usam a mesma conexão. Ensaios anteriores provam viabilidade local, não a topologia do Atlas.
+- [ ] Antes de atender HTTP de escrita, criar e reler **nas fixtures descartáveis** I1–I5, comparando coleção, chaves, `unique` e filtros exatos do desenho. Preservar também índices existentes necessários às fixtures, como email de Usuario e pedido/prestador de Proposta. Nenhum índice novo entra automaticamente no schema.
+- [ ] Para futura base existente, primeiro auditoria autorizada de duplicidades/tipos no escopo de cada filtro, incluindo referências parciais; não excluir dados para viabilizar índice. Declaração, instalação operacional e migração são tarefas distintas. Índice parcial não protege documentos sem a chave, nem garante referência existente.
+- [ ] Provar que o servidor local não monta a aceitação antiga e aplica as restrições da seção 3; não basta esconder botões. Só certificar novos pedidos após essa verificação. Nenhuma outra instância/escritor pode acessar o banco de ensaio.
+- [ ] Aprovar diferenças de HTTP/projeção e comportamento de legado; frontend mostra replay/409/503 corretamente e não faz retry automático de gravação.
+- [ ] Rollback local: parar HTTP, fechar sessões/conexões e encerrar o banco descartável próprio; recomeçar com fixtures novas. Para banco preservado futuro: suspender escrita e manter leitura compatível; **não voltar ao escritor antigo sobre documentos certificados**, não apagar vínculos/índices nem presumir rollback dos dados.
+
+Atlas/Render permanecem **desconhecidos e não autorizados**. Hospedagem só poderá ser planejada depois de verificação operacional específica de topologia, índices reais, dados legados e versões concorrentes. Não criar variável de ambiente que ative esse caminho automaticamente. O service não verifica índices instalados por conta própria; prontidão deve ser exigida pela composição antes de expor escrita.
+
+## 5. Próximas entregas — exatamente três
+
+| Entrega | Arquivos e alteração concreta proposta | Testes e critério de aceite |
+|---|---|---|
+| **1. Composição HTTP local completa e segura** | Criar `tests/helpers/contratacaoLocalApp.js` e `tests/contratacao-jornada-local.integration.test.js`; alteração pequena em `controllers/pedidoController.js` para fábrica de criação com certificação explícita, preservando exportação antiga. Reutilizar `httpApp.js` para carregar fontes reais com dependências explícitas e Routers reais; montar o adaptador novo exclusivamente nessa composição, com Models isolados e JWT sintético. Implementar ali barreiras/bloqueios da seção 3. Cadastro/login, criação de serviço, pedido, proposta, listagens e notificações devem executar handlers reais, sem sentinelas nem mocks de persistência | Replica set descartável; cadastrar contas fictícias e autenticar via HTTP; criar serviço/pedido/proposta; aceitar e repetir; conferir agenda/evento únicos e outra conta bloqueada. Testar marcador forjado ignorado, legado 409, barreira de requisições, operações bloqueadas sem escrita, ausência de handler antigo e falha de prontidão impedindo escrita. Critério: jornada integrada passa sem alterar `npm start`, `src/app.js` ou rotas ativas |
+| **2. Compatibilidade das telas e das leituras** | `site-iservice-main/dashboard-cliente.html`: confirmação neutra, mensagem do servidor, botão ocupado, recarga em conflitos e aviso de resultado incerto. `controllers/pedidoController.js`, `propostaController.js`, `agendamentoController.js`, `notificacaoController.js`: projeções específicas das listagens para excluir só metadados novos, preservando objetos populados/nomes/título. Testes HTTP/DOM direcionados; não generalizar a projeção do PUT para GETs | Verificar `pedido_id.titulo`, nomes de prestador/cliente/serviço, contagem/link/lida da notificação e estados. Capturar toast de criação/replay/409/503 sem nova gravação automática. Garantir que formulários não enviam certificação; manter asserções do fluxo antigo quando ainda ativo. Critério: consumidores atuais funcionam com respostas antigas e com a composição local nova |
+| **3. Demonstração navegável e evidência final** | Criar `scripts/demoContratacaoLocal.js`, launcher explícito reutilizando a composição da entrega 1, helper descartável e estáticos atuais. Controle de preparação/aceitação somente no terminal local; servidor só inicia após prontidão. Sem ligação a `server.js`, scripts de start/deploy ou URI persistente. Documentar roteiro curto e limites em arquivo próprio futuro | Rodar suíte completa e jornada ponta a ponta, depois demonstração manual com dois navegadores/perfis e contas fictícias cadastradas via UI. Verificar limpeza ao sair/falhar, mensagens corretas e repetição autenticada do PUT. Critério: os oito passos abaixo são demonstráveis, sem depender de contas existentes nem abrir escritores bloqueados |
+
+O carregamento controlado usado pelos testes pode ser reaproveitado apenas para este launcher de demonstração; não transformar a avaliação de módulos de teste em bootstrap de produção. Não duplicar os casos de uso no launcher. A integração definitiva no Router hospedado será decisão posterior à prontidão completa, não uma quarta entrega necessária para a demonstração local.
+
+## 6. Aceite da demonstração e limites
+
+Aceite objetivo: (1) cliente fictício cadastrado/autenticado cria Pedido com marcador definido pelo servidor; (2) prestador fictício envia proposta; (3) encerrado o recebimento, cliente aceita pelo mesmo caminho público; (4) banco recarregado contém vencedor e vínculos completos; (5) GET/HTML da agenda exibe serviço e participantes corretos; (6) prestador vê uma notificação com link correto; (7) repetir PUT autenticado mantém IDs e contagens, sem reset de `lida`; (8) outro cliente não lista/aceita/cancela/marca como lida recurso alheio. Endpoints temporariamente bloqueados devem respeitar autorização antes de retornar indisponibilidade; comprovar propriedade também nos testes existentes, não apresentar bloqueio global como prova suficiente de isolamento.
+
+| Pendência | Bloqueia o quê? / limite aceito para a demonstração |
+|---|---|
+| Reserva concorrente direta × proposta, e duas contratações distintas do mesmo prestador/horário | Bloqueia liberação geral de agenda. Demo bloqueia POST direto e usa fixtures com horários/prestadores sem conflito; duas aceitações de pedidos distintos no mesmo slot continuam sem garantia. Não declarar FUNC-004 resolvida |
+| Cancelamento/finalização/reabertura coordenados | Bloqueiam habilitar essas ações para contratos vinculados. Não bloqueiam a jornada mínima com endpoints temporariamente bloqueados. Não declarar FUNC-005 resolvida |
+| Propostas/catalogo alterados durante aceitação | Bloqueiam uso concorrente irrestrito; barreira da demo delimita o ensaio. Futuro exige protocolo persistente comum, não extensão de lock em memória para múltiplas instâncias |
+| Serviço ambíguo | Não bloqueia caso feliz com um serviço correspondente; `409` é comportamento aprovado do service. Escolha explícita no formulário é evolução posterior |
+| Legados ambíguos | Bloqueiam aceitação desses documentos, não leitura nem ensaio com fixtures novas; sem certificação automática ou reparo por aproximação |
+| Deploy/versões mistas e índices operacionais | Bloqueiam ativação hospedada; fora da demonstração descartável. Não há evidência sobre produção |
+| Confirmação realmente incerta de commit | Não foi reproduzida como falha de rede; testes anteriores injetam sinal após commit real. Demo deve mostrar `503` sem anúncio de sucesso e não repetir gravação automaticamente. Recuperação operacional/failover completos continuam pendentes |
+
+Este plano não autoriza nenhuma implementação por si só. A próxima autorização pode abranger uma entrega inteira, sem novas auditorias gerais ou extrações de rotas isoladas.
