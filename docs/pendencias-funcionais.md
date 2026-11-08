@@ -4,6 +4,21 @@ Registro da auditoria pós-modularização, baseado no commit `155f99b` da branc
 `refactor/arquitetura-mvc`, em 7 de novembro de 2026. A Fase 6A apenas documenta
 pendências e extrai a aceitação de propostas para um service; não corrige os itens.
 
+### Histórico e evidências posteriores
+
+- **Fase 6B.1, commit `99c717d`:** integração real de autenticação/hashing,
+  21 testes contabilizados pelo runner (19 cenários e dois agrupamentos).
+- **Fase 6B.2, commit `288fa65`:** integração real de propostas/agendamentos,
+  17 testes contabilizados pelo runner (15 cenários e dois agrupamentos).
+- **Fase 6C.0, 8 de novembro de 2026:** atualização documental das evidências abaixo.
+  A suíte mais recente informada é de 797 aprovações, nenhuma falha ou teste ignorado;
+  não houve nova execução de testes nesta atualização documental.
+
+As descrições originais foram mantidas como histórico da auditoria `155f99b`.
+As atualizações datadas de cada item indicam a evidência atual e prevalecem sobre
+menções históricas a ensaios ainda ausentes. FUNC-001 a FUNC-006 continuam pendentes
+de correção. Nenhum comportamento foi observado ou investigado em produção.
+
 ## Classificação e limites da evidência
 
 - **P1:** prioridade para segurança, consistência ou funcionamento da jornada do TCC.
@@ -18,6 +33,10 @@ Os testes HTTP usam aplicação, Routers, middlewares e controllers reais, com
 dependências explicitamente simuladas. A integração real já existente do chat não
 comprova atomicidade, hashing ou índices dos demais domínios. Nenhum item deste
 documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças em índices.
+
+As duas integrações posteriores citadas no histórico usam Models/Mongoose reais e
+MongoDB local temporário, validando URI, PID, porta, diretório e banco antes das escritas.
+Isso amplia a evidência local sem demonstrar a condição de dados ou infraestrutura de produção.
 
 ## FUNC-001 — Aceitação em estados inadequados
 
@@ -34,6 +53,17 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
 - **Critério de aceite:** todos os estados proibidos pela política são rejeitados sem
   alterar pedido, propostas, agendamentos ou notificações; estados permitidos funcionam.
 
+### Atualização de evidência — Fase 6B.2 / 6C.0
+
+- **Estado atual:** pendente de correção. **Evidência atual:** constatado com Mongoose
+  e MongoDB reais em ambiente temporário descartável, sem observação em produção.
+- **Teste:** [integração de propostas/agendamentos](../tests/propostas-agendamentos-mongodb.integration.test.js),
+  `FUNC-001: proposta recusada de pedido cancelado e realmente aceita`.
+- **Resultado persistido:** proposta recusada passou a aceita, pedido cancelado passou
+  a em andamento, com um agendamento e uma notificação reais após recarga.
+- **Ainda necessário:** matriz completa dos estados aprovados, incluindo concorrência
+  com cancelamento/finalização; a reprodução atual não demonstra todos esses cruzamentos.
+
 ## FUNC-002 — Aceitação repetida e duplicação de efeitos
 
 - **Prioridade:** P1. **Estado:** pendente. **Evidência:** constatado na repetição simulada;
@@ -49,6 +79,17 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
   projetar uma garantia persistente e respostas coerentes antes de alterar schema/índice.
 - **Critério de aceite:** repetição e concorrência não produzem múltiplas contratações
   efetivas nem notificações duplicadas para a mesma aceitação, conforme política aprovada.
+
+### Atualização de evidência — Fase 6B.2 / 6C.0
+
+- **Estado atual:** pendente de correção. **Evidência atual:** repetição sequencial
+  constatada com Mongoose e MongoDB reais em ambiente temporário descartável; não em produção.
+- **Teste:** [integração de propostas/agendamentos](../tests/propostas-agendamentos-mongodb.integration.test.js),
+  `FUNC-002: repetir aceitacao persiste dois agendamentos e duas notificacoes`.
+- **Resultado persistido:** duas aceitações sequenciais produziram dois agendamentos
+  e duas notificações com IDs distintos para a mesma proposta.
+- **Ainda necessário:** aceitação concorrente da mesma proposta e de propostas diferentes
+  do mesmo pedido; essas corridas específicas permanecem riscos não ensaiados.
 
 ## FUNC-003 — Escritas parciais em falhas intermediárias
 
@@ -69,6 +110,20 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
 - **Critério de aceite:** cada falha deixa estado consistente ou recuperável segundo
   protocolo testado, sem aceitação incompleta invisível ao usuário.
 
+### Atualização de evidência — Fase 6B.2 / 6C.0
+
+- **Estado atual:** pendente de correção. **Evidência atual:** estados parciais
+  constatados com persistência real em MongoDB temporário, após falhas injetadas no teste.
+  Não se trata de queda real do servidor nem de incidente em produção.
+- **Testes:** [integração de propostas/agendamentos](../tests/propostas-agendamentos-mongodb.integration.test.js),
+  `FUNC-003: falha controlada em pedido.save preserva escritas reais anteriores` e
+  `FUNC-003: falha controlada em agendamento.create preserva escritas reais anteriores`.
+- **Resultado persistido:** falha em pedido.save deixou proposta aceita, pedido aberto
+  e concorrente enviada; falha em agendamento.create deixou proposta aceita, pedido em
+  andamento e concorrente recusada. Ambos ficaram sem agendamento/notificação.
+- **Ainda necessário:** falhas de infraestrutura, recuperação e resultados de commit
+  incertos, em topologia descartável apropriada à solução futura.
+
 ## FUNC-004 — Possíveis conflitos de horário
 
 - **Prioridade:** P1. **Estado:** pendente. **Evidência:** risco potencial de concorrência;
@@ -87,6 +142,22 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
 - **Critério de aceite:** nenhuma combinação concorrente cria reservas incompatíveis
   com a política aprovada; horários distintos e liberações válidas continuam funcionando.
 
+### Atualização de evidência — Fase 6B.2 / 6C.0
+
+- **Estado atual:** pendente de correção. **Evidência atual:** conflitos constatados
+  com leituras/gravações reais e Mongoose em MongoDB temporário; não em produção.
+- **Testes:** [integração de propostas/agendamentos](../tests/propostas-agendamentos-mongodb.integration.test.js),
+  `FUNC-004: aceitacao ignora reserva direta existente no mesmo prestador/data/hora` e
+  `FUNC-004: duas leituras reais sincronizadas permitem duas reservas diretas iguais`.
+- **Resultado persistido:** contratação direta seguida de aceitação produziu duas reservas
+  iguais para clientes distintos. Duas leituras reais, sincronizadas antes das criações,
+  também permitiram duas reservas diretas iguais; seus resultados não foram fabricados.
+- **Limites:** concorrência com escalonamento controlado, não teste de carga. Na ordem
+  inversa (aceitação antes de contratação direta), a contratação direta retornou 400.
+  Prestadores, datas e horas diferentes foram aceitos sem conflito.
+- **Ainda necessário:** duração/sobreposição, fuso, reabertura e concorrência com cancelamento,
+  de acordo com política de disponibilidade a aprovar.
+
 ## FUNC-005 — Transições e cancelamentos inadequados
 
 - **Prioridade:** P1. **Estado:** pendente. **Evidência:** constatado.
@@ -102,6 +173,20 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
 - **Critério de aceite:** transições proibidas não alteram dados; transições permitidas
   funcionam somente para o papel e proprietário autorizados.
 
+### Atualização de evidência — Fase 6B.2 / 6C.0
+
+- **Estado atual:** pendente de correção. **Evidência atual:** constatado com Mongoose
+  e MongoDB reais em ambiente temporário descartável; sem observação em produção.
+- **Testes:** [integração de propostas/agendamentos](../tests/propostas-agendamentos-mongodb.integration.test.js),
+  `FUNC-005: prestador finaliza e reabre sem restricao de transicao; outra conta recebe 403`,
+  `FUNC-005: cliente cancela agendamento finalizado mas nao recurso de outra conta` e
+  `FUNC-005: pedido finalizado pode ser cancelado somente pelo proprietario`.
+- **Resultado persistido:** agendamento pendente foi finalizado e reaberto; agendamento
+  finalizado e pedido finalizado foram cancelados pelos respectivos proprietários.
+  Tentativas das outras contas retornaram 403 e preservaram os documentos.
+- **Ainda necessário:** matriz completa e coordenação entre pedido, proposta aceita,
+  agendamento e avaliações; casos simulados adicionais continuam úteis como histórico.
+
 ## FUNC-006 — Sucesso com agendamento ausente
 
 - **Prioridade:** P1. **Estado:** pendente. **Evidência:** constatado.
@@ -115,6 +200,17 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
   contrato HTTP e mensagem da interface, em mudança funcional própria.
 - **Critério de aceite:** a interface só anuncia agendamento criado quando ele existe;
   ausência de serviço segue regra explícita e não deixa contratação ambígua.
+
+### Atualização de evidência — Fase 6B.2 / 6C.0
+
+- **Estado atual:** pendente de correção. **Evidência atual:** constatado com Mongoose,
+  helper de notificações e MongoDB reais em ambiente temporário descartável; não em produção.
+- **Teste:** [integração de propostas/agendamentos](../tests/propostas-agendamentos-mongodb.integration.test.js),
+  `FUNC-006: sem servico aceita e notifica, persistindo nenhum agendamento`.
+- **Resultado persistido:** proposta aceita, pedido em andamento, concorrente recusada,
+  uma notificação real e nenhum agendamento; HTTP 200 com agendamento nulo.
+- **Ainda necessário:** teste da mensagem na interface e decisão sobre a obrigatoriedade
+  do agendamento. A mensagem de criação na interface foi constatada por inspeção do código.
 
 ## FUNC-007 — Contratação anuncia sucesso apenas local
 
@@ -167,7 +263,8 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
 
 ## FUNC-010 — Falta de integração real de hashing/autenticação
 
-- **Prioridade:** P1. **Estado:** pendente. **Evidência:** constatado como lacuna de teste,
+- **Prioridade:** P1. **Estado:** coberta por testes de integração (critério de aceite atendido).
+  **Evidência histórica:** constatado como lacuna de teste,
   não como falha comprovada de armazenamento de senhas.
 - **Arquivos:** `Models/usuarioModel.js`, `controllers/CadastroController.js`,
   `controllers/LoginController.js`, `tests/auth-rotas.test.js`, `tests/api-seguranca.test.js`.
@@ -181,6 +278,28 @@ documento autoriza acesso ao Atlas, alteração de dados existentes ou mudanças
   com Models reais; não reprocessar hashes nem recriar usuários existentes.
 - **Critério de aceite:** hashing/comparação e preservação do hash sem mudança de senha
   são comprovados por testes reais, sem exposição de credenciais.
+
+### Atualização de evidência e estado — Fase 6B.1 / 6C.0
+
+- **Histórico:** estado inicial pendente na auditoria `155f99b`. O commit `99c717d`
+  acrescentou [auth-mongodb.integration.test.js](../tests/auth-mongodb.integration.test.js):
+  21 testes do runner (19 cenários e dois agrupamentos), com Model, bcrypt, Mongoose,
+  controllers e MongoDB reais em instância temporária descartável.
+- **Verificação do critério de aceite:** atendido para esta lacuna de cobertura.
+  Os testes conferem hash bcrypt persistido diferente do texto original; comparação
+  correta/incorreta após recarga; hash inalterado no save sem troca de senha e no login;
+  novo hash ao mudar a senha pelo Model, com rejeição da antiga e login com a nova.
+  Conferem também cadastro dos dois papéis, validações, índice real de email,
+  identidade/papel/expiração JWT, ultimo_login persistido e middleware autenticado.
+- **Evidência:** verificações não imprimem senhas, hashes completos ou tokens, e a
+  limpeza verifica encerramento do processo e das conexões. A suíte posterior informada
+  de 797 testes inclui esta integração; não foi executada novamente nesta fase documental.
+- **Limite do encerramento:** cobre a ausência dos testes previstos no critério original.
+  Não implementa endpoint, formulário, recuperação ou política de troca de senha e não
+  demonstra segurança completa de autenticação nem condição de contas existentes.
+  A troca foi exercitada diretamente no Model e depois pelo login real.
+- **Não é uma correção funcional:** a lógica de produção e os comportamentos de erro
+  existentes permanecem iguais. Nenhum dado de produção foi usado ou observado.
 
 ## FUNC-011 — Validações e conflitos conhecidos retornam 500
 
