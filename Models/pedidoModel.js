@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 
+const ContratacaoSchema = new mongoose.Schema({
+  proposta_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Proposta' },
+  servico_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Servico' },
+  agendamento_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Agendamento' }
+}, { _id: false });
+
 const PedidoSchema = new mongoose.Schema({
+  fluxo_contratacao: { type: Number, enum: [1] },
+  contratacao: { type: ContratacaoSchema },
   cliente_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario',

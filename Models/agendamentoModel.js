@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const AgendamentoSchema = new mongoose.Schema({
+  origem: { type: String, enum: ['direta', 'proposta'] },
+  pedido_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Pedido' },
+  proposta_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Proposta' },
   cliente_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario',

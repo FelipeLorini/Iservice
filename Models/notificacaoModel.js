@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
 const NotificacaoSchema = new mongoose.Schema({
+  pedido_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Pedido' },
+  evento_chave: { type: String },
   usuario_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario',

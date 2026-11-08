@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const PropostaSchema = new mongoose.Schema({
+  servico_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Servico' },
   pedido_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Pedido',
