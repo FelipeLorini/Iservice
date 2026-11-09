@@ -1,9 +1,10 @@
 const Notificacao = require('../Models/notificacaoModel');
+const camposLeitura = '_id usuario_id mensagem tipo lida link data_criacao __v';
 
 exports.listarNotificacoes = async (req, res) => {
   try {
     const usuario_id = req.usuarioId;
-    const notificacoes = await Notificacao.find({ usuario_id })
+    const notificacoes = await Notificacao.find({ usuario_id }, camposLeitura)
       .sort({ data_criacao: -1 })
       .limit(30);
     res.json(notificacoes);

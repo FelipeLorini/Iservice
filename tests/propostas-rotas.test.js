@@ -188,12 +188,13 @@ for (const missing of [false, true]) test(`GET por pedido nega outra conta ou in
   assert.deepEqual(f.calls, [{ op: 'pedido.findById', value: PEDIDO }]); assert.deepEqual(f.effects, []);
 });
 
-test('GET prestador filtra sessao e popula pedido inteiro, sem aceitar identidade na query', async t => {
+test('GET prestador filtra sessao e popula campos publicos do pedido, sem aceitar identidade na query', async t => {
   const f = await fixture(t, { usuarioId: PRESTADOR });
   json(await f.request('GET', '/api/propostas/prestador?prestador_id=' + OUTRO, f.headers('prestador')),
     200, [{ ...proposta, pedido_id: pedido }]);
   assert.deepEqual(f.calls, [{ op: 'proposta.find', value: { prestador_id: PRESTADOR } },
-    { op: 'proposta.populate', value: ['pedido_id'] }, { op: 'proposta.sort', value: { data_criacao: -1 } }]);
+    { op: 'proposta.populate', value: ['pedido_id', '_id cliente_id titulo descricao categoria data_desejada status data_criacao __v'] },
+    { op: 'proposta.sort', value: { data_criacao: -1 } }]);
   assert.deepEqual(f.effects, []);
 });
 

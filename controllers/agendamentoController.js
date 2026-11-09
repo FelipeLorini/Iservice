@@ -1,5 +1,6 @@
 const Agendamento = require('../Models/agendamentoModel');
 const Servico = require('../Models/servicoModel');
+const camposLeitura = '_id cliente_id prestador_id servico_id data hora status data_criacao __v';
 
 exports.agendarServico = async (req, res) => {
   try {
@@ -42,7 +43,7 @@ exports.agendarServico = async (req, res) => {
 exports.listarAgendamentosCliente = async (req, res) => {
   try {
     const cliente_id = req.usuarioId;
-    const agendamentos = await Agendamento.find({ cliente_id })
+    const agendamentos = await Agendamento.find({ cliente_id }, camposLeitura)
       .populate('prestador_id', 'nome telefone')
       .populate('servico_id', 'nome preco');
     res.json(agendamentos);
@@ -54,7 +55,7 @@ exports.listarAgendamentosCliente = async (req, res) => {
 exports.listarAgendamentosPrestador = async (req, res) => {
   try {
     const prestador_id = req.usuarioId;
-    const agendamentos = await Agendamento.find({ prestador_id })
+    const agendamentos = await Agendamento.find({ prestador_id }, camposLeitura)
       .populate('cliente_id', 'nome telefone')
       .populate('servico_id', 'nome preco');
     res.json(agendamentos);

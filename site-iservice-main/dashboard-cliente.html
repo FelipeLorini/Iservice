@@ -156,6 +156,7 @@
 
                                 <div class="form-section">
                                     <h3 class="section-label"><i class="fas fa-inbox"></i>Pedidos publicados</h3>
+                                    <p id="estadoAceitacao" class="muted" role="status" aria-live="polite"></p>
                                     <div id="listaPedidos">
                                         <div class="empty empty-sm"><i class="fas fa-inbox"></i>Nenhum pedido publicado ainda.</div>
                                     </div>
@@ -605,6 +606,8 @@
         }
 
         const STATUS_PEDIDO = { aberto: 'aberto', 'em andamento': 'em andamento', cancelado: 'cancelado', finalizado: 'finalizado' };
+        const aceitacoesPendentes = new Set();
+        const aceitacoesConfirmadas = new Set();
 
         async function carregarPedidos() {
             try {
@@ -639,7 +642,7 @@
                     `;
                 }).join('');
 
-                pedidos.filter(p => p.status === 'aberto').forEach(p => carregarPropostasDoPedido(p._id));
+                await Promise.all(pedidos.filter(p => p.status === 'aberto').map(p => carregarPropostasDoPedido(p._id)));
 
             } catch (erro) {
                 console.error('Erro ao carregar pedidos:', erro);
@@ -665,9 +668,9 @@
                                 <span class="row-title">${esc(p.prestador_id?.nome || 'Prestador')}</span>
                                 <span class="row-sub"><b>${IS.moeda(p.valor)}</b> · Prazo: ${esc(p.prazo)}</span>
                             </div>
-                            ${p.status === 'enviada'
-                                ? `<button type="button" class="btn btn-primary btn-xs btn-aceitar-proposta" onclick="aceitarProposta('${esc(p._id)}')"><i class="fas fa-check"></i> Aceitar</button>`
-                                : IS.badge(p.status === 'aceita' ? 'aceita' : 'recusada')}
+                            ${p.status === 'enviada' && !aceitacoesConfirmadas.has(p._id)
+                                ? `<button type="button" class="btn btn-primary btn-xs btn-aceitar-proposta" data-proposta-id="${esc(p._id)}" onclick="aceitarProposta('${esc(p._id)}', this)" ${aceitacoesPendentes.has(p._id) ? 'disabled aria-busy="true"' : ''}>${aceitacoesPendentes.has(p._id) ? 'Aguarde…' : '<i class="fas fa-check"></i> Aceitar'}</button>`
+                                : IS.badge(p.status === 'aceita' || aceitacoesConfirmadas.has(p._id) ? 'aceita' : 'recusada')}
                         </div>
                     `).join('')}
                 `;
@@ -676,27 +679,69 @@
             }
         }
 
-        async function aceitarProposta(propostaId) {
-            if (!confirm('Aceitar esta proposta? Um agendamento será criado automaticamente.')) return;
+        async function aceitarProposta(propostaId, botao) {
+            if (aceitacoesPendentes.has(propostaId) || aceitacoesConfirmadas.has(propostaId)) return;
+            if (!confirm('Confirmar a aceitação desta proposta?')) return;
+
+            aceitacoesPendentes.add(propostaId);
+            if (botao) {
+                botao.disabled = true;
+                botao.setAttribute('aria-busy', 'true');
+                botao.textContent = 'Aguarde…';
+            }
+            const estado = document.getElementById('estadoAceitacao');
+            estado.textContent = 'Consultando o resultado da aceitação…';
+            const incerto = 'Não foi possível confirmar o resultado da aceitação. Consulte seus pedidos e agendamentos antes de tentar novamente.';
+            let atualizar = false;
 
             try {
                 const resposta = await fetch(`${API_URL}/propostas/${propostaId}/aceitar`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const dados = await resposta.json();
-
-                if (!resposta.ok) {
-                    IS.toast(dados.mensagem || 'Erro ao aceitar proposta.', 'error');
-                    return;
+                let dados;
+                try {
+                    dados = await resposta.json();
+                } catch (erro) {
+                    if (resposta.ok) throw erro;
+                    dados = null; // Conflitos/503 continuam identificaveis pelo status HTTP.
                 }
-
-                IS.toast('Proposta aceita! O agendamento foi criado.');
-                carregarPedidos();
-                carregarAgendamentos();
-
+                const mensagem = typeof dados?.mensagem === 'string' && dados.mensagem.trim()
+                    ? dados.mensagem.trim() : null;
+                if (resposta.status === 503) {
+                    estado.textContent = incerto;
+                    IS.toast(incerto, 'error');
+                    atualizar = true;
+                } else if (!resposta.ok) {
+                    estado.textContent = mensagem || 'Erro ao aceitar proposta.';
+                    IS.toast(estado.textContent, 'error');
+                    atualizar = resposta.status === 409;
+                } else {
+                    aceitacoesConfirmadas.add(propostaId);
+                    estado.textContent = mensagem || 'Aceitação confirmada. Consulte seus pedidos e agendamentos.';
+                    IS.toast(estado.textContent);
+                    atualizar = true;
+                }
             } catch (erro) {
-                IS.toast('Erro ao conectar com o servidor.', 'error');
+                estado.textContent = incerto;
+                IS.toast(incerto, 'error');
+                atualizar = true;
+            } finally {
+                // Somente leituras: uma falha de comunicacao nao autoriza repetir o PUT.
+                if (atualizar) await Promise.allSettled([
+                    Promise.resolve().then(() => carregarPedidos()),
+                    Promise.resolve().then(() => carregarAgendamentos())
+                ]);
+                aceitacoesPendentes.delete(propostaId);
+                // As leituras podem ter substituido/removido o botao original.
+                document.querySelectorAll('.btn-aceitar-proposta').forEach(controle => {
+                    if (controle.dataset.propostaId === propostaId) {
+                        controle.disabled = aceitacoesConfirmadas.has(propostaId);
+                        controle.removeAttribute('aria-busy');
+                        if (controle.disabled) controle.textContent = 'Aceitação confirmada';
+                        else controle.innerHTML = '<i class="fas fa-check"></i> Aceitar';
+                    }
+                });
             }
         }
 

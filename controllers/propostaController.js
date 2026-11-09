@@ -2,6 +2,7 @@ const Proposta = require('../Models/propostaModel');
 const Pedido = require('../Models/pedidoModel');
 const propostaService = require('../services/propostaService');
 const { criarNotificacao } = require('../utils/notificacaoHelper');
+const camposLeitura = '_id pedido_id prestador_id valor prazo descricao status data_criacao __v';
 
 exports.criarProposta = async (req, res) => {
   try {
@@ -53,7 +54,7 @@ exports.listarPropostas = async (req, res) => {
       return res.status(403).json({ mensagem: 'Voce nao tem permissao para ver estas propostas' });
     }
 
-    const propostas = await Proposta.find({ pedido_id: id })
+    const propostas = await Proposta.find({ pedido_id: id }, camposLeitura)
       .populate('prestador_id', 'nome telefone')
       .sort({ data_criacao: -1 });
     res.json(propostas);
@@ -65,8 +66,8 @@ exports.listarPropostas = async (req, res) => {
 exports.listarPropostasPrestador = async (req, res) => {
   try {
     const prestador_id = req.usuarioId;
-    const propostas = await Proposta.find({ prestador_id })
-      .populate('pedido_id')
+    const propostas = await Proposta.find({ prestador_id }, camposLeitura)
+      .populate('pedido_id', '_id cliente_id titulo descricao categoria data_desejada status data_criacao __v')
       .sort({ data_criacao: -1 });
     res.json(propostas);
   } catch (error) {

@@ -1,4 +1,5 @@
 const Pedido = require('../Models/pedidoModel');
+const camposLeitura = '_id cliente_id titulo descricao categoria data_desejada status data_criacao __v';
 
 function criarHandlerCriarPedido({ model = Pedido, certificar = false } = {}) {
   return async (req, res) => {
@@ -28,7 +29,7 @@ exports.criarPedido = criarHandlerCriarPedido();
 exports.listarPedidosCliente = async (req, res) => {
   try {
     const cliente_id = req.usuarioId;
-    const pedidos = await Pedido.find({ cliente_id }).sort({ data_criacao: -1 });
+    const pedidos = await Pedido.find({ cliente_id }, camposLeitura).sort({ data_criacao: -1 });
     res.json(pedidos);
   } catch (error) {
     res.status(500).json({ mensagem: 'Erro ao listar pedidos', erro: error.message });
@@ -41,7 +42,7 @@ exports.listarPedidosAbertos = async (req, res) => {
     if (req.query.categoria) {
       filtro.categoria = req.query.categoria;
     }
-    const pedidos = await Pedido.find(filtro)
+    const pedidos = await Pedido.find(filtro, camposLeitura)
       .populate('cliente_id', 'nome')
       .sort({ data_criacao: -1 });
     res.json(pedidos);
