@@ -17,10 +17,10 @@ function configureApp(app) {
   app.use('/api', userRoutes);
   app.use('/api/chat', chatRoutes);
 
-  app.use(express.static(path.join(__dirname, '..', 'site-iservice-main')));
+  app.use(express.static(path.join(__dirname, '..', 'public')));
 
   app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'site-iservice-main', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
   });
 }
 

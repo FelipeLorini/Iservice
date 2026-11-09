@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const read = file => fs.readFileSync(path.join(__dirname, '..', 'site-iservice-main', file), 'utf8');
+const read = file => fs.readFileSync(path.join(__dirname, '..', 'public', file), 'utf8');
 const CLIENTE = '1'.repeat(24), PRESTADOR = '2'.repeat(24), OUTRO = '3'.repeat(24);
 const plain = value => JSON.parse(JSON.stringify(value));
 const flush = () => new Promise(resolve => setImmediate(resolve));

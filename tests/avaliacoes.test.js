@@ -360,7 +360,7 @@ async function dashboard(options = {}) {
       return ok([]);
     }
   });
-  for (const match of read('site-iservice-main/dashboard-cliente.html').matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
+  for (const match of read('public/dashboard-cliente.html').matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
     if (match[1].trim()) vm.runInContext(match[1], context);
   }
   await flush();

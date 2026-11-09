@@ -161,7 +161,7 @@ for (const page of ['login', 'cadastro']) {
           } };
         }
       };
-      const html = read(`site-iservice-main/${page}.html`);
+      const html = read(`public/${page}.html`);
       for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
         if (match[1].trim()) vm.runInNewContext(match[1], context);
       }

@@ -6,7 +6,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { A, B, C, fixture, invoke } = require('./helpers/chatFixtures');
 const CHAT = '3'.repeat(24), OTHER = '4'.repeat(24);
-const read = file => fs.readFileSync(path.join(__dirname, '../site-iservice-main', file), 'utf8');
+const read = file => fs.readFileSync(path.join(__dirname, '../public', file), 'utf8');
 const flush = () => new Promise(setImmediate);
 const response = (body, status = 200) => ({ status, ok: status >= 200 && status < 300, async json() { return body; } });
 function deferred() { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; }

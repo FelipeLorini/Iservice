@@ -266,7 +266,7 @@ test('paginas e script estaticos preservam caminhos e conteudo', async t => {
     const res = await f.request('GET', url);
     assert.equal(res.status, 200, url);
     assert.match(res.headers['content-type'], file.endsWith('.html') ? /^text\/html\b/ : /javascript\b/);
-    assert.equal(res.text, fs.readFileSync(path.join(root, 'site-iservice-main', file), 'utf8'));
+    assert.equal(res.text, fs.readFileSync(path.join(root, 'public', file), 'utf8'));
   }
   assert.deepEqual(f.queries, []);
   assert.deepEqual(f.dispatches, []);

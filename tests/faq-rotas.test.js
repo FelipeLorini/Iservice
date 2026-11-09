@@ -206,7 +206,7 @@ test('GET /faq.html continua servindo a pagina estatica, sem consultar o modelo 
   const res = await f.request('GET', '/faq.html');
   assert.equal(res.status, 200);
   assert.match(res.headers['content-type'], /^text\/html\b/);
-  assert.equal(res.text, fs.readFileSync(path.join(root, 'site-iservice-main/faq.html'), 'utf8'));
+  assert.equal(res.text, fs.readFileSync(path.join(root, 'public/faq.html'), 'utf8'));
   assert.deepEqual(f.queries, []);
   assert.deepEqual(f.dispatches, []);
 });

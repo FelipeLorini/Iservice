@@ -180,7 +180,7 @@ async function criarContratacaoLocalApp({ servirFrontend = false } = {}) {
       ['/propostas', 'propostaRoutes'], ['/agendamentos', 'agendamentoRoutes'], ['/notificacoes', 'notificacaoRoutes']
     ]) app.use('/api' + prefix, route(`routes/${file}.js`));
     if (servirFrontend) {
-      const publicRoot = path.resolve(__dirname, '../../site-iservice-main');
+      const publicRoot = path.resolve(__dirname, '../../public');
       assert.equal(fs.realpathSync(publicRoot), publicRoot);
       const extensions = new Set(['.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.webp', '.svg', '.ico', '.gif', '.woff', '.woff2', '.ttf']);
       app.use((req, res, next) => {

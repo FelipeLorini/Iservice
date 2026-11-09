@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const root = path.join(__dirname, '..', 'site-iservice-main');
+const root = path.join(__dirname, '..', 'public');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const pages = fs.readdirSync(root).filter(file => file.endsWith('.html'));
 const protectedPages = ['chat.html', 'dashboard-cliente.html', 'dashboard-prestador.html',

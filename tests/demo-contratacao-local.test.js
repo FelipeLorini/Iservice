@@ -64,14 +64,14 @@ test('launcher CLI real: estaticos restritos, jornada autenticada, comando aceit
   for (const file of ['index.html', 'login.html', 'cadastro.html', 'dashboard-cliente.html', 'dashboard-prestador.html', 'home.css', 'app.css', 'app.js', 'logo-mark.png']) {
     await t.test('frontend real servido: ' + file, async () => {
       const res = await rawGet(url, '/' + file); assert.equal(res.status, 200); assert.equal(res.address, '127.0.0.1');
-      if (!file.endsWith('.png')) assert.equal(res.text, fs.readFileSync(path.join(root, 'site-iservice-main', file), 'utf8'));
+      if (!file.endsWith('.png')) assert.equal(res.text, fs.readFileSync(path.join(root, 'public', file), 'utf8'));
     });
   }
   await t.test('raiz publica e arquivos privados/traversal inacessiveis', async () => {
-    assert.equal((await rawGet(url, '/')).text, fs.readFileSync(path.join(root, 'site-iservice-main/index.html'), 'utf8'));
+    assert.equal((await rawGet(url, '/')).text, fs.readFileSync(path.join(root, 'public/index.html'), 'utf8'));
     for (const pathname of ['/.env', '/%2eenv', '/server.js', '/controllers/pedidoController.js', '/tests/helpers/httpApp.js',
       '/.git/config', '/Backup_iService_Pre_MVC/', '/README.md', '/workspace.code-workspace', '/..%2fserver.js',
-      '/%2e%2e/server.js', '/%2e%2e%5cserver.js', '/scripts/demoContratacaoLocal.js', '/site-iservice-main/']) {
+      '/%2e%2e/server.js', '/%2e%2e%5cserver.js', '/scripts/demoContratacaoLocal.js', '/public/', '/site-iservice-main/']) {
       assert.equal((await rawGet(url, pathname)).status, 404, pathname);
     }
   });

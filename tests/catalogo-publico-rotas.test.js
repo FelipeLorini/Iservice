@@ -262,7 +262,7 @@ test('chat continua protegido e arquivos estaticos preservam caminhos e conteudo
     const res = await f.request('GET', file === 'index.html' ? '/' : '/' + file);
     assert.equal(res.status, 200, file);
     assert.match(res.headers['content-type'], file.endsWith('.html') ? /^text\/html\b/ : /javascript\b/);
-    assert.equal(res.text, fs.readFileSync(path.join(root, 'site-iservice-main', file), 'utf8'));
+    assert.equal(res.text, fs.readFileSync(path.join(root, 'public', file), 'utf8'));
   }
   assert.deepEqual(f.queries, []);
   assert.deepEqual(f.writes, []);

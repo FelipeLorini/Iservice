@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const html = fs.readFileSync(path.join(__dirname, '../site-iservice-main/dashboard-cliente.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '../public/dashboard-cliente.html'), 'utf8');
 const flush = () => new Promise(resolve => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
 const response = (status, body) => ({ status, ok: status >= 200 && status < 300, async json() { return body; } });

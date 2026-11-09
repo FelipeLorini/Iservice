@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="site-iservice-main/logo.png" alt="IService" width="320">
+<img src="public/logo.png" alt="IService" width="320">
 
 ### Conectamos você ao profissional certo
 
@@ -90,31 +90,60 @@ Um agendamento pode nascer de dois jeitos: o cliente contrata direto pela busca,
 
 ##  Estrutura de pastas
 
+```text
+iService/
+|-- server.js                 # Inicializacao HTTP e conexao; npm start preservado
+|-- src/app.js                # Montagem Express, API e arquivos publicos
+|-- routes/                   # Routers por dominio; userRoutes agrega /api
+|-- controllers/              # Handlers HTTP, validacoes e consultas atuais
+|-- services/                 # Casos de uso de propostas/contratacao
+|-- Models/                   # Schemas e modelos Mongoose
+|-- middleware/               # JWT e autorizacao por papel
+|-- config/                   # Configuracao da conexao
+|-- utils/                    # Auxiliares de chat e notificacoes
+|-- public/                   # View: HTML, CSS, JavaScript e imagens
+|   |-- index.html            # Pagina inicial
+|   |-- *.html                # Telas e dashboards
+|   |-- *.css                 # Estilos compartilhados e de paginas
+|   |-- *.js                  # Interface, chamadas HTTP e componentes
+|   `-- *.png                 # Identidade visual (e subpasta de imagens)
+|-- tests/                    # Unidade, HTTP, interface e MongoDB descartavel
+|-- scripts/                  # Ferramentas e demonstracao local
+|-- benchmarks/               # Ensaios separados da aplicacao
+`-- docs/                     # Evidencias, politicas e pendencias
 ```
-site-iservice-main/
-├── config/
-│   └── database.js          # Conexão com o MongoDB
-├── controllers/             # Regras de negócio de cada recurso
-├── middleware/              # Autenticação JWT e controle de perfil (cliente/prestador)
-├── Models/                  # Schemas do Mongoose
-├── routes/
-│   ├── userRoutes.js        # Rotas da API (/api/...)
-│   └── chatRoutes.js        # Rotas do chat (/api/chat/...)
-├── scripts/
-│   └── seedFaq.js           # Popula as perguntas da Central de Ajuda
-├── utils/
-│   └── notificacaoHelper.js # Criação de notificações
-├── site-iservice-main/      # Frontend (servido como arquivos estáticos)
-│   ├── index.html           # Landing page
-│   ├── home.css             # Identidade visual (cores, tipografia, header, footer, botões)
-│   ├── app.css              # Componentes das páginas internas
-│   ├── app.js               # Funções compartilhadas (menu, formatação, avisos, modais)
-│   ├── notificacoes.js      # Sino de notificações
-│   └── *.html               # Demais páginas
-├── server.js                # Ponto de entrada do servidor
-├── .env.example             # Modelo das variáveis de ambiente
-└── package.json
-```
+
+A View e composta por paginas estaticas e scripts de navegador em `public/`.
+Nao ha necessidade de EJS: as telas consomem a API JSON na mesma origem.
+O Express serve somente essa pasta na raiz HTTP, depois de `/api` e `/api/chat`.
+Assim, `/login.html`, `/app.js`, `/home.css` e todas as demais URLs permanecem
+iguais; `public` nao faz parte da URL. Nomes e caminhos relativos dos recursos
+foram preservados, inclusive `Reparos.html`. O launcher descartavel usa a mesma
+pasta, mantendo suas restricoes de acesso e sua composicao isolada de API.
+
+O fluxo geral e View -> Router/middlewares -> Controller -> Model/Service.
+Services concentram a orquestracao de contratacao ja extraida; controllers ainda
+contem validacoes e consultas Mongoose. Essa separacao incremental nao equivale
+a afirmar que todas as regras ja foram extraidas dos controllers.
+
+A pasta anterior `site-iservice-main/` passou a `public/` sem mudar o conteudo
+das telas. Referencias a ela nos documentos historicos de auditoria indicam o
+caminho anterior. Foram removidos apenas `Views/{auth,agendamento,servico}View.js`
+(sem imports, tags de script ou montagem HTTP), `controllers/MenuController.js`
+(vazio), o README de uma linha e o workspace vazio da antiga pasta estatica.
+O alias `Models/chat.js` permanece por compatibilidade comprovada pelos testes.
+
+Para validacao sem banco persistente, use `npm test` com `mongod` local disponivel.
+O roteiro da demonstracao esta em [docs/demo-contratacao-local.md](docs/demo-contratacao-local.md).
+A contratacao vinculada continua na composicao local; esta reorganizacao nao
+altera a ativacao do fluxo no servidor habitual nem publica qualquer versao.
+
+Pendencias nao bloqueantes de organizacao: extrair gradualmente scripts embutidos
+quando houver mudanca funcional nas telas e separar regras dos controllers onde
+isso reduzir acoplamento. Nao renomear `Models/` ou fragmentar CSS/JS apenas por
+estetica. Pendencias funcionais continuam registradas em
+[docs/pendencias-funcionais.md](docs/pendencias-funcionais.md), sem declaracao de
+correcao nesta sprint.
 
 ---
 
@@ -129,7 +158,7 @@ site-iservice-main/
 **1. Clone o repositório e entre na pasta**
 ```bash
 git clone <url-do-repositorio>
-cd site-iservice-main
+cd <pasta-do-repositorio>
 ```
 
 **2. Instale as dependências**

@@ -29,7 +29,7 @@ function harness(fetcher) {
     addEventListener(name,fn){(events[name]||=[]).push(fn)},
     async fetch(url,options={}){requests.push({url,options});return fetcher(url,options)}
   });context.window=context;
-  for(const file of ['app.js','chat.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../site-iservice-main',file),'utf8'),context);
+  for(const file of ['app.js','chat.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../public',file),'utf8'),context);
   context.IS.toast=(text)=>notices.push(text);
   return {context,nodes,storage,requests,intervals,notices,redirects,store,
     event(name,event={}){for(const fn of events[name]||[])fn(event)},
