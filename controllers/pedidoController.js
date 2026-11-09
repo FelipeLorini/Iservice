@@ -1,23 +1,29 @@
 const Pedido = require('../Models/pedidoModel');
 
-exports.criarPedido = async (req, res) => {
-  try {
-    const { titulo, descricao, categoria, data_desejada } = req.body;
-    const cliente_id = req.usuarioId;
+function criarHandlerCriarPedido({ model = Pedido, certificar = false } = {}) {
+  return async (req, res) => {
+    try {
+      const { titulo, descricao, categoria, data_desejada } = req.body;
+      const cliente_id = req.usuarioId;
 
-    const pedido = await Pedido.create({
-      cliente_id,
-      titulo,
-      descricao,
-      categoria,
-      data_desejada
-    });
+      const pedido = await model.create({
+        cliente_id,
+        titulo,
+        descricao,
+        categoria,
+        data_desejada,
+        ...(certificar === true ? { fluxo_contratacao: 1 } : {})
+      });
 
-    res.status(201).json({ mensagem: 'Pedido criado com sucesso', pedido });
-  } catch (error) {
-    res.status(500).json({ mensagem: 'Erro ao criar pedido', erro: error.message });
-  }
-};
+      res.status(201).json({ mensagem: 'Pedido criado com sucesso', pedido });
+    } catch (error) {
+      res.status(500).json({ mensagem: 'Erro ao criar pedido', erro: error.message });
+    }
+  };
+}
+
+exports.criarHandlerCriarPedido = criarHandlerCriarPedido;
+exports.criarPedido = criarHandlerCriarPedido();
 
 exports.listarPedidosCliente = async (req, res) => {
   try {
