@@ -34,7 +34,8 @@ const indices = [
   ['Usuario', 'email', { email: 1 }, undefined],
   ['Proposta', 'pedido_prestador', { pedido_id: 1, prestador_id: 1 }, undefined]
 ];
-async function criarContratacaoLocalApp() {
+async function criarContratacaoLocalApp({ servirFrontend = false } = {}) {
+  assert.equal(typeof servirFrontend, 'boolean');
   const replica = await disposableReplicaSet();
   const isolated = new mongoose.Mongoose(), connection = isolated.connection, models = {};
   isolated.set('bufferCommands', false);
@@ -178,11 +179,32 @@ async function criarContratacaoLocalApp() {
       ['', 'authRoutes'], ['/servicos', 'servicoRoutes'], ['/pedidos', 'pedidoRoutes'],
       ['/propostas', 'propostaRoutes'], ['/agendamentos', 'agendamentoRoutes'], ['/notificacoes', 'notificacaoRoutes']
     ]) app.use('/api' + prefix, route(`routes/${file}.js`));
+    if (servirFrontend) {
+      const publicRoot = path.resolve(__dirname, '../../site-iservice-main');
+      assert.equal(fs.realpathSync(publicRoot), publicRoot);
+      const extensions = new Set(['.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.webp', '.svg', '.ico', '.gif', '.woff', '.woff2', '.ttf']);
+      app.use((req, res, next) => {
+        if (!['GET', 'HEAD'].includes(req.method)) return res.sendStatus(404);
+        let pathname;
+        try { pathname = decodeURIComponent(req.path); } catch { return res.sendStatus(400); }
+        if (pathname === '/') pathname = '/index.html';
+        if (pathname.includes('\\') || pathname.split('/').some(part => part.startsWith('.')) ||
+          !extensions.has(path.extname(pathname).toLowerCase())) return res.sendStatus(404);
+        const filename = path.resolve(publicRoot, '.' + pathname);
+        if (!filename.startsWith(publicRoot + path.sep)) return res.sendStatus(404);
+        try {
+          // Nao servir links, atalhos para o repositorio, diretorios ou arquivos internos.
+          if (fs.realpathSync(filename) !== filename || !fs.statSync(filename).isFile()) return res.sendStatus(404);
+        } catch { return res.sendStatus(404); }
+        next();
+      }, express.static(publicRoot, { dotfiles: 'deny', redirect: false, index: 'index.html' }));
+    }
     app.use((error, req, res, next) => res.status(500).json({ mensagem: 'Erro na demonstracao local' }));
     return {
       models, connection, replica,
       get fase() { return phase; }, get preparacoesAtivas() { return active; },
       get escutando() { return Boolean(server?.listening); },
+      get url() { return server?.listening ? `http://127.0.0.1:${server.address().port}/` : null; },
       verificarProntidao, iniciarAceitacao, encerrar,
       async iniciarHttp() {
         assert.ok(!server, 'HTTP ja iniciado');
