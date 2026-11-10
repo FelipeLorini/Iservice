@@ -99,6 +99,7 @@
                         <div class="panel-body">
                             <div class="form-section">
                                 <h3 class="section-label">Dados profissionais</h3>
+                                <p class="section-desc">Descrição e portfólio são publicados no seu perfil. Os demais campos deste formulário são preferências privadas deste navegador, separadas por conta.</p>
                                 <div class="form-grid">
                                     <div class="field">
                                         <label for="nome">Nome completo</label>
@@ -157,7 +158,7 @@
                         </div>
                         <footer class="panel-foot">
                             <p id="msgStatus" class="inline-msg msg-status" role="status"></p>
-                            <button type="submit" class="btn btn-primary btn-md btn-salvar"><i class="fas fa-save"></i> Salvar alterações</button>
+                            <button id="btnSalvarPerfil" type="submit" class="btn btn-primary btn-md btn-salvar"><i class="fas fa-save"></i> Salvar alterações</button>
                         </footer>
                     </form>
 
@@ -262,15 +263,24 @@
         document.getElementById('nome').value = usuario.nome || '';
         document.getElementById('telefone').value = usuario.telefone || '';
 
-        const perfilSalvo = JSON.parse(localStorage.getItem('perfilPrestador')) || {};
+        const chavePerfil = 'perfilPrestador:' + usuario.id;
+        const sessaoAtual = () => IS.token === token && IS.usuario?.id === usuario.id;
+        let perfilSalvo = {};
+        try {
+            const local = JSON.parse(localStorage.getItem(chavePerfil));
+            if (local && typeof local === 'object' && !Array.isArray(local)) perfilSalvo = local;
+        } catch (erro) { /* Preferencias opcionais; nao importar a chave antiga sem dono. */ }
+        let perfilCarregado = false;
+        let salvandoDescricao = false;
+        let salvandoPortfolio = false;
+        const botaoSalvar = document.getElementById('btnSalvarPerfil');
+        document.getElementById('descricao').disabled = true;
+        botaoSalvar.disabled = true;
 
         if (perfilSalvo.especialidade) {
             document.getElementById('especialidade').value = perfilSalvo.especialidade;
         }
 
-        if (perfilSalvo.descricao) {
-            document.getElementById('descricao').value = perfilSalvo.descricao;
-        }
 
         if (perfilSalvo.preco) {
             document.getElementById('preco').value = perfilSalvo.preco;
@@ -280,7 +290,7 @@
             document.getElementById('telefone').value = perfilSalvo.telefone;
         }
 
-        if (perfilSalvo.dias) {
+        if (Array.isArray(perfilSalvo.dias)) {
             document.querySelectorAll('#diasSemana input[type="checkbox"]').forEach(cb => {
                 cb.checked = perfilSalvo.dias.includes(cb.value);
             });
@@ -310,8 +320,9 @@
 
         atualizarResumo();
 
-        document.getElementById('formPerfil').addEventListener('submit', function (e) {
+        document.getElementById('formPerfil').addEventListener('submit', async function (e) {
             e.preventDefault();
+            if (!perfilCarregado || salvandoDescricao || !sessaoAtual()) return;
 
             const nome = document.getElementById('nome').value.trim();
             const telefone = document.getElementById('telefone').value.trim();
@@ -335,20 +346,39 @@
                 nome,
                 telefone,
                 especialidade,
-                descricao,
                 preco,
                 dias,
                 horaInicio,
                 horaFim
             };
 
-            localStorage.setItem('perfilPrestador', JSON.stringify(perfil));
-
-            IS.msg(msg, 'Perfil atualizado com sucesso!', 'success');
-
-            document.getElementById('avatar').textContent = IS.inicial(nome);
-            document.getElementById('nomeUsuario').textContent = nome;
-            atualizarResumo();
+            salvandoDescricao = true;
+            botaoSalvar.disabled = true;
+            try {
+                const resposta = await fetch(IS.API_URL + '/usuario/portifolio', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ descricao_detalhada: descricao })
+                });
+                const dados = await resposta.json();
+                if (!sessaoAtual()) return;
+                if (!resposta.ok || typeof dados.descricao_detalhada !== 'string') throw new Error('Atualizacao recusada');
+                document.getElementById('descricao').value = dados.descricao_detalhada;
+                let preferenciasSalvas = true;
+                try { localStorage.setItem(chavePerfil, JSON.stringify(perfil)); }
+                catch (erro) { preferenciasSalvas = false; }
+                IS.msg(msg, preferenciasSalvas
+                    ? 'Descrição salva no servidor. Demais preferências salvas neste navegador.'
+                    : 'Descrição salva no servidor, mas não foi possível guardar as preferências neste navegador.', 'success');
+                document.getElementById('avatar').textContent = IS.inicial(nome);
+                document.getElementById('nomeUsuario').textContent = nome;
+                atualizarResumo();
+            } catch (erro) {
+                if (sessaoAtual()) IS.msg(msg, 'Não foi possível confirmar o salvamento da descrição. Recarregue para conferir antes de tentar novamente.', 'error');
+            } finally {
+                salvandoDescricao = false;
+                botaoSalvar.disabled = !sessaoAtual();
+            }
         });
 
         const API_URL = IS.API_URL;
@@ -357,15 +387,23 @@
 
         async function carregarPortifolio() {
             try {
-                const resposta = await fetch(`${API_URL}/usuario/${usuarioId}/perfil`);
+                const resposta = await fetch(API_URL + '/usuario/' + usuarioId + '/perfil', { cache: 'no-store' });
                 const dados = await resposta.json();
-                if (resposta.ok) {
-                    portifolioAtual = dados.portifolio || [];
-                }
+                if (!sessaoAtual()) return;
+                if (!resposta.ok || dados.id !== usuarioId || dados.tipo !== 'prestador' ||
+                    typeof dados.descricao_detalhada !== 'string' || !Array.isArray(dados.portifolio)) throw new Error('Perfil indisponivel');
+                portifolioAtual = dados.portifolio;
+                document.getElementById('descricao').value = dados.descricao_detalhada;
+                perfilCarregado = true;
+                document.getElementById('descricao').disabled = false;
+                botaoSalvar.disabled = false;
+                renderizarPortifolio();
             } catch (erro) {
-                console.error('Erro ao carregar portifolio:', erro);
+                if (sessaoAtual()) {
+                    IS.msg(document.getElementById('msgStatus'), 'Não foi possível carregar o perfil. Recarregue a página antes de editar.', 'error');
+                    document.getElementById('portfolioGrid').innerHTML = IS.vazio('fa-triangle-exclamation', 'Portfólio indisponível', 'Recarregue a página.', 'is-error');
+                }
             }
-            renderizarPortifolio();
         }
 
         function renderizarPortifolio() {
@@ -391,41 +429,41 @@
             `).join('');
         }
 
-        async function salvarPortifolio() {
+        async function salvarPortifolio(proximo) {
+            if (!perfilCarregado || salvandoPortfolio || !sessaoAtual()) return false;
+            salvandoPortfolio = true;
             try {
-                await fetch(`${API_URL}/usuario/portifolio`, {
+                const resposta = await fetch(API_URL + '/usuario/portifolio', {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ portifolio: portifolioAtual })
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ portifolio: proximo })
                 });
+                const dados = await resposta.json();
+                if (!sessaoAtual()) return false;
+                if (!resposta.ok || !Array.isArray(dados.portifolio)) throw new Error('Atualizacao recusada');
+                portifolioAtual = dados.portifolio;
+                renderizarPortifolio();
+                return true;
             } catch (erro) {
-                console.error('Erro ao salvar portifolio:', erro);
-                IS.toast('Não foi possível salvar o portfólio.', 'error');
+                if (sessaoAtual()) IS.toast('Não foi possível confirmar o salvamento do portfólio. Recarregue para conferir.', 'error');
+                return false;
+            } finally {
+                salvandoPortfolio = false;
             }
         }
 
-        function removerFoto(indice) {
-            portifolioAtual.splice(indice, 1);
-            renderizarPortifolio();
-            salvarPortifolio();
+        async function removerFoto(indice) {
+            await salvarPortifolio(portifolioAtual.filter((_, i) => i !== indice));
         }
 
-        function adicionarFoto() {
+        async function adicionarFoto() {
             const input = document.getElementById('portfolioUrlInput');
             const url = input.value.trim();
-            if (!url) {
-                input.focus();
-                return;
+            if (!url) { input.focus(); return; }
+            if (await salvarPortifolio([...portifolioAtual, url])) {
+                input.value = '';
+                IS.toast('Foto adicionada ao portfólio.');
             }
-
-            portifolioAtual.push(url);
-            input.value = '';
-            renderizarPortifolio();
-            salvarPortifolio();
-            IS.toast('Foto adicionada ao portfólio.');
         }
 
         document.getElementById('btnAdicionarFoto').addEventListener('click', adicionarFoto);

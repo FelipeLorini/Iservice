@@ -353,8 +353,9 @@ test('todas as páginas usam catálogo na navegação; seções e agendamento da
   }
   const p = page();
   for (const id of ['inicio', 'como-contratar', 'servicos', 'profissionais', 'agendamento']) assert.ok(p.document.getElementById(id));
-  assert.equal(p.document.getElementById('btnAgendar').listeners.click.length, 1);
-  assert.ok(p.document.getElementById('data').min);
+  assert.equal(p.document.getElementById('btnAgendar').href, 'profissionais.html');
+  assert.equal(p.document.getElementById('data'), null);
+  assert.doesNotMatch(read('script.js'), /localStorage|Agendamento realizado com sucesso/);
   assert.doesNotMatch(read('index.html'), /href="app.css"/);
   assert.match(read('home.css'), /\.is-guest \[data-auth="in"\]/);
 });
