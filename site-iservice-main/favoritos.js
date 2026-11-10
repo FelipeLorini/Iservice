@@ -195,7 +195,11 @@ document.addEventListener('DOMContentLoaded', function () {
         conteudoPerfil.setAttribute('aria-busy', 'true');
         if (!dialog.open) dialog.showModal();
         try {
-            const resposta = await requisicao('/usuario/' + id + '/perfil', { cache: 'no-store' });
+            const [media, resposta] = await Promise.all([
+                requisicao('/avaliacoes/prestador/' + id + '/media', { cache: 'no-store' })
+                    .then(res => res.json()).catch(() => null),
+                requisicao('/usuario/' + id + '/perfil', { cache: 'no-store' })
+            ]);
             const perfil = await resposta.json();
             if (pedido !== numeroPerfil || !sessaoAtual()) return;
             if (perfil.id !== id || perfil.tipo !== 'prestador' || typeof perfil.nome !== 'string') throw new Error('Perfil invalido');
@@ -203,9 +207,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (typeof url !== 'string') return false;
                 try { const parsed = new URL(url); return ['http:', 'https:'].includes(parsed.protocol) && !parsed.username && !parsed.password; } catch (erro) { return false; }
             }) : [];
+            const mediaValida = media && Number.isInteger(media.total) && media.total >= 0 &&
+                typeof media.media === 'number' && Number.isFinite(media.media) && media.media >= 0 && media.media <= 5;
+            const avaliacao = !mediaValida ? 'Avaliações indisponíveis no momento.'
+                : media.total === 0 ? 'Sem avaliações ainda'
+                : media.media.toFixed(1) + ' / 5 · ' + media.total + (media.total === 1 ? ' avaliação' : ' avaliações');
             conteudoPerfil.innerHTML = `<h4 class="row-title">${esc(perfil.nome)}</h4>
                 <p class="row-sub">${perfil.online ? 'Acesso recente' : 'Sem acesso recente'}</p>
                 <p class="favorito-descricao">${esc(typeof perfil.descricao_detalhada === 'string' && perfil.descricao_detalhada ? perfil.descricao_detalhada : 'Este profissional ainda não adicionou uma descrição.')}</p>
+                <p class="row-sub">${esc(avaliacao)}</p>
+                <p class="row-sub">Consulte a disponibilidade pelo chat.</p>
                 <div class="favorito-portfolio">${fotos.map(url => `<img src="${esc(url)}" alt="Foto do portfólio de ${esc(perfil.nome)}" loading="lazy" referrerpolicy="no-referrer">`).join('')}</div>`;
         } catch (erro) {
             if (pedido === numeroPerfil && sessaoAtual()) conteudoPerfil.innerHTML = IS.vazio('fa-triangle-exclamation', 'Perfil indisponível', 'Feche esta janela e tente novamente. O profissional pode não estar mais disponível.', 'empty-sm is-error');

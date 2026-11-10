@@ -114,6 +114,7 @@ async function page(options = {}) {
                 const id = JSON.parse(config.body).prestador_id;
                 state.records.push(favorito(id, 'Profissional')); return ok({ favorito: { prestador_id: id } });
             }
+            if (/^\/api\/avaliacoes\/prestador\/[a-f\d]{24}\/media$/.test(url)) return state.rating ? state.rating() : ok({ media: 0, total: 0 });
             assert.match(url, /^\/api\/usuario\/[a-f\d]{24}\/perfil$/);
             if (state.profile) return state.profile(url);
             return ok({ id: url.split('/')[3], nome: 'Ana Limpeza', tipo: 'prestador', descricao_detalhada: 'Cuido de sua casa', portifolio: [], online: false });
@@ -558,4 +559,30 @@ test('controle de expansao e acessivel e acoes usam colunas flexiveis com area d
     assert.match(acoes, /min-width:\s*0/);
     assert.match(acoes, /white-space:\s*normal/);
     assert.match(acoes, /overflow-wrap:\s*anywhere/);
+});
+
+for (const [label, rating, expected] of [
+    ['sem notas', { media: 0, total: 0 }, /Sem avaliações ainda/],
+    ['com notas', { media: 4.5, total: 2 }, /4.5 \/ 5 · 2 avaliações/],
+    ['nota unica', { media: 5, total: 1 }, /5.0 \/ 5 · 1 avaliação/],
+    ['contrato invalido', { media: '<script>', total: 1 }, /Avaliações indisponíveis/]
+]) test('modal publico: ' + label + ', descricao e portfolio sem dados locais ou contato', async () => {
+    const p = await page({ rating: async () => ok(rating),
+        profile: async () => ok({ id: PRESTADOR, tipo: 'prestador', nome: 'Profissional',
+            descricao_detalhada: 'Descricao persistida', portifolio: ['https://example.invalid/foto.png'],
+            especialidade: 'NAO_PUBLICAR', telefone: 'NAO_PUBLICAR', disponibilidade: 'NAO_PUBLICAR' }) });
+    await p.click(p.button('perfil'));
+    const html = p.node('conteudoPerfilFavorito').innerHTML;
+    assert.match(html, expected); assert.match(html, /Descricao persistida/);
+    assert.match(html, /https:\/\/example.invalid\/foto.png/);
+    assert.match(html, /Consulte a disponibilidade pelo chat/);
+    assert.doesNotMatch(html, /NAO_PUBLICAR/);
+    assert.ok(p.requests.some(r => r.url === '/api/avaliacoes/prestador/' + PRESTADOR + '/media'));
+});
+test('falha na media nao impede descricao nem inventa ausencia de avaliacoes', async () => {
+    const p = await page({ rating: async () => failure(500) });
+    await p.click(p.button('perfil'));
+    assert.match(p.node('conteudoPerfilFavorito').innerHTML, /Cuido de sua casa/);
+    assert.match(p.node('conteudoPerfilFavorito').innerHTML, /Avaliações indisponíveis/);
+    assert.doesNotMatch(p.node('conteudoPerfilFavorito').innerHTML, /Sem avaliações ainda/);
 });

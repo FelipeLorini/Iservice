@@ -89,6 +89,19 @@ exports.aceitarProposta = async (req, res) => {
       return res.status(403).json({ mensagem: 'Voce nao tem permissao para aceitar esta proposta' });
     }
 
+    // Guardas da refatoracao (7ae8ae8), adaptadas ao controller atual.
+    // Nao garantem exclusao concorrente nem atomicidade entre documentos.
+    if (pedido.status !== 'aberto') {
+      return res.status(409).json({ mensagem: 'Este pedido nao esta aberto para aceitar propostas' });
+    }
+    if (proposta.status !== 'enviada') {
+      return res.status(409).json({ mensagem: 'Esta proposta nao esta disponivel para aceitacao' });
+    }
+    const servico = await Servico.findOne({ prestador_id: proposta.prestador_id, categoria: pedido.categoria });
+    if (!servico) {
+      return res.status(409).json({ mensagem: 'Nao existe servico correspondente para aceitar esta proposta' });
+    }
+
     proposta.status = 'aceita';
     await proposta.save();
 
@@ -100,7 +113,6 @@ exports.aceitarProposta = async (req, res) => {
       { status: 'recusada' }
     );
 
-    let servico = await Servico.findOne({ prestador_id: proposta.prestador_id, categoria: pedido.categoria });
     let agendamento = null;
     if (servico) {
       agendamento = await Agendamento.create({

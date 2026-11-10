@@ -66,7 +66,7 @@ function startScrollSpy() {
 }
 
 function goToLogin() {
-    window.location.href = "login.html";
+    window.location.href = "profissionais.html";
 }
 
 function loadStars() {
@@ -89,48 +89,3 @@ function loadStars() {
 }
 
 loadStars();
-
-function startAgendamento() {
-    const btnAgendar = document.getElementById("btnAgendar");
-
-    if (!btnAgendar) return;
-
-    btnAgendar.addEventListener("click", () => {
-        const servico = document.getElementById("servico").value;
-        const data = document.getElementById("data").value;
-        const horario = document.getElementById("horario").value;
-        const msg = document.getElementById("msgAgendamento");
-
-        if (!servico || !data || !horario) {
-            msg.textContent = "Preencha todos os campos!";
-            msg.className = "msg-erro";
-            return;
-        }
-
-        const dataSelecionada = new Date(data + "T" + horario);
-        const hoje = new Date();
-
-        if (dataSelecionada <= hoje) {
-            msg.textContent = "Escolha uma data e horário futuros!";
-            msg.className = "msg-erro";
-            return;
-        }
-
-        const agendamento = {
-            servico: servico,
-            data: data,
-            horario: horario
-        };
-
-        let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
-        agendamentos.push(agendamento);
-        localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
-
-        msg.textContent = "Agendamento realizado com sucesso!";
-        msg.className = "msg-sucesso";
-
-        document.getElementById("servico").value = "";
-        document.getElementById("data").value = "";
-        document.getElementById("horario").value = "";
-    });
-}

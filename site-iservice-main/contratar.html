@@ -48,71 +48,16 @@
         <div class="container auth-grid">
             <div class="auth-copy">
                 <span class="kicker">Contratação</span>
-                <h1>Solicite um <span class="accent">profissional</span></h1>
-                <p>Informe o serviço, a data e o endereço. Nós encaminhamos a sua solicitação para os prestadores disponíveis.</p>
-                <ul class="check-list">
-                    <li><i class="fas fa-check"></i> Profissionais avaliados pela comunidade</li>
-                    <li><i class="fas fa-check"></i> Horários flexíveis, de manhã ou à tarde</li>
-                    <li><i class="fas fa-check"></i> Atendimento em toda Taquara/RS</li>
-                </ul>
+                <h1>Escolha um serviço cadastrado</h1>
+                <p>Para agendar, entre na sua conta de cliente e selecione um serviço no catálogo. Converse com o prestador pelo chat para combinar detalhes.</p>
             </div>
-
-            <div class="form-card contratar-container">
-                <div class="form-card-head">
-                    <h2>Contratar profissional</h2>
-                    <p>Preencha os dados para solicitar um prestador.</p>
-                </div>
-
-                <form id="formContratar" novalidate>
-                    <div class="form-grid">
-                        <div class="field field-full">
-                            <label for="tipoServico">Tipo de serviço</label>
-                            <select id="tipoServico" required>
-                                <option value="">Selecione o serviço...</option>
-                                <option value="faxina">Faxina / Limpeza</option>
-                                    <option value="jardinagem">Jardinagem</option>
-                                    <option value="reparos">Reparos em geral</option>
-                                    <option value="eletrica">Elétrica</option>
-                                    <option value="pintura">Pintura</option>
-                                    <option value="encanamento">Encanamento</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="dataServico">Data do serviço</label>
-                            <input type="date" id="dataServico" required>
-                        </div>
-
-                        <div class="field">
-                            <label for="horarioServico">Horário</label>
-                            <select id="horarioServico" required>
-                                <option value="">Selecione...</option>
-                                <option value="08:00">08:00</option>
-                                <option value="09:00">09:00</option>
-                                <option value="10:00">10:00</option>
-                                <option value="11:00">11:00</option>
-                                <option value="13:00">13:00</option>
-                                <option value="14:00">14:00</option>
-                                <option value="15:00">15:00</option>
-                                <option value="16:00">16:00</option>
-                            </select>
-                        </div>
-
-                        <div class="field field-full">
-                            <label for="endereco">Endereço completo</label>
-                            <input type="text" id="endereco" placeholder="Rua, número, bairro - Taquara/RS" autocomplete="street-address" required>
-                        </div>
-
-                        <div class="field field-full">
-                            <label for="observacao">Observação <span class="optional">(opcional)</span></label>
-                            <textarea id="observacao" placeholder="Detalhes sobre o serviço..."></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-md btn-block btn-contratar"><i class="fas fa-handshake"></i> Solicitar profissional</button>
-                </form>
-
-                <p class="inline-msg msg" id="msgContratar" role="status"></p>
+            <div class="form-card">
+                <h2>Continue pelo catálogo</h2>
+                <p>Esta página não recebe solicitações nem coleta endereços. O formulário antigo foi desativado porque salvava dados apenas neste navegador, sem enviar uma solicitação ao servidor.</p>
+                <p>No catálogo, use Contratar para escolher data e horário. Após a confirmação do servidor, acompanhe o agendamento no Dashboard.</p>
+                <a class="btn btn-primary btn-md btn-block" href="profissionais.html">Escolher serviço no catálogo</a>
+                <p data-auth="out">Ainda não tem conta? <a href="cadastro.html">Criar conta</a>.</p>
+                <p data-auth="in"><a href="dashboard-cliente.html" data-link="dashboard">Acompanhar no Dashboard</a></p>
             </div>
         </div>
     </main>
@@ -168,49 +113,6 @@
         </div>
     </footer>
 
-    <script>
-        document.getElementById("dataServico").min = new Date().toISOString().split("T")[0];
-
-        document.getElementById("formContratar").addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const servico = document.getElementById("tipoServico").value;
-            const data = document.getElementById("dataServico").value;
-            const horario = document.getElementById("horarioServico").value;
-            const endereco = document.getElementById("endereco").value;
-            const observacao = document.getElementById("observacao").value;
-            const msg = document.getElementById("msgContratar");
-
-            if (!servico || !data || !horario || !endereco) {
-                IS.msg(msg, "Preencha todos os campos obrigatórios!", 'error');
-                return;
-            }
-
-            const dataSelecionada = new Date(data + "T" + horario);
-            const hoje = new Date();
-
-            if (dataSelecionada <= hoje) {
-                IS.msg(msg, "Escolha uma data e horário futuros!", 'error');
-                return;
-            }
-
-            const contratacao = {
-                servico: servico,
-                data: data,
-                horario: horario,
-                endereco: endereco,
-                observacao: observacao
-            };
-
-            let contratacoes = JSON.parse(localStorage.getItem("contratacoes")) || [];
-            contratacoes.push(contratacao);
-            localStorage.setItem("contratacoes", JSON.stringify(contratacoes));
-
-            IS.msg(msg, "Solicitação enviada com sucesso!", 'success');
-
-            document.getElementById("formContratar").reset();
-        });
-    </script>
     <script src="notificacoes.js"></script>
 </body>
 </html>
