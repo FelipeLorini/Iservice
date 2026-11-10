@@ -534,10 +534,7 @@ ul {
 .visual-panel {
     position: relative;
     width: min(100%, 500px);
-    padding: 20px;
-    gap: 18px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas: "primeiro segundo" "logo logo" "terceiro terceiro";
+    aspect-ratio: 1 / 1;
     border-radius: 28px;
     border: 1px solid var(--line-strong);
     background:
@@ -558,18 +555,14 @@ ul {
 }
 
 .visual-mark {
-    grid-area: logo;
     position: relative;
-    width: min(58%, 220px);
+    width: 58%;
     height: auto;
     filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.45));
 }
 
 .chip {
-    position: relative;
-    min-width: 0;
-    width: 100%;
-    overflow-wrap: anywhere;
+    position: absolute;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -603,9 +596,9 @@ ul {
     font-size: 0.78rem;
 }
 
-.chip-1 { grid-area: primeiro; }
-.chip-2 { grid-area: segundo; }
-.chip-3 { grid-area: terceiro; width: auto; max-width: 100%; }
+.chip-1 { top: 12%; left: -28px; }
+.chip-2 { top: 42%; right: -24px; }
+.chip-3 { bottom: 10%; left: 6%; }
 
 .trust {
     position: relative;
@@ -1054,6 +1047,8 @@ ul {
 
 @media (max-width: 1100px) {
     .hero-grid { gap: 36px; }
+    .chip-1 { left: -12px; }
+    .chip-2 { right: -12px; }
 }
 
 @media (max-width: 920px) {
@@ -1123,6 +1118,8 @@ ul {
     .lead { margin-inline: auto; }
     .hero-actions { justify-content: center; }
 
+    .chip-1 { left: 0; }
+    .chip-2 { right: 0; }
 
     .trust-card { grid-template-columns: 1fr; }
     .trust-item { padding: 20px 24px; }
@@ -1159,11 +1156,11 @@ ul {
     .hero-actions .btn { width: 100%; }
     .grid-3 { grid-template-columns: 1fr; }
     .booking-form { padding: 24px 20px; }
-    .visual-panel { grid-template-columns: minmax(0, 1fr); grid-template-areas: "primeiro" "logo" "segundo" "terceiro"; padding: 16px; gap: 14px; }
     .chip { padding: 10px 12px; }
-    .chip-3 { width: 100%; }
     .chip-icon { width: 32px; height: 32px; }
     .chip strong { font-size: 0.82rem; }
+    .chip-1 { top: 8%; }
+    .chip-3 { bottom: 6%; }
     .cta-band .btn { width: 100%; }
 }
 

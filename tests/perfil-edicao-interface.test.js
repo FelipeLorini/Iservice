@@ -125,11 +125,16 @@ test('portfolio recusado preserva foto anterior e nao anuncia inclusao ou exclus
   assert.doesNotMatch(f.nodes.get('portfolioGrid').innerHTML, /nova.png/);
   assert.ok(f.notices.every(n => n.type === 'error'));
 });
-test('layout usa areas independentes para logo/cards e rotulo simples preserva contador', () => {
+test('layout restaura geometria original do hero e rotulo simples preserva contador', () => {
   const css = fs.readFileSync(path.join(root, 'home.css'), 'utf8');
-  assert.match(css, /grid-template-areas: "primeiro segundo" "logo logo" "terceiro terceiro"/);
-  assert.match(css, /grid-template-areas: "primeiro" "logo" "segundo" "terceiro"/);
-  assert.doesNotMatch(css, /\.chip-[123] \{[^}]*(?:top|left|right|bottom):/);
+  assert.match(css, /\.visual-panel \{[^}]*aspect-ratio: 1 \/ 1;[^}]*place-items: center;/);
+  assert.match(css, /\.visual-mark \{[^}]*width: 58%;/);
+  assert.match(css, /\.chip \{[^}]*position: absolute;[^}]*gap: 12px;[^}]*padding: 12px 16px;/);
+  assert.match(css, /\.chip-1 \{ top: 12%; left: -28px; \}/);
+  assert.match(css, /\.chip-2 \{ top: 42%; right: -24px; \}/);
+  assert.match(css, /\.chip-3 \{ bottom: 10%; left: 6%; \}/);
+  assert.match(css, /@media \(max-width: 920px\)[\s\S]*\.chip-1 \{ left: 0; \}/);
+  assert.match(css, /@media \(max-width: 600px\)[\s\S]*\.chip-1 \{ top: 8%; \}/);
   const dashboard = fs.readFileSync(path.join(root, 'dashboard-cliente.html'), 'utf8');
   assert.match(dashboard, /id="totalFavoritos">[^<]*<\/span><span class="stat-label">Meus Favoritos<\/span>/);
   assert.match(dashboard, /<a href="#meusFavoritos" class="btn/);
